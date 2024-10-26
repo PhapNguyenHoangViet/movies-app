@@ -9,7 +9,6 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 
-
 class UserManager(BaseUserManager):
     """Manager for users."""
 
@@ -57,3 +56,4 @@ class Movie(models.Model):
 
     def __str__(self):
         return self.title
+    

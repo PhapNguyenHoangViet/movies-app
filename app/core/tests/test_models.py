@@ -2,16 +2,12 @@
 Tests for models.
 """
 from decimal import Decimal
-
 from django.test import TestCase
 from django.contrib.auth import get_user_model
-
 from core import models
-
 
 class ModelTests(TestCase):
     """Test models."""
-
 
     def test_create_user_with_email_successful(self):
         """Test creating a user with an email is successful."""
@@ -21,8 +17,6 @@ class ModelTests(TestCase):
             email=email,
             password=password,
         )
-
-
         self.assertEqual(user.email, email)
         self.assertTrue(user.check_password(password))
 
@@ -42,8 +36,6 @@ class ModelTests(TestCase):
         """Test that creating a user without an email raises a ValueError."""
         with self.assertRaises(ValueError):
             get_user_model().objects.create_user('', 'test123')
-
-
 
     def test_create_superuser(self):
         """Test creating a superuser."""
@@ -68,5 +60,5 @@ class ModelTests(TestCase):
             release_year=2023,
             rating=Decimal('7.5'),
         )
-
         self.assertEqual(str(movie), movie.title)
+        

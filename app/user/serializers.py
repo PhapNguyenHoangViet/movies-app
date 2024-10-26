@@ -6,9 +6,7 @@ from django.contrib.auth import (
     authenticate,
 )
 from django.utils.translation import gettext as _
-
 from rest_framework import serializers # type: ignore
-
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for the user object."""
@@ -56,3 +54,4 @@ class AuthTokenSerializer(serializers.Serializer):
 
         attrs['user'] = user
         return attrs
+    
