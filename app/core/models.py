@@ -9,9 +9,9 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 
+
 class UserManager(BaseUserManager):
     """Manager for users."""
-
     def create_user(self, email, password=None, **extra_fields):
         """Create, save and return a new user."""
         if not email:
@@ -31,16 +31,16 @@ class UserManager(BaseUserManager):
 
         return user
 
+
 class User(AbstractBaseUser, PermissionsMixin):
     """User in the system."""
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-
     objects = UserManager()
-
     USERNAME_FIELD = 'email'
+
 
 class Movie(models.Model):
     """Movie object."""
@@ -50,10 +50,10 @@ class Movie(models.Model):
     )
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-    release_year = models.IntegerField()  # Năm phát hành
-    genre = models.CharField(max_length=255, blank=True)  # Thể loại
-    rating = models.DecimalField(max_digits=3, decimal_places=1, blank=True, null=True)  # Đánh giá
+    release_year = models.IntegerField()
+    genre = models.CharField(max_length=255, blank=True)
+    rating = models.DecimalField(
+        max_digits=3, decimal_places=1, blank=True, null=True)
 
     def __str__(self):
         return self.title
-    
