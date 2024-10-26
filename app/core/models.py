@@ -1,6 +1,7 @@
 """
 Database models.
 """
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import (
     AbstractBaseUser,
@@ -41,3 +42,18 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
+
+class Movie(models.Model):
+    """Movie object."""
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    release_year = models.IntegerField()  # Năm phát hành
+    genre = models.CharField(max_length=255, blank=True)  # Thể loại
+    rating = models.DecimalField(max_digits=3, decimal_places=1, blank=True, null=True)  # Đánh giá
+
+    def __str__(self):
+        return self.title

@@ -1,10 +1,12 @@
 """
 Tests for models.
 """
+from decimal import Decimal
+
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
-
+from core import models
 
 
 class ModelTests(TestCase):
@@ -52,3 +54,19 @@ class ModelTests(TestCase):
 
         self.assertTrue(user.is_superuser)
         self.assertTrue(user.is_staff)
+
+    def test_create_movie(self):
+        """Test creating a movie is successful."""
+        user = get_user_model().objects.create_user(
+            'test@example.com',
+            'testpass123',
+        )
+        movie = models.Movie.objects.create(
+            user=user,
+            title='Sample Movie Title',
+            genre='Action',
+            release_year=2023,
+            rating=Decimal('7.5'),
+        )
+
+        self.assertEqual(str(movie), movie.title)
