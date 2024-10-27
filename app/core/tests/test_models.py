@@ -55,9 +55,10 @@ class ModelTests(TestCase):
         )
         movie = models.Movie.objects.create(
             user=user,
-            title='Sample Movie Title',
-            genre='Action',
-            release_year=2023,
-            rating=Decimal('7.5'),
+            movie_title='Sample Movie Title',
+            release_date=None,
+            IMDb_URL='https://sample-movie.com',
+            genre='action',
         )
-        self.assertEqual(str(movie), movie.title)
+        self.assertEqual(str(movie), movie.movie_title)
+

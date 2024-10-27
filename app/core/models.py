@@ -47,13 +47,12 @@ class Movie(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
+        blank=True, null=True
     )
-    title = models.CharField(max_length=255)
-    description = models.TextField(blank=True)
-    release_year = models.IntegerField()
-    genre = models.CharField(max_length=255, blank=True)
-    rating = models.DecimalField(
-        max_digits=3, decimal_places=1, blank=True, null=True)
+    movie_title = models.CharField(max_length=255)
+    release_date = models.DateField(blank=True, null=True)
+    IMDb_URL = models.URLField(blank=True, null=True)
+    genre = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
-        return self.title
+        return self.movie_title
