@@ -44,7 +44,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Movie(models.Model):
     movie_id = models.AutoField(primary_key=True)
-    movie_title = models.CharField(max_length=255)
+    movie_title = models.CharField(max_length=1000)
     release_date = models.DateField(blank=True, null=True)
     video_release_date = models.DateField(blank=True, null=True)
     IMDb_URL = models.URLField(blank=True, null=True)

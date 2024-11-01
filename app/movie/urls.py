@@ -9,7 +9,7 @@ from movie import views
 
 
 router = DefaultRouter()
-router.register('movie', views.MovieViewSet)
+router.register('movies', views.MovieViewSet)
 
 app_name = 'movie'
 
