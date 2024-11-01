@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
@@ -13,8 +12,10 @@ from datetime import datetime
 
 MOVIES_URL = reverse('movie:movie-list')
 
+
 def detail_url(movie_id):
     return reverse('movie:movie-detail', args=[movie_id])
+
 
 def create_movie(**params):
     defaults = {
@@ -49,7 +50,6 @@ class PublicMovieAPITests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
 
-
     def test_get_movie_detail(self):
         movie = create_movie()
         url = detail_url(movie.movie_id)
@@ -74,7 +74,6 @@ class PublicMovieAPITests(TestCase):
                 v = datetime.strptime(v, '%Y-%m-%d').date()
             self.assertEqual(getattr(movie, k), v)
 
-
     def test_partial_update(self):
         original_link = 'https://example.com/movie.pdf'
         movie = create_movie(
@@ -92,25 +91,7 @@ class PublicMovieAPITests(TestCase):
         self.assertEqual(movie.IMDb_URL, original_link)
 
     def test_full_update(self):
-        original_link = 'https://example.com/movie.pdf'
-        movie = create_movie(
-            movie_title='Sample movie title',
-            IMDb_URL=original_link,
-        )
-
-        payload = {'movie_title': 'New movie title'}
-        url = detail_url(movie.movie_id)
-        res = self.client.patch(url, payload, format='json')
-
-        self.assertEqual(res.status_code, status.HTTP_200_OK)
-        movie.refresh_from_db()
-        self.assertEqual(movie.movie_title, payload['movie_title'])
-        self.assertEqual(movie.IMDb_URL, original_link)
-
-
-    def test_full_update(self):
-        movie = create_movie(
-        )
+        movie = create_movie()
 
         payload = {
             'movie_title': 'New movie title',
@@ -137,4 +118,5 @@ class PublicMovieAPITests(TestCase):
         res = self.client.delete(url)
 
         self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertFalse(Movie.objects.filter(movie_id=movie.movie_id).exists())
+        self.assertFalse(Movie.objects.filter(
+            movie_id=movie.movie_id).exists())
