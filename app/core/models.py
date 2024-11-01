@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 from django.contrib.auth.models import (
     AbstractBaseUser,
@@ -43,19 +44,33 @@ class Movie(models.Model):
     video_release_date = models.DateField(blank=True, null=True)
     IMDb_URL = models.URLField(blank=True, null=True)
     genre = models.JSONField(default=list, blank=True)
+    tags = models.ManyToManyField('Tag')
 
     def __str__(self):
         return self.movie_title
 
 
 class Rating(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    rating_id = models.AutoField(primary_key=True)
     rating = models.FloatField()
     timestamp = models.DateTimeField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
 
     class Meta:
         unique_together = ('user', 'movie')
 
     def __str__(self):
         return f'{self.user.email} rate {self.movie.movie_title}-{self.rating}'
+    
+
+class Tag(models.Model):
+    tag_id = models.AutoField(primary_key=True)
+    tag_name = models.CharField(max_length=255)
+    created_at = models.DateField(blank=True, null=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+    )
+
+    def __str__(self):
+        return self.tag_name
