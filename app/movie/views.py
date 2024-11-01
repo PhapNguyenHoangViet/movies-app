@@ -10,5 +10,3 @@ class MovieViewSet(viewsets.ModelViewSet):
     """View for manage Movie APIs."""
     serializer_class = serializers.MovieSerializer
     queryset = Movie.objects.all()
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]

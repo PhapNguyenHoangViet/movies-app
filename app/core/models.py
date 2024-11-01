@@ -33,7 +33,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    """User in the system."""
+    user_id = models.AutoField(primary_key=True)
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
@@ -43,16 +43,24 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Movie(models.Model):
-    """Movie object."""
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        blank=True, null=True
-    )
+    movie_id = models.AutoField(primary_key=True)
     movie_title = models.CharField(max_length=255)
     release_date = models.DateField(blank=True, null=True)
+    video_release_date = models.DateField(blank=True, null=True)
     IMDb_URL = models.URLField(blank=True, null=True)
-    genre = models.CharField(max_length=255, blank=True, null=True)
-
+    genre = models.JSONField(default=list, blank=True)
+    
     def __str__(self):
         return self.movie_title
+
+class Rating(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    rating = models.FloatField()
+    timestamp = models.DateTimeField()
+
+    class Meta:
+        unique_together = ('user', 'movie')
+
+    def __str__(self):
+        return f'{self.user.email} rated {self.movie.movie_title} - {self.rating}'

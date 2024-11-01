@@ -7,9 +7,8 @@ from core.models import Movie
 
 
 class MovieSerializer(serializers.ModelSerializer):
-    """Serializer for recipes."""
-
+    """Serializer for Movies."""
     class Meta:
         model = Movie
-        fields = ['id', 'movie_title', 'release_date', 'IMDb_URL', 'genre']
-        read_only_fields = ['id']
+        fields = ['movie_id', 'movie_title', 'release_date', 'video_release_date', 'IMDb_URL', 'genre']
+        read_only_fields = ['movie_id']

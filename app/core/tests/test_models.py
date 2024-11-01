@@ -48,14 +48,9 @@ class ModelTests(TestCase):
         self.assertTrue(user.is_staff)
 
     def test_create_movie(self):
-        """Test creating a movie is successful."""
-        user = get_user_model().objects.create_user(
-            'test@example.com',
-            'testpass123',
-        )
         movie = models.Movie.objects.create(
-            user=user,
             movie_title='Sample Movie Title',
+            video_release_date=None,
             release_date=None,
             IMDb_URL='https://sample-movie.com',
             genre='action',
