@@ -52,3 +52,9 @@ class ModelTests(TestCase):
             genre='action',
         )
         self.assertEqual(str(movie), movie.movie_title)
+
+    def test_create_tag(self):
+        user = create_user()
+        tag = models.Tag.objects.create(user=user, name='Tag1')
+
+        self.assertEqual(str(tag), tag.name)
