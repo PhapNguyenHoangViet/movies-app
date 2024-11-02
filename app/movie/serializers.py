@@ -66,3 +66,11 @@ class MovieSerializer(serializers.ModelSerializer):
 class MovieDetailSerializer(MovieSerializer):
     class Meta(MovieSerializer.Meta):
         fields = MovieSerializer.Meta.fields
+
+
+class MovieImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Movie
+        fields = ['movie_id', 'image']
+        read_only_fields = ['movie_id']
+        extra_kwargs = {'image': {'required': 'True'}}

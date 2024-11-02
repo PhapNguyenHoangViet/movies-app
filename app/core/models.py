@@ -53,8 +53,7 @@ class Movie(models.Model):
     IMDb_URL = models.URLField(blank=True, null=True)
     genre = models.JSONField(default=list, blank=True)
     tags = models.ManyToManyField('Tag')
-    image = models.ImageField(null=True, upload_to=movie_image_file_path)   
-    
+    image = models.ImageField(null=True, upload_to=movie_image_file_path)
     def __str__(self):
         return self.movie_title
 

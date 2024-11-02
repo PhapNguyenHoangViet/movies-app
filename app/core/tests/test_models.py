@@ -81,7 +81,6 @@ class ModelTests(TestCase):
         self.assertEqual(rating.movie, movie)
         self.assertEqual(rating.rating, 5)
 
-
     @patch('core.models.uuid.uuid4')
     def test_movie_file_name_uuid(self, mock_uuid):
         uuid = 'test-uuid'
