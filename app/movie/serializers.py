@@ -65,7 +65,7 @@ class MovieSerializer(serializers.ModelSerializer):
 
 class MovieDetailSerializer(MovieSerializer):
     class Meta(MovieSerializer.Meta):
-        fields = MovieSerializer.Meta.fields
+        fields = MovieSerializer.Meta.fields + ["image"]
 
 
 class MovieImageSerializer(serializers.ModelSerializer):
