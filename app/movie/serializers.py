@@ -26,7 +26,7 @@ class MovieSerializer(serializers.ModelSerializer):
         if not isinstance(value, list):
             raise serializers.ValidationError("Genre must be a list.")
         return value
-        
+
     def _get_or_create_tags(self, tags, movie):
         auth_user = self.context['request'].user
         for tag in tags:
@@ -39,7 +39,7 @@ class MovieSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         tags = validated_data.pop('tags', [])
         movie = Movie.objects.create(**validated_data)
-        self._get_or_create_tags(tags, movie)        
+        self._get_or_create_tags(tags, movie)
         return movie
 
     def update(self, instance, validated_data):
@@ -53,11 +53,9 @@ class MovieSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
-    
+
 
 class MovieDetailSerializer(MovieSerializer):
 
     class Meta(MovieSerializer.Meta):
         fields = MovieSerializer.Meta.fields
-
-

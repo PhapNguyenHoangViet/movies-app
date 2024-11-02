@@ -129,7 +129,7 @@ class MovieAPITests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Movie.objects.filter(
             movie_id=movie.movie_id).exists())
-        
+
     def test_create_movie_with_new_tags(self):
         payload = {
             'movie_title': 'New movie title',
@@ -152,7 +152,7 @@ class MovieAPITests(TestCase):
                 user=self.user,
             ).exists()
             self.assertTrue(exists)
-                
+ 
     def test_create_movie_with_existing_tags(self):
         tag_hay = Tag.objects.create(user=self.user, tag_name='hay')
         payload = {
@@ -198,11 +198,10 @@ class MovieAPITests(TestCase):
         payload = {'tags': [{'tag_name': 'Khong hay'}]}
         url = detail_url(movie.movie_id)
         res = self.client.patch(url, payload, format='json')
- 
+
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertIn(tag_khonghay, movie.tags.all())
         self.assertNotIn(tag_hay, movie.tags.all())
-
 
     def test_clear_movie_tags(self):
         tag = Tag.objects.create(user=self.user, tag_name='Hay')

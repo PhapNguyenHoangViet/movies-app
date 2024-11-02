@@ -12,8 +12,10 @@ from movie.serializers import TagSerializer
 
 TAGS_URL = reverse('movie:tag-list')
 
+
 def detail_url(tag_id):
     return reverse('movie:tag-detail', args=[tag_id])
+
 
 def create_user(email='user@gmail.com', password='123456'):
     return get_user_model().objects.create_user(email=email, password=password)
@@ -71,7 +73,6 @@ class PrivateTagsApiTests(TestCase):
 
     def test_delete_tag(self):
         tag = Tag.objects.create(user=self.user, tag_name='Hay')
-
         url = detail_url(tag.tag_id)
         res = self.client.delete(url)
         
