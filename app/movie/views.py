@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from core.models import Movie
 from core.models import Tag
+from core.models import Rating
 from movie import serializers
 
 
@@ -31,3 +32,13 @@ class TagViewSet(mixins.DestroyModelMixin,
     def get_queryset(self):
         return self.queryset.filter(
             user=self.request.user).order_by('-tag_name')
+
+
+class RatingViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.RatingSerializer
+    queryset = Rating.objects.all()
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)

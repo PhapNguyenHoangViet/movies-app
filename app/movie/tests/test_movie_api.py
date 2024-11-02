@@ -152,7 +152,7 @@ class MovieAPITests(TestCase):
                 user=self.user,
             ).exists()
             self.assertTrue(exists)
- 
+
     def test_create_movie_with_existing_tags(self):
         tag_hay = Tag.objects.create(user=self.user, tag_name='hay')
         payload = {

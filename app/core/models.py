@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
 
 from django.contrib.auth.models import (
     AbstractBaseUser,
@@ -53,16 +54,27 @@ class Movie(models.Model):
 class Rating(models.Model):
     rating_id = models.AutoField(primary_key=True)
     rating = models.FloatField()
-    timestamp = models.DateTimeField()
-    user = models.ForeignKey(User, settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(blank=True, null=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+    )
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
 
     class Meta:
         unique_together = ('user', 'movie')
 
+    def save(self, *args, **kwargs):
+        existing_rating = Rating.objects.filter(
+            user=self.user, movie=self.movie).first()
+        if existing_rating:
+            existing_rating.rating = self.rating
+            existing_rating.timestamp = timezone.now()
+            existing_rating.save()
+        else:
+            super().save(*args, **kwargs)
+
     def __str__(self):
-        return self.rating
+        return f"{self.user.user_id} rate {self.movie.movie_id}:{self.rating}"
 
 
 class Tag(models.Model):

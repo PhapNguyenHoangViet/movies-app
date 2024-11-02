@@ -2,24 +2,32 @@ from rest_framework import serializers
 from core.models import (
     Movie,
     Tag,
+    Rating,
 )
 
 
 class TagSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Tag
         fields = ['tag_id', 'tag_name', 'created_at']
         read_only_fields = ['tag_id']
 
 
+class RatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rating
+        fields = ['rating_id', 'rating', 'timestamp']
+        read_only_fields = ['rating_id']
+
+
 class MovieSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, required=False)
+    ratings = RatingSerializer(many=True, read_only=True)
 
     class Meta:
         model = Movie
         fields = ['movie_id', 'movie_title', 'release_date',
-                  'video_release_date', 'IMDb_URL', 'genre', 'tags']
+                  'video_release_date', 'IMDb_URL', 'genre', 'tags', 'ratings']
         read_only_fields = ['movie_id']
 
     def validate_genre(self, value):
@@ -56,6 +64,5 @@ class MovieSerializer(serializers.ModelSerializer):
 
 
 class MovieDetailSerializer(MovieSerializer):
-
     class Meta(MovieSerializer.Meta):
         fields = MovieSerializer.Meta.fields
