@@ -1,3 +1,10 @@
+from drf_spectacular.utils import (
+    extend_schema_view,
+    extend_schema,
+    OpenApiParameter,
+    OpenApiTypes,
+)
+
 from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework import status
@@ -14,9 +21,34 @@ from core.models import Rating
 from movie import serializers
 
 
+@extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                'tags',
+                OpenApiTypes.STR,
+                description='Comma separated list of tag IDs to filter',
+            ),
+        ]
+    )
+)
+
+
 class MovieViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.MovieDetailSerializer
     queryset = Movie.objects.all()
+
+    def _params_to_ints(self, qs):
+        return [int(str_id) for str_id in qs.split(',')]
+
+    def get_queryset(self):
+        tags = self.request.query_params.get('tags')
+        queryset = self.queryset
+        if tags:
+            tag_ids = self._params_to_ints(tags)
+            queryset = queryset.filter(tags__tag_id__in=tag_ids)
+        
+        return queryset.order_by('-movie_id').distinct()
 
     def get_serializer_class(self):
         if self.action == 'list':

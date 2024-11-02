@@ -223,6 +223,25 @@ class MovieAPITests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(movie.tags.count(), 0)
 
+    def test_filter_by_tags(self):
+        r1 = create_movie(movie_title='Superman')
+        r2 = create_movie(movie_title='Superman2')
+        tag1 = Tag.objects.create(user=self.user, tag_name='Hay')
+        tag2 = Tag.objects.create(user=self.user, tag_name='Không Hay')
+        r1.tags.add(tag1)
+        r2.tags.add(tag2)
+        r3 = create_movie(movie_title='Superman3')
+
+        params = {'tags': f'{tag1.tag_id},{tag2.tag_id}'}
+        res = self.client.get(MOVIES_URL, params)
+
+        s1 = MovieSerializer(r1)
+        s2 = MovieSerializer(r2)
+        s3 = MovieSerializer(r3)
+        self.assertIn(s1.data, res.data)
+        self.assertIn(s2.data, res.data)
+        self.assertNotIn(s3.data, res.data)
+
 
 class ImageUploadTests(TestCase):
 

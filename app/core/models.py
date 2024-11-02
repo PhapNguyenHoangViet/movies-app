@@ -54,8 +54,7 @@ class Movie(models.Model):
     genre = models.JSONField(default=list, blank=True)
     tags = models.ManyToManyField('Tag')
     image = models.ImageField(null=True, upload_to=movie_image_file_path)
-    def __str__(self):
-        return self.movie_title
+    def __str__(self): return self.movie_title
 
 
 class Rating(models.Model):
