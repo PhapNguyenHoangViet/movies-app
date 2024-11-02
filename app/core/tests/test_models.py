@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from core import models
 from django.utils import timezone
+from unittest.mock import patch
 
 
 def create_user(email='user@gmail.com', password='123456'):
@@ -31,12 +32,10 @@ class ModelTests(TestCase):
             self.assertEqual(user.email, expected)
 
     def test_new_user_without_email_raises_error(self):
-        """Test that creating a user without an email raises a ValueError."""
         with self.assertRaises(ValueError):
             get_user_model().objects.create_user('', 'test123')
 
     def test_create_superuser(self):
-        """Test creating a superuser."""
         user = get_user_model().objects.create_superuser(
             'test@gmail.com',
             'test123',
@@ -81,3 +80,12 @@ class ModelTests(TestCase):
         self.assertEqual(rating.user, user)
         self.assertEqual(rating.movie, movie)
         self.assertEqual(rating.rating, 5)
+
+
+    @patch('core.models.uuid.uuid4')
+    def test_movie_file_name_uuid(self, mock_uuid):
+        uuid = 'test-uuid'
+        mock_uuid.return_value = uuid
+        file_path = models.movie_image_file_path(None, 'example.jpg')
+
+        self.assertEqual(file_path, f'uploads/movie/{uuid}.jpg')

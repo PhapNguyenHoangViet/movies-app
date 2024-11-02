@@ -1,3 +1,7 @@
+import tempfile
+import os
+from PIL import Image
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
@@ -17,6 +21,10 @@ MOVIES_URL = reverse('movie:movie-list')
 
 def detail_url(movie_id):
     return reverse('movie:movie-detail', args=[movie_id])
+
+
+def image_upload_url(movie_id):
+    return reverse('movie:movie-upload-image', args=[movie_id])
 
 
 def create_user(email='user@gmail.com', password='123456'):
@@ -214,3 +222,39 @@ class MovieAPITests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(movie.tags.count(), 0)
+
+
+class ImageUploadTests(TestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = get_user_model().objects.create_user(
+            'user@example.com',
+            'password123',
+        )
+        self.client.force_authenticate(self.user)
+        self.movie = create_movie()
+
+    def tearDown(self):
+        self.movie.image.delete()
+
+    def test_upload_image(self):
+        url = image_upload_url(self.movie.movie_id)
+        with tempfile.NamedTemporaryFile(suffix='.jpg') as image_file:
+            img = Image.new('RGB', (10, 10))
+            img.save(image_file, format='JPEG')
+            image_file.seek(0)
+            payload = {'image': image_file}
+            res = self.client.post(url, payload, format='multipart')
+
+        self.movie.refresh_from_db()
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertIn('image', res.data)
+        self.assertTrue(os.path.exists(self.movie.image.path))
+
+    def test_upload_image_bad_request(self):
+        url = image_upload_url(self.movie.movie_id)
+        payload = {'image': 'notanimage'}
+        res = self.client.post(url, payload, format='multipart')
+
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
