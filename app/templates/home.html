@@ -1,0 +1,352 @@
+{% load static %}
+
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title></title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link href="{% static '/static/css/style.css' %}" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Actor&family=Jolly+Lodger&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/owlcarousel/assets/owl.carousel.min.css">
+  <link rel="stylesheet" href="assets/owlcarousel/assets/owl.theme.default.min.css">
+  <style>
+    .dropdown-custom .dropdown-item:hover {
+      color: #465499;
+    }
+  </style>
+</head>
+
+<body>
+  <section class="header" style="width: 100%; position: fixed; z-index: 1000; display: flex;">
+    <div class="container-fluid pt-2 bg-white">
+      <div class="row">
+        <div class="col-1 ps-3">
+          <a class="logo-themovie" href="/api/user/home" style="font-size: 32px; display: flex;">TheMovie</a>
+        </div>
+        <div class="col-1 pt-1">
+          <div class="dropdown" style="max-width: 80%;">
+            <button class="btn btn-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+              style="border: none; background-color: #f3f3f3;">
+              <i class="fa-solid fa-bars" style="color:#465499;">
+                <i class="fa-solid fa-caret-down" style="color:#465499;"></i>
+              </i>
+            </button>
+            <ul class="dropdown-menu dropdown-custom bg-light">
+              <li><a class="dropdown-item bg-light" href="#">Action</a></li>
+              <li><a class="dropdown-item bg-light" href="#">Another action</a></li>
+              <li><a class="dropdown-item bg-light" href="#">Something else here</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-1"></div>
+        <div class="col-4 pt-1 ps-4">
+          <div class="input-group mb-3" style="max-width: 90%;">
+            <input type="text" class="form-control" placeholder="Search..." aria-label="Search"
+              aria-describedby="basic-addon2">
+            <span class="input-group-text" id="basic-addon2"><i class="fa-solid fa-magnifying-glass"></i></span>
+          </div>
+        </div>
+        <div class="col-1 pe-5">
+        </div>
+        <div class="col-2 pt-1 g-0">
+          <button type="button" class="btn" style="display: flex; margin-left: auto;"><i class="fa-solid fa-star"
+              style="color: #ffb703; border: none; outline: none; outline-width: 0;"></i></button>
+        </div>
+        <div class="col-1 pt-0 ps-3 pe-0 g-0">
+          <div class="dropdown" style="max-width: 80%;">
+            <button class="btn btn-secondary bg-white" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+              style="border: none; background-color: #f3f3f3;">
+              <i class="fa-solid fa-user-large" style="color: darkgrey;">
+                <i class="fa-solid fa-caret-down"></i>
+              </i>
+            </button>
+            <ul class="dropdown-menu dropdown-custom bg-light">
+              <label class="ps-3" style="color: #465499; font-weight: 700; font-size: 14;">Thuy816</label>
+              <li><a class="dropdown-item bg-light" href="/api/user/profile/">Settings</a></li>
+              <li><a class="dropdown-item bg-light" href="/api/user/welcome/">Logout</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="mybody mt-5 pt-5">
+    <div class="row ps-3">
+      <p3 style="font-size: 32px; color: #6c757d;">Topic</p3>
+    </div>
+    <div class="row" style="display: flex;">
+      <div class="large-12 columns" style="padding: 2%;">
+        <div class="owl-carousel owl-theme">
+          <div class="item" style="justify-content: center; display: flex;">
+            <div class="movie-row-item">
+              <div class="movie-card-md1">
+                <div class="card">
+                  <a href="movie.html">
+                    <img src="https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg">
+                  </a>
+                </div>
+                <div class="overlay">
+                  <div class="row-gap-1">
+                    <a href="/api/user/home/" class="movie-link">Spider-Man: Into the Spider-Verse</a>
+                  </div>
+                  <div class="row-gap-1">
+                    <i class="fa-solid fa-star" style="color: #ffb703; border: none; outline: none; outline-width: 0;">
+                      <label style="color: gray;">4.4</label>
+                    </i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="item" style="justify-content: center; display: flex;">
+            <div class="movie-row-item">
+              <div class="movie-card-md1">
+                <div class="card">
+                  <a href="movie.html">
+                    <img src="https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg">
+                  </a>
+                </div>
+                <div class="overlay">
+                  <div class="row-gap-1">
+                    <a href="/api/user/home/" class="movie-link">Spider-Man: Into the Spider-Verse</a>
+                  </div>
+                  <div class="row-gap-1">
+                    <i class="fa-solid fa-star" style="color: #ffb703; border: none; outline: none; outline-width: 0;">
+                      <label style="color: gray;">4.4</label>
+                    </i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="item" style="justify-content: center; display: flex;">
+            <div class="movie-row-item">
+              <div class="movie-card-md1">
+                <div class="card">
+                  <a href="movie.html">
+                    <img src="https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg">
+                  </a>
+                </div>
+                <div class="overlay">
+                  <div class="row-gap-1">
+                    <a href="/api/user/home/" class="movie-link">Spider-Man: Into the Spider-Verse</a>
+                  </div>
+                  <div class="row-gap-1">
+                    <i class="fa-solid fa-star" style="color: #ffb703; border: none; outline: none; outline-width: 0;">
+                      <label style="color: gray;">4.4</label>
+                    </i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="item" style="justify-content: center; display: flex;">
+            <div class="movie-row-item">
+              <div class="movie-card-md1">
+                <div class="card">
+                  <a href="movie.html">
+                    <img src="https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg">
+                  </a>
+                </div>
+                <div class="overlay">
+                  <div class="row-gap-1">
+                    <a href="/api/user/home/" class="movie-link">Spider-Man: Into the Spider-Verse</a>
+                  </div>
+                  <div class="row-gap-1">
+                    <i class="fa-solid fa-star" style="color: #ffb703; border: none; outline: none; outline-width: 0;">
+                      <label style="color: gray;">4.4</label>
+                    </i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="item" style="justify-content: center; display: flex;">
+            <div class="movie-row-item">
+              <div class="movie-card-md1">
+                <div class="card">
+                  <a href="movie.html">
+                    <img src="https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg">
+                  </a>
+                </div>
+                <div class="overlay">
+                  <div class="row-gap-1">
+                    <a href="/api/user/home/" class="movie-link">Spider-Man: Into the Spider-Verse</a>
+                  </div>
+                  <div class="row-gap-1">
+                    <i class="fa-solid fa-star" style="color: #ffb703; border: none; outline: none; outline-width: 0;">
+                      <label style="color: gray;">4.4</label>
+                    </i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="item" style="justify-content: center; display: flex;">
+            <div class="movie-row-item">
+              <div class="movie-card-md1">
+                <div class="card">
+                  <a href="movie.html">
+                    <img src="https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg">
+                  </a>
+                </div>
+                <div class="overlay">
+                  <div class="row-gap-1">
+                    <a href="/api/user/home/" class="movie-link">Spider-Man: Into the Spider-Verse</a>
+                  </div>
+                  <div class="row-gap-1">
+                    <i class="fa-solid fa-star" style="color: #ffb703; border: none; outline: none; outline-width: 0;">
+                      <label style="color: gray;">4.4</label>
+                    </i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="item" style="justify-content: center; display: flex;">
+            <div class="movie-row-item">
+              <div class="movie-card-md1">
+                <div class="card">
+                  <a href="movie.html">
+                    <img src="https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg">
+                  </a>
+                </div>
+                <div class="overlay">
+                  <div class="row-gap-1">
+                    <a href="home.html" class="movie-link">Spider-Man: Into the Spider-Verse</a>
+                  </div>
+                  <div class="row-gap-1">
+                    <i class="fa-solid fa-star" style="color: #ffb703; border: none; outline: none; outline-width: 0;">
+                      <label style="color: gray;">4.4</label>
+                    </i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="item" style="justify-content: center; display: flex;">
+            <div class="movie-row-item">
+              <div class="movie-card-md1">
+                <div class="card">
+                  <a href="movie.html">
+                    <img src="https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg">
+                  </a>
+                </div>
+                <div class="overlay">
+                  <div class="row-gap-1">
+                    <a href="home.html" class="movie-link">Spider-Man: Into the Spider-Verse</a>
+                  </div>
+                  <div class="row-gap-1">
+                    <i class="fa-solid fa-star" style="color: #ffb703; border: none; outline: none; outline-width: 0;">
+                      <label style="color: gray;">4.4</label>
+                    </i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="item" style="justify-content: center; display: flex;">
+            <div class="movie-row-item">
+              <div class="movie-card-md1">
+                <div class="card">
+                  <a href="movie.html">
+                    <img src="https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg">
+                  </a>
+                </div>
+                <div class="overlay">
+                  <div class="row-gap-1">
+                    <a href="home.html" class="movie-link">Spider-Man: Into the Spider-Verse</a>
+                  </div>
+                  <div class="row-gap-1">
+                    <i class="fa-solid fa-star" style="color: #ffb703; border: none; outline: none; outline-width: 0;">
+                      <label style="color: gray;">4.4</label>
+                    </i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="item" style="justify-content: center; display: flex;">
+            <div class="movie-row-item">
+              <div class="movie-card-md1">
+                <div class="card">
+                  <a href="movie.html">
+                    <img src="https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg">
+                  </a>
+                </div>
+                <div class="overlay">
+                  <div class="row-gap-1">
+                    <a href="home.html" class="movie-link">Spider-Man: Into the Spider-Verse</a>
+                  </div>
+                  <div class="row-gap-1">
+                    <i class="fa-solid fa-star" style="color: #ffb703; border: none; outline: none; outline-width: 0;">
+                      <label style="color: gray;">4.4</label>
+                    </i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="item">
+            <h4>11</h4>
+          </div>
+          <div class="item">
+            <h4>12</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer>
+    <div style="text-align: center;">
+      <p>Website concept inspired by <a href="https://movielens.org"
+          style="color: #6c757d; text-decoration: none;">MovieLens</a></p>
+      <p>Copyright © 2024</p>
+    </div>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+  <script src="assets/vendors/jquery.min.js"></script>
+  <script src="assets/owlcarousel/owl.carousel.js"></script>
+  <script>
+    $(document).ready(function () {
+      $('.owl-carousel').owlCarousel({
+        loop: false,
+        margin: 10,
+        nav: false,
+        responsiveClass: true,
+        responsive: {
+          0: {
+            items: 2,
+          },
+          600: {
+            items: 4,
+          },
+          1000: {
+            items: 8,
+            nav: false,
+            margin: 20
+          }
+        }
+      })
+    })
+  </script>
+</body>
+
+</html>

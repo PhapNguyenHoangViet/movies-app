@@ -1,0 +1,51 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>The Movie</title>
+        <!-- bootstrap core css -->
+        <link rel="stylesheet" type="text/css" href="{% static '/static/css/bootstrap.css' %}" />
+        <!-- Custom styles for this template -->
+        <link href="{% static '/static/css/style.css' %}" rel="stylesheet"/>
+    </head>
+<body>
+    <header>
+        <div>
+            <a href="/api/user/home/" class="logo-themovie" style="color: white; font-size: 64px;">
+                <span>TheMovie</span>
+            </a>
+        </div>
+    </header>
+
+    <div class="container-login">
+        <h2 style="color: #555; margin-bottom: 20px;">Log in</h2>
+        <form>
+            <div class="form-group">
+                <div class="split">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" style="width: 320px">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="split">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" style="width: 320px">
+                </div>
+            </div>
+            <button type="submit" class="submit-btn">Log in</button>
+            <div class="login-link">
+                Create an account? <a href="/api/user/sign_up/">Sign up here</a>
+            </div>
+        </form>
+    </div>
+    <footer>
+        <div style="text-align: center;">
+            <p>Website concept inspired by <a href="https://movielens.org" style="color: #6c757d; text-decoration: none;">MovieLens</a></p>
+            <p>Copyright © 2024</p>
+        </div>
+    </footer>
+</body>
+</html>

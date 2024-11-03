@@ -2,10 +2,40 @@ from rest_framework import generics, authentication, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
 
+from django.shortcuts import render
+
 from user.serializers import (
     UserSerializer,
     AuthTokenSerializer,
 )
+
+
+def welcome(request):
+    return render(request, 'welcome.html')
+
+
+def sign_up(request):
+    return render(request, 'sign_up.html')
+
+
+def log_in(request):
+    return render(request, 'log_in.html')
+
+
+def home(request):
+    return render(request, 'home.html')
+
+
+def profile(request):
+    return render(request, 'profile.html')
+
+
+def delete(request):
+    return render(request, 'delete.html')
+
+
+def change_password(request):
+    return render(request, 'change_password.html')
 
 
 class CreateUserView(generics.CreateAPIView):

@@ -1,0 +1,279 @@
+@import url('https://fonts.googleapis.com/css2?family=Jolly+Lodger&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Actor&family=Jolly+Lodger&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root {
+    --bluedark: #465499;
+    --greylight: #f3f3f3;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--greylight);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+header {
+    background-color: var(--bluedark);
+    color: white;
+    text-align: left;
+    padding: 20px 20% 20px;
+}
+
+.logo-themovie{
+    display: flex;
+    max-width: 80%;
+    font-family: Jolly Lodger; 
+    color:#465499; 
+    font-weight: 400; 
+    text-decoration: none;
+}
+
+header p {
+    font-size: 16px;
+    margin: 10px 0 20px;
+}
+
+header .buttons {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+header button {
+    flex: 1;
+    font-size: 14px;
+    margin: 0;
+    padding: 10px 20px;
+    color: var(--bluedark);
+    background-color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+header button:hover {
+    background-color: #ddd;
+}
+
+/* Main content styling */
+.container-welcome {
+    display: flex;
+    padding: 20px 20px;
+    justify-content: center;
+}
+
+.container-signup {
+    width: 100%;
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: white;
+}
+
+.container-login {
+    width: 100%;
+    max-width: 400px;
+    margin: 40px auto;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: white;
+}
+
+.image-welcome {
+    background-color: white;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+.image-welcome img{
+    width: 100%;
+    height: 100%;
+}
+
+footer {
+    background-color: #424242; 
+    color: #e0e0e0; 
+    padding: 20px;
+    margin-top: auto;
+    width: 100%;
+}
+.form-group {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    color: #777;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="password"],
+.form-group input[type="email"] {
+    width: 250px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-group.split {
+    width: 48%;
+}
+
+.submit-btn {
+    background-color: #3b5998;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.submit-btn:hover {
+    background-color: #333f70;
+}
+
+.login-link {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.login-link a {
+    color: var(--bluedark);
+    text-decoration: none;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
+.movie-row-item {
+    white-space: normal;
+    margin: 0 4px 0 0;
+    display: inline-block;
+    vertical-align: baseline;
+}
+.movie-card-md1 {
+    float: left;
+    margin: 0 0 3px;
+    position: relative;
+    width: 154px;
+    height: 280px;
+    overflow-x: visible;
+    font-size: 14px;
+    border-radius: 5px;
+    overflow: hidden;
+}
+.movie-card-md1 .card {
+    height: 100%;
+    width: 100%;
+}
+.movie-card-md1 img {
+    border-radius: 5px;
+}
+.movie-card-md1 .overlay {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: white;
+    z-index: 2;
+    max-height: 40%;
+    padding-left: 7%;
+    padding-bottom: 5%;
+}
+.movie-card-md1 .overlay .movie-link{
+    color: rgb(91, 90, 90);
+    font-size: 14px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 700;
+    text-decoration: none;
+}
+.movie-card-md1 .overlay label{
+    color: rgb(91, 90, 90);
+    font-size: 14px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 700;
+}
+
+.poster-movie{
+    display: flex;
+    background-color: white;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    max-width: 480px;
+    height: auto;
+}
+
+.poster-movie img{
+    width: 100%;
+    height: auto;
+}
+
+/* đánh giá phim*/
+.rate{
+
+	border-bottom-right-radius: 12px;
+	border-bottom-left-radius: 12px;
+
+}
+.rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: left
+}
+.rating>input {
+    display: none
+}
+.rating>label {
+    position: relative;
+    width: 1em;
+    font-size: 30px;
+    font-weight: 300;
+    color: #FFD600;
+    cursor: pointer
+}
+.rating>label::before {
+    content: "\2605";
+    position: absolute;
+    opacity: 0
+}
+.rating>label:hover:before,
+.rating>label:hover~label:before {
+    opacity: 1 !important
+}
+.rating>input:checked~label:before {
+    opacity: 1
+}
+
+.rating:hover>input:checked~label:before {
+    opacity: 0.4
+}
+.buttons{
+	top: 36px;
+    position: relative;
+}
+.rating-submit{
+	border-radius: 15px;
+	color: #fff;
+	    height: 49px;
+}
+.rating-submit:hover{
+	
+	color: #fff;
+}

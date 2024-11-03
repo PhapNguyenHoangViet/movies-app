@@ -68,6 +68,18 @@ class MovieViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                'assigned_only',
+                OpenApiTypes.INT, enum=[0, 1],
+            ),
+        ]
+    )
+)
+
+
 class TagViewSet(mixins.DestroyModelMixin,
                  mixins.UpdateModelMixin,
                  mixins.ListModelMixin,
@@ -78,8 +90,16 @@ class TagViewSet(mixins.DestroyModelMixin,
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return self.queryset.filter(
-            user=self.request.user).order_by('-tag_name')
+        assigned_only = bool(
+            int(self.request.query_params.get('assigned_only', 0))
+        )
+        queryset = self.queryset
+        if assigned_only:
+            queryset = queryset.filter(movie__isnull=False)
+
+        return queryset.filter(
+            user=self.request.user
+        ).order_by('-tag_name').distinct()
 
 
 class RatingViewSet(viewsets.ModelViewSet):
@@ -90,3 +110,4 @@ class RatingViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)
+

@@ -1,0 +1,71 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>The Movie</title>
+        <!-- bootstrap core css -->
+        <link rel="stylesheet" type="text/css" href="{% static '/static/css/bootstrap.css' %}" />
+        <!-- Custom styles for this template -->
+        <link href="{% static '/static/css/style.css' %}" rel="stylesheet"/>
+    </head>
+<body>
+    <header>
+        <div>
+            <a href="/api/user/home/" class="logo-themovie" style="color: white; font-size: 64px;">
+                <span>TheMovie</span>
+            </a>
+        </div>
+    </header>
+
+    <div class="container-signup">
+        <h2 style="color: #555; margin-bottom: 20px;">Register</h2>
+        <form>
+            <div class="form-group">
+                <div class="split">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email">
+                </div>
+                <div class="split">
+                    <label for="dob">Date of Birth</label>
+                    <input type="text" id="dob" name="dob" placeholder="MM/DD/YYYY">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="split">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username">
+                </div>
+                <div class="split">
+                    <label for="city">Current City</label>
+                    <input type="text" id="city" name="city">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="split">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="split">
+                    <label for="retype-password">Retype Password</label>
+                    <input type="password" id="retype-password" name="retype-password">
+                </div>
+            </div>
+            <button type="submit" class="submit-btn">Sign up</button>
+            <div class="login-link">
+                Already a user? <a href="/api/user/log_in/">Log in here</a>
+            </div>
+        </form>
+    </div>
+    <footer>
+        <div style="text-align: center;">
+            <p>Website concept inspired by <a href="https://movielens.org" style="color: #6c757d; text-decoration: none;">MovieLens</a></p>
+            <p>Copyright © 2024</p>
+        </div>
+    </footer>
+</body>
+</html>
