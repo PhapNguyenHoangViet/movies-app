@@ -3,7 +3,15 @@ from core.models import (
     Movie,
     Tag,
     Rating,
+    Genre,
 )
+
+
+class GenreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Genre
+        fields = ['genre_id', 'genre_name']
+        read_only_fields = ['genre_id']
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -20,20 +28,16 @@ class RatingSerializer(serializers.ModelSerializer):
         read_only_fields = ['rating_id']
 
 
-class MovieSerializer(serializers.ModelSerializer):
+class MovieSerializer(serializers.ModelSerializer, serializers.HyperlinkedModelSerializer):
+    genres = GenreSerializer(many=True, required=False)
     tags = TagSerializer(many=True, required=False)
     ratings = RatingSerializer(many=True, read_only=True)
 
     class Meta:
         model = Movie
         fields = ['movie_id', 'movie_title', 'release_date',
-                  'video_release_date', 'IMDb_URL', 'genre', 'tags', 'ratings']
+                  'video_release_date', 'IMDb_URL', 'image', 'genres', 'tags', 'ratings']
         read_only_fields = ['movie_id']
-
-    def validate_genre(self, value):
-        if not isinstance(value, list):
-            raise serializers.ValidationError("Genre must be a list.")
-        return value
 
     def _get_or_create_tags(self, tags, movie):
         auth_user = self.context['request'].user
@@ -65,7 +69,7 @@ class MovieSerializer(serializers.ModelSerializer):
 
 class MovieDetailSerializer(MovieSerializer):
     class Meta(MovieSerializer.Meta):
-        fields = MovieSerializer.Meta.fields + ["image"]
+        fields = MovieSerializer.Meta.fields
 
 
 class MovieImageSerializer(serializers.ModelSerializer):

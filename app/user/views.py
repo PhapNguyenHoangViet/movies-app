@@ -9,21 +9,12 @@ from user.serializers import (
     AuthTokenSerializer,
 )
 
-
-def welcome(request):
-    return render(request, 'welcome.html')
-
-
 def sign_up(request):
     return render(request, 'sign_up.html')
 
 
 def log_in(request):
     return render(request, 'log_in.html')
-
-
-def home(request):
-    return render(request, 'home.html')
 
 
 def profile(request):

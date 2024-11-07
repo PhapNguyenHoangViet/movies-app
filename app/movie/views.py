@@ -15,10 +15,25 @@ from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
+from django.shortcuts import render
+
 from core.models import Movie
 from core.models import Tag
 from core.models import Rating
+from core.models import Genre
 from movie import serializers
+
+
+def movie(request):
+    return render(request, 'movie.html')
+
+
+def welcome(request):
+    return render(request, 'welcome.html')
+
+
+def home(request):
+    return render(request, 'home.html')
 
 
 @extend_schema_view(
@@ -47,7 +62,6 @@ class MovieViewSet(viewsets.ModelViewSet):
         if tags:
             tag_ids = self._params_to_ints(tags)
             queryset = queryset.filter(tags__tag_id__in=tag_ids)
-        
         return queryset.order_by('-movie_id').distinct()
 
     def get_serializer_class(self):
@@ -78,6 +92,11 @@ class MovieViewSet(viewsets.ModelViewSet):
         ]
     )
 )
+
+
+class GenreViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.GenreSerializer
+    queryset = Genre.objects.all()
 
 
 class TagViewSet(mixins.DestroyModelMixin,

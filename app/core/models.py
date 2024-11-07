@@ -4,7 +4,7 @@ import os
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
-
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
@@ -51,8 +51,8 @@ class Movie(models.Model):
     release_date = models.DateField(blank=True, null=True)
     video_release_date = models.DateField(blank=True, null=True)
     IMDb_URL = models.URLField(blank=True, null=True)
-    genre = models.JSONField(default=list, blank=True)
     tags = models.ManyToManyField('Tag')
+    genres = models.ManyToManyField('Genre')
     image = models.ImageField(null=True, upload_to=movie_image_file_path)
     def __str__(self): return self.movie_title
 
@@ -60,11 +60,12 @@ class Movie(models.Model):
 class Rating(models.Model):
     rating_id = models.AutoField(primary_key=True)
     rating = models.FloatField()
+    rating = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     timestamp = models.DateTimeField(blank=True, null=True)
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,
     )
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movie, on_delete=models.SET_NULL)
 
     class Meta:
         unique_together = ('user', 'movie')
@@ -82,6 +83,13 @@ class Rating(models.Model):
     def __str__(self):
         return f"{self.user.user_id} rate {self.movie.movie_id}:{self.rating}"
 
+
+class Genre(models.Model):
+    genre_id = models.AutoField(primary_key=True)
+    genre_name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.genre_name
 
 class Tag(models.Model):
     tag_id = models.AutoField(primary_key=True)

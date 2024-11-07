@@ -32,8 +32,9 @@ urlpatterns = [
          SpectacularSwaggerView.as_view(url_name='api-schema'),
          name='api-docs',
     ),
-    path('api/user/', include('user.urls')),
-    path('api/movie/', include('movie.urls')),
+
+    path('user/', include('user.urls')),
+    path('movie/', include('movie.urls')),
 ]
 
 if settings.DEBUG:
