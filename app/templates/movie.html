@@ -35,7 +35,7 @@
         <div class="container-fluid pt-2 bg-white">
             <div class="row">
                 <div class="col-1 ps-3">
-                    <a class="logo-themovie" href="/movie/home/" style="font-size: 32px; display: flex;">TheMovie</a>
+                    <a class="logo-themovie" href="{% url 'movie:home' %}" style="font-size: 32px; display: flex;">TheMovie</a>
                 </div>
                 <div class="col-1 pt-1">
                     <div class="dropdown" style="max-width: 80%;">
@@ -78,8 +78,8 @@
                         </button>
                         <ul class="dropdown-menu dropdown-custom bg-light">
                             <label class="ps-3" style="color: #465499; font-weight: 700; font-size: 14;">Thuy816</label>
-                            <li><a class="dropdown-item bg-light" href="/user/profile/">Settings</a></li>
-                            <li><a class="dropdown-item bg-light" href="/movie/welcome/">Logout</a></li>
+                            <li><a class="dropdown-item bg-light" href="{% url 'user:profile' %}">Settings</a></li>
+                            <li><a class="dropdown-item bg-light" href="{% url 'movie:welcome' %}">Logout</a></li>
                         </ul>
                     </div>
                 </div>
