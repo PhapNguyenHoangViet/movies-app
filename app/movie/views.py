@@ -47,8 +47,6 @@ def home(request):
         ]
     )
 )
-
-
 class MovieViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.MovieDetailSerializer
     queryset = Movie.objects.all()
@@ -92,13 +90,6 @@ class MovieViewSet(viewsets.ModelViewSet):
         ]
     )
 )
-
-
-class GenreViewSet(viewsets.ModelViewSet):
-    serializer_class = serializers.GenreSerializer
-    queryset = Genre.objects.all()
-
-
 class TagViewSet(mixins.DestroyModelMixin,
                  mixins.UpdateModelMixin,
                  mixins.ListModelMixin,
@@ -130,3 +121,7 @@ class RatingViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)
 
+
+class GenreViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.GenreSerializer
+    queryset = Genre.objects.all()

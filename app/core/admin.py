@@ -43,5 +43,4 @@ admin.site.register(models.User, UserAdmin)
 admin.site.register(models.Movie)
 admin.site.register(models.Tag)
 admin.site.register(models.Rating)
-
 admin.site.register(models.Genre)

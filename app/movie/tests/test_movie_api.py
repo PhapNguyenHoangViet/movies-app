@@ -37,7 +37,6 @@ def create_movie(**params):
         'release_date': '2024-05-05',
         'video_release_date': '2024-05-05',
         'IMDb_URL': 'http://example.com/movie.pdf',
-        'genre': ['Action', 'Drama'],
     }
     defaults.update(params)
 
@@ -81,7 +80,6 @@ class MovieAPITests(TestCase):
             'release_date': '2024-05-05',
             'video_release_date': '2024-05-05',
             'IMDb_URL': 'http://example.com/movie.pdf',
-            'genre': ['Action', 'Drama'],
         }
         res = self.client.post(MOVIES_URL, payload, format='json')
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
@@ -115,7 +113,6 @@ class MovieAPITests(TestCase):
             'release_date': '2024-05-05',
             'video_release_date': '2024-05-05',
             'IMDb_URL': 'http://example.com/Newmovie.pdf',
-            'genre': ['NewAction', 'NewDrama'],
         }
 
         url = detail_url(movie.movie_id)
@@ -144,7 +141,6 @@ class MovieAPITests(TestCase):
             'release_date': '2024-05-05',
             'video_release_date': '2024-05-05',
             'IMDb_URL': 'http://example.com/Newmovie.pdf',
-            'genre': ['NewAction', 'NewDrama'],
             'tags': [{'tag_name': 'hay'}, {'tag_name': 'chua hay'}],
         }
         res = self.client.post(MOVIES_URL, payload, format='json')
@@ -168,7 +164,6 @@ class MovieAPITests(TestCase):
             'release_date': '2024-05-05',
             'video_release_date': '2024-05-05',
             'IMDb_URL': 'http://example.com/Newmovie.pdf',
-            'genre': ['NewAction', 'NewDrama'],
             'tags': [{'tag_name': 'hay'}, {'tag_name': 'chua hay'}],
         }
         res = self.client.post(MOVIES_URL, payload, format='json')

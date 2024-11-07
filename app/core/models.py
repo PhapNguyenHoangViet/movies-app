@@ -60,12 +60,13 @@ class Movie(models.Model):
 class Rating(models.Model):
     rating_id = models.AutoField(primary_key=True)
     rating = models.FloatField()
-    rating = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    rating = models.PositiveIntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)])
     timestamp = models.DateTimeField(blank=True, null=True)
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
     )
-    movie = models.ForeignKey(Movie, on_delete=models.SET_NULL)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
 
     class Meta:
         unique_together = ('user', 'movie')
@@ -91,13 +92,13 @@ class Genre(models.Model):
     def __str__(self):
         return self.genre_name
 
+
 class Tag(models.Model):
     tag_id = models.AutoField(primary_key=True)
     tag_name = models.CharField(max_length=255)
     created_at = models.DateField(blank=True, null=True)
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
-    )
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.tag_name

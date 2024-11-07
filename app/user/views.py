@@ -3,11 +3,11 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
 
 from django.shortcuts import render
-
 from user.serializers import (
     UserSerializer,
     AuthTokenSerializer,
 )
+
 
 def sign_up(request):
     return render(request, 'sign_up.html')

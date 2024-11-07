@@ -28,7 +28,7 @@ class RatingSerializer(serializers.ModelSerializer):
         read_only_fields = ['rating_id']
 
 
-class MovieSerializer(serializers.ModelSerializer, serializers.HyperlinkedModelSerializer):
+class MovieSerializer(serializers.ModelSerializer):
     genres = GenreSerializer(many=True, required=False)
     tags = TagSerializer(many=True, required=False)
     ratings = RatingSerializer(many=True, read_only=True)
@@ -36,7 +36,8 @@ class MovieSerializer(serializers.ModelSerializer, serializers.HyperlinkedModelS
     class Meta:
         model = Movie
         fields = ['movie_id', 'movie_title', 'release_date',
-                  'video_release_date', 'IMDb_URL', 'image', 'genres', 'tags', 'ratings']
+                  'video_release_date', 'IMDb_URL', 'image',
+                  'genres', 'tags', 'ratings']
         read_only_fields = ['movie_id']
 
     def _get_or_create_tags(self, tags, movie):

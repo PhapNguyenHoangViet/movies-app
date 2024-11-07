@@ -50,7 +50,6 @@ class ModelTests(TestCase):
             video_release_date=None,
             release_date=None,
             IMDb_URL='https://sample-movie.com',
-            genre='action',
         )
         self.assertEqual(str(movie), movie.movie_title)
 
@@ -70,7 +69,6 @@ class ModelTests(TestCase):
             video_release_date=None,
             release_date=None,
             IMDb_URL='https://sample-movie.com',
-            genre='action',
         )
         rating = models.Rating.objects.create(
             user=user,

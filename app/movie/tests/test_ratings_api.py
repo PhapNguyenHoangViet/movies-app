@@ -39,7 +39,6 @@ class PrivateratingsApiTests(TestCase):
             video_release_date=None,
             release_date=None,
             IMDb_URL='https://sample-movie.com',
-            genre='action',
         )
         self.client = APIClient()
         self.client.force_authenticate(self.user)

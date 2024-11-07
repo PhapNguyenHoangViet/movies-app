@@ -82,7 +82,6 @@ class PrivateTagsApiTests(TestCase):
         tags = Tag.objects.filter(user=self.user)
         self.assertFalse(tags.exists())
 
-
     def test_filter_tags_assigned_to_movies(self):
         tag1 = Tag.objects.create(user=self.user, tag_name='Hay')
         tag2 = Tag.objects.create(user=self.user, tag_name='0 Hay')
