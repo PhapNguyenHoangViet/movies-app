@@ -40,7 +40,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     dateOfBirth = models.DateField(blank=True, null=True)
-    sex = models.CharField(max_length=10, choices=[('M', 'Male'), ('F', 'Female')], null=True, blank=True) 
+    sex = models.CharField(max_length=10, null=True, blank=True)
     currentCity = models.CharField(max_length=255, null=True, blank=True)
     occupation = models.CharField(max_length=255, null=True, blank=True)
     is_active = models.BooleanField(default=True)

@@ -107,6 +107,11 @@ footer {
     margin-top: auto;
     width: 100%;
 }
+
+.form-profile {
+    margin: 30px auto;
+}
+
 .form-group {
     display: flex;
     justify-content: space-between;
@@ -138,6 +143,15 @@ footer {
     border-radius: 4px;
     font-size: 14px;
 }
+
+.sex select {
+    width: 250px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
 .form-group.split {
     width: 48%;
 }

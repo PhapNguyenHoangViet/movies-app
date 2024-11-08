@@ -19,5 +19,6 @@ urlpatterns = [
     path('', include(router.urls)),
     path('home/', views.home, name='home'),
     path('welcome/', views.welcome, name='welcome'),
-    path('movie_detail/<int:movie_id>/', views.movie_detail, name='movie_detail'),
+    path('movie_detail/<int:movie_id>/',
+         views.movie_detail, name='movie_detail'),
 ]

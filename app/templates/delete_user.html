@@ -114,12 +114,21 @@
                     </div>
                 </div>
                 <div class="col-9">
+                    <br>
                     <label style="color: rgb(250, 69, 69); font-weight: 600px; margin-bottom: 7px;">Are you sure that you want to delete your account?</label>
-                    <form>
-                        <div class="row mb-3">
-                            <label for="inputEmail" class="form-label" style="font-size: 15px;">Enter your email</label>
-                            <input type="text" class="form-control ms-2" style="max-width: 50%; display: flex;" id="inputpassword" placeholder="">
+                    <br>
+                    <form  method="POST" action="{% url 'user:delete' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <div class="split">
+                                <label for="confirm_email">Confirm email</label>
+                                {{ form.confirm_email }}
+                                {% for error in form.confirm_email.errors %}
+                                    <div class="error">{{ error }}</div>
+                                {% endfor %}
+                            </div>
                         </div>
+                        <br>
                         <button type="submit" class="btn" style="background-color:#465499; color: white;">Delete</button>
                     </form>
                 </div>

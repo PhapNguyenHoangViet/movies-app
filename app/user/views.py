@@ -5,8 +5,8 @@ from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import UserCreationForm
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, ProfileForm
+from .forms import ChangePasswordForm, DeleteUserForm
 
 from user.serializers import (
     UserSerializer,
@@ -20,18 +20,20 @@ def log_in(request):
         return redirect('movie:home')
 
     if request.method == 'POST':
-        username = request.POST['email'].lower()
+        email = request.POST['email'].lower()
         password = request.POST['password']
         try:
-            user = User.objects.get(username=username)
-        except:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
             messages.error(request, 'Email does not exist')
-        user = authenticate(request, username=username, password=password)
+            return redirect('user:log_in')
+        user = authenticate(request, email=email, password=password)
         if user is not None:
             login(request, user)
-            return redirect(request.GET['next'] if 'next' in request.GET else 'movie:home')
+            return redirect(request.GET['next']
+                            if 'next' in request.GET else 'movie:home')
         else:
-            messages.error(request, 'Email OR password is incorrect')
+            messages.error(request, 'Email or password is incorrect')
     return render(request, 'log_in.html')
 
 
@@ -53,26 +55,63 @@ def sign_up(request):
             messages.success(request, 'User account was created!')
             login(request, user)
             return redirect('user:log_in')
-
         else:
             messages.success(
                 request, 'An error has occurred during registration')
-            
-    return render(request, 'sign_up.html', {
-        "form":form,
-    })
+
+    return render(request, 'sign_up.html', {"form": form})
 
 
+@login_required(login_url='user:log_in')
 def profile(request):
-    return render(request, 'profile.html')
+    profile = request.user
+    form = ProfileForm(instance=profile)
+
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('user:profile')
+
+    context = {'form': form}
+    return render(request, 'profile.html', context)
 
 
+@login_required(login_url='user:log_in')
 def delete(request):
-    return render(request, 'delete.html')
+    if request.method == 'POST':
+        form = DeleteUserForm(request.POST, instance=request.user)
+        if form.is_valid():
+            confirm_email = form.cleaned_data['confirm_email'].lower()
+            if confirm_email == request.user.email.lower():
+                user = request.user
+                user.delete()
+                messages.success(request,
+                                 "Your account has been successfully deleted.")
+                return redirect('movie:welcome')
+            else:
+                messages.error(request, 'Email confirmation does not match.')
+                return redirect('user:delete')
+    else:
+        form = DeleteUserForm(instance=request.user)
+
+    context = {'form': form}
+    return render(request, 'delete_user.html', context)
 
 
+@login_required(login_url='user:log_in')
 def change_password(request):
-    return render(request, 'change_password.html')
+    profile = request.user
+    form = ChangePasswordForm(instance=profile)
+
+    if request.method == 'POST':
+        form = ChangePasswordForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('user:change_password')
+
+    context = {'form': form}
+    return render(request, 'change_password.html', context)
 
 
 class CreateUserView(generics.CreateAPIView):

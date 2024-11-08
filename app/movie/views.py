@@ -30,8 +30,10 @@ all_movies = [
     "movie_title": "The Empire Strikes Back1",
     "release_date": "2024-11-07",
     "video_release_date": "2024-11-07",
-    "IMDb_URL": "https://nisum.udemy.com/course/python-django-the-practical-guide/learn/lecture/26373230#overview",
-    "image": "https://filmfare.wwmindia.com/content/2019/nov/tanhaji21573992197.jpg",
+    "IMDb_URL":
+    "https://nisum.udemy.com/",
+    "image":
+    "https://filmfare.wwmindia.com/content/2019/nov/tanhaji21573992197.jpg",
     "genres": [],
     "tags": [],
     "avg_rating":4
@@ -41,29 +43,33 @@ all_movies = [
     "movie_title": "The Empire Strikes Back2",
     "release_date": "2024-11-07",
     "video_release_date": "2024-11-07",
-    "IMDb_URL": "https://nisum.udemy.com/course/python-django-the-practical-guide/learn/lecture/26373230#overview",
-    "image": "https://filmfare.wwmindia.com/content/2019/nov/tanhaji21573992197.jpg",
+    "IMDb_URL":
+    "https://nisum.udemy.com/",
+    "image":
+    "https://filmfare.wwmindia.com/content/2019/nov/tanhaji21573992197.jpg",
     "genres": [],
     "tags": [],
     "avg_rating":4
   },
-    {
+  {
     "movie_id": 3,
     "movie_title": "string3",
     "release_date": "2024-11-07",
     "video_release_date": "2024-11-07",
-    "IMDb_URL": "https://nisum.udemy.com/course/python-django-the-practical-guide/learn/lecture/26373230#overview",
+    "IMDb_URL":
+    "https://nisum.udemy.com/",
     "image": "https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg",
     "genres": [],
     "tags": [],
     "avg_rating":4
   },
-    {
+  {
     "movie_id": 4,
     "movie_title": "string4",
     "release_date": "2024-11-07",
     "video_release_date": "2024-11-07",
-    "IMDb_URL": "https://nisum.udemy.com/course/python-django-the-practical-guide/learn/lecture/26373230#overview",
+    "IMDb_URL":
+    "https://nisum.udemy.com/",
     "image": "https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg",
     "genres": [],
     "tags": [],
@@ -74,18 +80,19 @@ all_movies = [
     "movie_title": "string4",
     "release_date": "2024-11-07",
     "video_release_date": "2024-11-07",
-    "IMDb_URL": "https://nisum.udemy.com/course/python-django-the-practical-guide/learn/lecture/26373230#overview",
+    "IMDb_URL":
+    "https://nisum.udemy.com/",
     "image": "https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg",
     "genres": [],
     "tags": [],
     "avg_rating":4
   },
-    {
+  {
     "movie_id": 6,
     "movie_title": "string4",
     "release_date": "2024-11-07",
     "video_release_date": "2024-11-07",
-    "IMDb_URL": "https://nisum.udemy.com/course/python-django-the-practical-guide/learn/lecture/26373230#overview",
+    "IMDb_URL": "https://nisum.udemy.com",
     "image": "https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg",
     "genres": [],
     "tags": [],
