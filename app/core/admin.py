@@ -6,36 +6,19 @@ from core import models
 
 class UserAdmin(BaseUserAdmin):
     ordering = ['user_id']
-    list_display = ['email', 'name']
+    list_display = ['email', 'name',  'dateOfBirth', 'sex', 'currentCity', 'occupation']
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        (_('Personal Info'), {'fields': ('name',)}),
-        (
-            _('Permissions'),
-            {
-                'fields': (
-                    'is_active',
-                    'is_staff',
-                    'is_superuser',
-                )
-            }
-        ),
-        (_('Important dates'), {'fields': ('last_login',)}),
+        ('Personal info', {'fields': ('name', 'dateOfBirth', 'sex', 'currentCity', 'occupation')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser')}),
+        ('Important dates', {'fields': ('last_login',)}),
     )
     readonly_fields = ['last_login']
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': (
-                'email',
-                'password1',
-                'password2',
-                'name',
-                'is_active',
-                'is_staff',
-                'is_superuser',
-            ),
-        }),
+            'fields': ('email', 'password1', 'password2', 'name', 'dateOfBirth', 'sex', 'currentCity', 'occupation')}
+        ),
     )
 
 

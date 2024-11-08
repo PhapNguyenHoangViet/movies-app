@@ -22,8 +22,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Actor&family=Jolly+Lodger&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/owlcarousel/assets/owl.carousel.min.css">
-  <link rel="stylesheet" href="assets/owlcarousel/assets/owl.theme.default.min.css">
+  <link rel="stylesheet" href="{% static '/static/assets/owlcarousel/assets/owl.carousel.min.css' %}">
+  <link rel="stylesheet" href="{% static '/static/assets/owlcarousel/assets/owl.theme.default.min.css' %}">
   <style>
     .dropdown-custom .dropdown-item:hover {
       color: #465499;
@@ -89,6 +89,13 @@
     <div class="row ps-3">
       <p3 style="font-size: 32px; color: #6c757d;">Topic</p3>
     </div>
+    <div class="movie-grid">
+      {% for movie in movies %}
+        {% include 'includes/movie.html' %}
+      {% endfor %}
+    </div>
+  </section>
+    <!-- 
     <div class="row" style="display: flex;">
       <div class="large-12 columns" style="padding: 2%;">
         <div class="owl-carousel owl-theme">
@@ -96,222 +103,27 @@
             <div class="movie-row-item">
               <div class="movie-card-md1">
                 <div class="card">
-                  <a href="/movie/movie/">
-                    <img src="https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg">
+                  <a href="">
+                    <img src="">
                   </a>
                 </div>
                 <div class="overlay">
                   <div class="row-gap-1">
-                    <a href="/movie/home/" class="movie-link">Spider-Man: Into the Spider-Verse</a>
+                    <a href="" class="movie-link"></a>
                   </div>
                   <div class="row-gap-1">
                     <i class="fa-solid fa-star" style="color: #ffb703; border: none; outline: none; outline-width: 0;">
-                      <label style="color: gray;">4.4</label>
+                      <label style="color: gray;"></label>
                     </i>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="item" style="justify-content: center; display: flex;">
-            <div class="movie-row-item">
-              <div class="movie-card-md1">
-                <div class="card">
-                  <a href="/movie/movie/">
-                    <img src="https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg">
-                  </a>
-                </div>
-                <div class="overlay">
-                  <div class="row-gap-1">
-                    <a href="/movie/home/" class="movie-link">Spider-Man: Into the Spider-Verse</a>
-                  </div>
-                  <div class="row-gap-1">
-                    <i class="fa-solid fa-star" style="color: #ffb703; border: none; outline: none; outline-width: 0;">
-                      <label style="color: gray;">4.4</label>
-                    </i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="item" style="justify-content: center; display: flex;">
-            <div class="movie-row-item">
-              <div class="movie-card-md1">
-                <div class="card">
-                  <a href="/movie/movie/">
-                    <img src="https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg">
-                  </a>
-                </div>
-                <div class="overlay">
-                  <div class="row-gap-1">
-                    <a href="/movie/home/" class="movie-link">Spider-Man: Into the Spider-Verse</a>
-                  </div>
-                  <div class="row-gap-1">
-                    <i class="fa-solid fa-star" style="color: #ffb703; border: none; outline: none; outline-width: 0;">
-                      <label style="color: gray;">4.4</label>
-                    </i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="item" style="justify-content: center; display: flex;">
-            <div class="movie-row-item">
-              <div class="movie-card-md1">
-                <div class="card">
-                  <a href="/movie/movie/">
-                    <img src="https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg">
-                  </a>
-                </div>
-                <div class="overlay">
-                  <div class="row-gap-1">
-                    <a href="/movie/home/" class="movie-link">Spider-Man: Into the Spider-Verse</a>
-                  </div>
-                  <div class="row-gap-1">
-                    <i class="fa-solid fa-star" style="color: #ffb703; border: none; outline: none; outline-width: 0;">
-                      <label style="color: gray;">4.4</label>
-                    </i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="item" style="justify-content: center; display: flex;">
-            <div class="movie-row-item">
-              <div class="movie-card-md1">
-                <div class="card">
-                  <a href="/movie/movie/">
-                    <img src="https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg">
-                  </a>
-                </div>
-                <div class="overlay">
-                  <div class="row-gap-1">
-                    <a href="/movie/home/" class="movie-link">Spider-Man: Into the Spider-Verse</a>
-                  </div>
-                  <div class="row-gap-1">
-                    <i class="fa-solid fa-star" style="color: #ffb703; border: none; outline: none; outline-width: 0;">
-                      <label style="color: gray;">4.4</label>
-                    </i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="item" style="justify-content: center; display: flex;">
-            <div class="movie-row-item">
-              <div class="movie-card-md1">
-                <div class="card">
-                  <a href="/movie/movie/">
-                    <img src="https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg">
-                  </a>
-                </div>
-                <div class="overlay">
-                  <div class="row-gap-1">
-                    <a href="/movie/home/" class="movie-link">Spider-Man: Into the Spider-Verse</a>
-                  </div>
-                  <div class="row-gap-1">
-                    <i class="fa-solid fa-star" style="color: #ffb703; border: none; outline: none; outline-width: 0;">
-                      <label style="color: gray;">4.4</label>
-                    </i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="item" style="justify-content: center; display: flex;">
-            <div class="movie-row-item">
-              <div class="movie-card-md1">
-                <div class="card">
-                  <a href="/movie/movie/">
-                    <img src="https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg">
-                  </a>
-                </div>
-                <div class="overlay">
-                  <div class="row-gap-1">
-                    <a href="/user.home/" class="movie-link">Spider-Man: Into the Spider-Verse</a>
-                  </div>
-                  <div class="row-gap-1">
-                    <i class="fa-solid fa-star" style="color: #ffb703; border: none; outline: none; outline-width: 0;">
-                      <label style="color: gray;">4.4</label>
-                    </i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="item" style="justify-content: center; display: flex;">
-            <div class="movie-row-item">
-              <div class="movie-card-md1">
-                <div class="card">
-                  <a href="/movie/movie/">
-                    <img src="https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg">
-                  </a>
-                </div>
-                <div class="overlay">
-                  <div class="row-gap-1">
-                    <a href="home.html" class="movie-link">Spider-Man: Into the Spider-Verse</a>
-                  </div>
-                  <div class="row-gap-1">
-                    <i class="fa-solid fa-star" style="color: #ffb703; border: none; outline: none; outline-width: 0;">
-                      <label style="color: gray;">4.4</label>
-                    </i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="item" style="justify-content: center; display: flex;">
-            <div class="movie-row-item">
-              <div class="movie-card-md1">
-                <div class="card">
-                  <a href="movie.html">
-                    <img src="https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg">
-                  </a>
-                </div>
-                <div class="overlay">
-                  <div class="row-gap-1">
-                    <a href="home.html" class="movie-link">Spider-Man: Into the Spider-Verse</a>
-                  </div>
-                  <div class="row-gap-1">
-                    <i class="fa-solid fa-star" style="color: #ffb703; border: none; outline: none; outline-width: 0;">
-                      <label style="color: gray;">4.4</label>
-                    </i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="item" style="justify-content: center; display: flex;">
-            <div class="movie-row-item">
-              <div class="movie-card-md1">
-                <div class="card">
-                  <a href="movie.html">
-                    <img src="https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg">
-                  </a>
-                </div>
-                <div class="overlay">
-                  <div class="row-gap-1">
-                    <a href="home.html" class="movie-link">Spider-Man: Into the Spider-Verse</a>
-                  </div>
-                  <div class="row-gap-1">
-                    <i class="fa-solid fa-star" style="color: #ffb703; border: none; outline: none; outline-width: 0;">
-                      <label style="color: gray;">4.4</label>
-                    </i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="item">
-            <h4>11</h4>
-          </div>
-          <div class="item">
-            <h4>12</h4>
           </div>
         </div>
       </div>
     </div>
-  </section>
+    -->
   <footer>
     <div style="text-align: center;">
       <p>Website concept inspired by <a href="https://movielens.org"

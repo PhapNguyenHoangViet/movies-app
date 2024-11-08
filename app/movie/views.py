@@ -24,16 +24,92 @@ from core.models import Genre
 from movie import serializers
 
 
-def movie(request):
-    return render(request, 'movie.html')
+all_movies = [
+  {
+    "movie_id": 1,
+    "movie_title": "The Empire Strikes Back1",
+    "release_date": "2024-11-07",
+    "video_release_date": "2024-11-07",
+    "IMDb_URL": "https://nisum.udemy.com/course/python-django-the-practical-guide/learn/lecture/26373230#overview",
+    "image": "https://filmfare.wwmindia.com/content/2019/nov/tanhaji21573992197.jpg",
+    "genres": [],
+    "tags": [],
+    "avg_rating":4
+  },
+  {
+    "movie_id": 2,
+    "movie_title": "The Empire Strikes Back2",
+    "release_date": "2024-11-07",
+    "video_release_date": "2024-11-07",
+    "IMDb_URL": "https://nisum.udemy.com/course/python-django-the-practical-guide/learn/lecture/26373230#overview",
+    "image": "https://filmfare.wwmindia.com/content/2019/nov/tanhaji21573992197.jpg",
+    "genres": [],
+    "tags": [],
+    "avg_rating":4
+  },
+    {
+    "movie_id": 3,
+    "movie_title": "string3",
+    "release_date": "2024-11-07",
+    "video_release_date": "2024-11-07",
+    "IMDb_URL": "https://nisum.udemy.com/course/python-django-the-practical-guide/learn/lecture/26373230#overview",
+    "image": "https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg",
+    "genres": [],
+    "tags": [],
+    "avg_rating":4
+  },
+    {
+    "movie_id": 4,
+    "movie_title": "string4",
+    "release_date": "2024-11-07",
+    "video_release_date": "2024-11-07",
+    "IMDb_URL": "https://nisum.udemy.com/course/python-django-the-practical-guide/learn/lecture/26373230#overview",
+    "image": "https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg",
+    "genres": [],
+    "tags": [],
+    "avg_rating":4
+  },
+  {
+    "movie_id": 5,
+    "movie_title": "string4",
+    "release_date": "2024-11-07",
+    "video_release_date": "2024-11-07",
+    "IMDb_URL": "https://nisum.udemy.com/course/python-django-the-practical-guide/learn/lecture/26373230#overview",
+    "image": "https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg",
+    "genres": [],
+    "tags": [],
+    "avg_rating":4
+  },
+    {
+    "movie_id": 6,
+    "movie_title": "string4",
+    "release_date": "2024-11-07",
+    "video_release_date": "2024-11-07",
+    "IMDb_URL": "https://nisum.udemy.com/course/python-django-the-practical-guide/learn/lecture/26373230#overview",
+    "image": "https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg",
+    "genres": [],
+    "tags": [],
+    "avg_rating":4
+  },
+]
+
+
+def home(request):
+    return render(request, 'home.html', {
+        "movies": all_movies
+    })
+
+
+def movie_detail(request, movie_id):
+    identified_movie = next(movie for movie in all_movies
+                            if movie['movie_id'] == movie_id)
+    return render(request, 'movie_detail.html', {
+        "movie": identified_movie
+    })
 
 
 def welcome(request):
     return render(request, 'welcome.html')
-
-
-def home(request):
-    return render(request, 'home.html')
 
 
 @extend_schema_view(

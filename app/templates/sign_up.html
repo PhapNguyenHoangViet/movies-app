@@ -22,7 +22,8 @@
 
     <div class="container-signup">
         <h2 style="color: #555; margin-bottom: 20px;">Register</h2>
-        <form>
+        <form action="/" method="POST">
+            {% csrf_token %}
             <div class="form-group">
                 <div class="split">
                     <label for="email">Email</label>
