@@ -78,7 +78,7 @@
             <ul class="dropdown-menu dropdown-custom bg-light">
               <label class="ps-3" style="color: #465499; font-weight: 700; font-size: 14;">Thuy816</label>
               <li><a class="dropdown-item bg-light" href="{% url 'user:profile' %}">Settings</a></li>
-              <li><a class="dropdown-item bg-light" href="{% url 'movie:welcome' %}">Logout</a></li>
+              <li><a class="dropdown-item bg-light" href="{% url 'user:log_out' %}">Logout</a></li>
             </ul>
           </div>
         </div>
@@ -89,53 +89,25 @@
     <div class="row ps-3">
       <p3 style="font-size: 32px; color: #6c757d;">Topic</p3>
     </div>
-    <div class="movie-grid">
-      {% for movie in movies %}
-        {% include 'includes/movie.html' %}
-      {% endfor %}
-    </div>
-  </section>
-    <!-- 
     <div class="row" style="display: flex;">
       <div class="large-12 columns" style="padding: 2%;">
         <div class="owl-carousel owl-theme">
-          <div class="item" style="justify-content: center; display: flex;">
-            <div class="movie-row-item">
-              <div class="movie-card-md1">
-                <div class="card">
-                  <a href="">
-                    <img src="">
-                  </a>
-                </div>
-                <div class="overlay">
-                  <div class="row-gap-1">
-                    <a href="" class="movie-link"></a>
-                  </div>
-                  <div class="row-gap-1">
-                    <i class="fa-solid fa-star" style="color: #ffb703; border: none; outline: none; outline-width: 0;">
-                      <label style="color: gray;"></label>
-                    </i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+        {% for movie in movies %}
+          {% include 'includes/movie.html' %}
+        {% endfor %}          
         </div>
       </div>
     </div>
-    -->
-  <footer>
-    <div style="text-align: center;">
-      <p>Website concept inspired by <a href="https://movielens.org"
-          style="color: #6c757d; text-decoration: none;">MovieLens</a></p>
-      <p>Copyright © 2024</p>
-    </div>
-  </footer>
+  </section>
+
+    
+  {% include 'includes/footer.html' %}
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
     crossorigin="anonymous"></script>
-  <script src="assets/vendors/jquery.min.js"></script>
-  <script src="assets/owlcarousel/owl.carousel.js"></script>
+  <script src="{% static '/static/assets/vendors/jquery.min.js' %}"></script>
+  <script src="{% static '/static/assets/owlcarousel/owl.carousel.js' %}"></script>
   <script>
     $(document).ready(function () {
       $('.owl-carousel').owlCarousel({
@@ -162,3 +134,5 @@
 </body>
 
 </html>
+
+

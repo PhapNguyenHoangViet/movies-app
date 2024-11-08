@@ -1,20 +1,19 @@
 <div class="item" style="justify-content: center; display: flex;">
-    <div class="movie-row-item">
-      <div class="movie-card-md1">
-        <div class="card">
-          <a href="{% url 'movie:movie_detail' movie_id=movie.movie_id %}">
-            <img src="{{ movie.image }}" alt="{{ movie.movie_title }}">
-          </a>
+  <div class="movie-row-item">
+    <div class="movie-card-md1">
+      <div class="card">
+        <a href="{% url 'movie:movie_detail' movie_id=movie.movie_id %}">
+          <img src="{{ movie.image }}" alt="{{ movie.movie_title }}"">
+        </a>
+      </div>
+      <div class="overlay">
+        <div class="row-gap-1">
+          <a href="{% url 'movie:movie_detail' movie_id=movie.movie_id %}" class="movie-link">{{ movie.movie_title }}</a>
         </div>
-        <div class="overlay">
-          <div class="row-gap-1">
-            <a href="{% url 'movie:movie_detail' movie_id=movie.movie_id %}" class="movie-link">{{ movie.movie_title }}</a>
-          </div>
-          <div class="row-gap-1">
-            <i class="fa-solid fa-star" style="color: #ffb703; border: none; outline: none; outline-width: 0;">
-              <label style="color: gray;">{{ movie.avg_rating }}</label>
-            </i>
-          </div>
+        <div class="row-gap-1">
+          <i class="fa-solid fa-star" style="color: #ffb703; border: none; outline: none; outline-width: 0;">
+            <label style="color: gray;">{{ movie.avg_rating }}</label>
+          </i>
         </div>
       </div>
     </div>

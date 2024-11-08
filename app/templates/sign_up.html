@@ -22,51 +22,83 @@
 
     <div class="container-signup">
         <h2 style="color: #555; margin-bottom: 20px;">Register</h2>
-        <form action="/" method="POST">
+        <form action="{% url 'user:sign_up' %}" method="POST">
             {% csrf_token %}
             <div class="form-group">
                 <div class="split">
                     <label for="email">Email</label>
-                    <input type="email" id="email" name="email">
+                    {{ form.email }}
+                    {% for error in form.email.errors %}
+                        <div class="error">{{ error }}</div>
+                    {% endfor %}
                 </div>
                 <div class="split">
                     <label for="dob">Date of Birth</label>
-                    <input type="text" id="dob" name="dob" placeholder="MM/DD/YYYY">
+                    {{ form.dateOfBirth }}
+                    {% for error in form.dateOfBirth.errors %}
+                        <div class="error">{{ error }}</div>
+                    {% endfor %}
                 </div>
             </div>
-            <div class="form-group">
-                <div class="split">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username">
-                </div>
-                <div class="split">
-                    <label for="city">Current City</label>
-                    <input type="text" id="city" name="city">
-                </div>
-            </div>
+        
             <div class="form-group">
                 <div class="split">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password">
+                    {{ form.password }}
+                    {% for error in form.password.errors %}
+                        <div class="error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="split">
+                    <label for="city">Current City</label>
+                    {{ form.currentCity }}
+                    {% for error in form.currentCity.errors %}
+                        <div class="error">{{ error }}</div>
+                    {% endfor %}
                 </div>
             </div>
+        
             <div class="form-group">
                 <div class="split">
-                    <label for="retype-password">Retype Password</label>
-                    <input type="password" id="retype-password" name="retype-password">
+                    <label for="password_confirm">Confirm Password</label>
+                    {{ form.password_confirm }}
+                    {% for error in form.password_confirm.errors %}
+                        <div class="error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="split">
+                    <label for="occupation">Occupation</label>
+                    {{ form.occupation }}
+                    {% for error in form.occupation.errors %}
+                        <div class="error">{{ error }}</div>
+                    {% endfor %}
                 </div>
             </div>
+        
+            <div class="form-group">
+                <div class="split">
+                    <label for="name">Name</label>
+                    {{ form.name }}
+                    {% for error in form.name.errors %}
+                        <div class="error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="split">
+                    <label for="sex">Sex</label>
+                    {{ form.sex }}
+                    {% for error in form.sex.errors %}
+                        <div class="error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        
             <button type="submit" class="submit-btn">Sign up</button>
             <div class="login-link">
                 Already a user? <a href="{% url 'user:log_in' %}">Log in here</a>
             </div>
         </form>
     </div>
-    <footer>
-        <div style="text-align: center;">
-            <p>Website concept inspired by <a href="https://movielens.org" style="color: #6c757d; text-decoration: none;">MovieLens</a></p>
-            <p>Copyright © 2024</p>
-        </div>
-    </footer>
+
+    {% include 'includes/footer.html' %}
 </body>
 </html>

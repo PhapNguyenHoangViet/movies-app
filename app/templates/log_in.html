@@ -22,7 +22,8 @@
 
     <div class="container-login">
         <h2 style="color: #555; margin-bottom: 20px;">Log in</h2>
-        <form>
+        <form action="{% url 'user:log_in' %}" method="POST">
+                {% csrf_token %}
             <div class="form-group">
                 <div class="split">
                     <label for="email">Email</label>
@@ -35,7 +36,7 @@
                     <input type="password" id="password" name="password" style="width: 380px">
                 </div>
             </div>
-            <button type="button" class="submit-btn" onclick="" >
+            <button type="submit" class="submit-btn">
                 Login
             </button>
             <div class="login-link">
@@ -43,11 +44,6 @@
             </div>
         </form>
     </div>
-    <footer>
-        <div style="text-align: center;">
-            <p>Website concept inspired by <a href="https://movielens.org" style="color: #6c757d; text-decoration: none;">MovieLens</a></p>
-            <p>Copyright © 2024</p>
-        </div>
-    </footer>
+    {% include 'includes/footer.html' %}
 </body>
 </html>
