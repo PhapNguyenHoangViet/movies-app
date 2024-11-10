@@ -32,59 +32,7 @@
 </head>
 
 <body>
-  <section class="header" style="width: 100%; position: fixed; z-index: 1000; display: flex;">
-    <div class="container-fluid pt-2 bg-white">
-      <div class="row">
-        <div class="col-1 ps-3">
-          <a class="logo-themovie" href="{% url 'movie:home' %}" style="font-size: 32px; display: flex;">TheMovie</a>
-        </div>
-        <div class="col-1 pt-1">
-          <div class="dropdown" style="max-width: 80%;">
-            <button class="btn btn-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false"
-              style="border: none; background-color: #f3f3f3;">
-              <i class="fa-solid fa-bars" style="color:#465499;">
-                <i class="fa-solid fa-caret-down" style="color:#465499;"></i>
-              </i>
-            </button>
-            <ul class="dropdown-menu dropdown-custom bg-light">
-              <li><a class="dropdown-item bg-light" href="#">Action</a></li>
-              <li><a class="dropdown-item bg-light" href="#">Another action</a></li>
-              <li><a class="dropdown-item bg-light" href="#">Something else here</a></li>
-            </ul>
-          </div>
-        </div>
-        <div class="col-1"></div>
-        <div class="col-4 pt-1 ps-4">
-          <div class="input-group mb-3" style="max-width: 90%;">
-            <input type="text" class="form-control" placeholder="Search..." aria-label="Search"
-              aria-describedby="basic-addon2">
-            <span class="input-group-text" id="basic-addon2"><i class="fa-solid fa-magnifying-glass"></i></span>
-          </div>
-        </div>
-        <div class="col-1 pe-5">
-        </div>
-        <div class="col-2 pt-1 g-0">
-          <button type="button" class="btn" style="display: flex; margin-left: auto;"><i class="fa-solid fa-star"
-              style="color: #ffb703; border: none; outline: none; outline-width: 0;"></i></button>
-        </div>
-        <div class="col-1 pt-0 ps-3 pe-0 g-0">
-          <div class="dropdown" style="max-width: 80%;">
-            <button class="btn btn-secondary bg-white" type="button" data-bs-toggle="dropdown" aria-expanded="false"
-              style="border: none; background-color: #f3f3f3;">
-              <i class="fa-solid fa-user-large" style="color: darkgrey;">
-                <i class="fa-solid fa-caret-down"></i>
-              </i>
-            </button>
-            <ul class="dropdown-menu dropdown-custom bg-light">
-              <label class="ps-3" style="color: #465499; font-weight: 700; font-size: 14;">Thuy816</label>
-              <li><a class="dropdown-item bg-light" href="{% url 'user:profile' %}">Settings</a></li>
-              <li><a class="dropdown-item bg-light" href="{% url 'user:log_out' %}">Logout</a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+  {% include 'includes/header.html' %}
   <section class="mybody mt-5 pt-5">
     <div class="row ps-3">
       <p3 style="font-size: 32px; color: #6c757d;">Topic</p3>
@@ -98,7 +46,45 @@
         </div>
       </div>
     </div>
+    <div class="row ps-3">
+      <p3 style="font-size: 32px; color: #6c757d;">Recent releases</p3>
+    </div>
+    <div class="row" style="display: flex;">
+      <div class="large-12 columns" style="padding: 2%;">
+        <div class="owl-carousel owl-theme">
+        {% for movie in recent_movies %}
+          {% include 'includes/movie.html' %}
+        {% endfor %}
+        </div>
+      </div>
+    </div>
+    <div class="row ps-3">
+      <p3 style="font-size: 32px; color: #6c757d;">Rating more</p3>
+    </div>
+    <div class="row" style="display: flex;">
+      <div class="large-12 columns" style="padding: 2%;">
+        <div class="owl-carousel owl-theme">
+        {% for movie in count_rating_movies %}
+          {% include 'includes/movie.html' %}
+        {% endfor %}          
+        </div>
+      </div>
+    </div>
+
+    <div class="row ps-3">
+      <p3 style="font-size: 32px; color: #6c757d;">Favorite Movies</p3>
+    </div>
+    <div class="row" style="display: flex;">
+      <div class="large-12 columns" style="padding: 2%;">
+        <div class="owl-carousel owl-theme">
+        {% for movie in avg_rating_movies %}
+          {% include 'includes/movie.html' %}
+        {% endfor %}          
+        </div>
+      </div>
+    </div>
   </section>
+
 
     
   {% include 'includes/footer.html' %}

@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from .forms import CustomUserCreationForm, ProfileForm
 from .forms import ChangePasswordForm, DeleteUserForm
+from core.models import Genre
 
 from user.serializers import (
     UserSerializer,
@@ -64,6 +65,7 @@ def sign_up(request):
 
 @login_required(login_url='user:log_in')
 def profile(request):
+    top_5_genres = Genre.objects.all()[:5]
     profile = request.user
     form = ProfileForm(instance=profile)
 
@@ -73,12 +75,13 @@ def profile(request):
             form.save()
             return redirect('user:profile')
 
-    context = {'form': form}
+    context = {'form': form, "genres": top_5_genres}
     return render(request, 'profile.html', context)
 
 
 @login_required(login_url='user:log_in')
 def delete(request):
+    top_5_genres = Genre.objects.all()[:5]
     if request.method == 'POST':
         form = DeleteUserForm(request.POST, instance=request.user)
         if form.is_valid():
@@ -95,12 +98,14 @@ def delete(request):
     else:
         form = DeleteUserForm(instance=request.user)
 
-    context = {'form': form}
+    context = {'form': form, "genres": top_5_genres}
     return render(request, 'delete_user.html', context)
 
 
 @login_required(login_url='user:log_in')
 def change_password(request):
+    top_5_genres = Genre.objects.all()[:5]
+
     profile = request.user
     form = ChangePasswordForm(instance=profile)
 
@@ -110,7 +115,7 @@ def change_password(request):
             form.save()
             return redirect('user:change_password')
 
-    context = {'form': form}
+    context = {'form': form, "genres": top_5_genres}
     return render(request, 'change_password.html', context)
 
 

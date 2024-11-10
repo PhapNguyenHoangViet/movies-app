@@ -4,114 +4,77 @@ from drf_spectacular.utils import (
     OpenApiParameter,
     OpenApiTypes,
 )
-
 from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework import status
-
 from rest_framework.decorators import action
 from rest_framework.response import Response
-
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
-from django.shortcuts import render
-
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from core.models import Movie
 from core.models import Tag
 from core.models import Rating
 from core.models import Genre
 from movie import serializers
+from django.utils import timezone
+from datetime import datetime
 
 
-all_movies = [
-  {
-    "movie_id": 1,
-    "movie_title": "The Empire Strikes Back1",
-    "release_date": "2024-11-07",
-    "video_release_date": "2024-11-07",
-    "IMDb_URL":
-    "https://nisum.udemy.com/",
-    "image":
-    "https://filmfare.wwmindia.com/content/2019/nov/tanhaji21573992197.jpg",
-    "genres": [],
-    "tags": [],
-    "avg_rating":4
-  },
-  {
-    "movie_id": 2,
-    "movie_title": "The Empire Strikes Back2",
-    "release_date": "2024-11-07",
-    "video_release_date": "2024-11-07",
-    "IMDb_URL":
-    "https://nisum.udemy.com/",
-    "image":
-    "https://filmfare.wwmindia.com/content/2019/nov/tanhaji21573992197.jpg",
-    "genres": [],
-    "tags": [],
-    "avg_rating":4
-  },
-  {
-    "movie_id": 3,
-    "movie_title": "string3",
-    "release_date": "2024-11-07",
-    "video_release_date": "2024-11-07",
-    "IMDb_URL":
-    "https://nisum.udemy.com/",
-    "image": "https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg",
-    "genres": [],
-    "tags": [],
-    "avg_rating":4
-  },
-  {
-    "movie_id": 4,
-    "movie_title": "string4",
-    "release_date": "2024-11-07",
-    "video_release_date": "2024-11-07",
-    "IMDb_URL":
-    "https://nisum.udemy.com/",
-    "image": "https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg",
-    "genres": [],
-    "tags": [],
-    "avg_rating":4
-  },
-  {
-    "movie_id": 5,
-    "movie_title": "string4",
-    "release_date": "2024-11-07",
-    "video_release_date": "2024-11-07",
-    "IMDb_URL":
-    "https://nisum.udemy.com/",
-    "image": "https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg",
-    "genres": [],
-    "tags": [],
-    "avg_rating":4
-  },
-  {
-    "movie_id": 6,
-    "movie_title": "string4",
-    "release_date": "2024-11-07",
-    "video_release_date": "2024-11-07",
-    "IMDb_URL": "https://nisum.udemy.com",
-    "image": "https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg",
-    "genres": [],
-    "tags": [],
-    "avg_rating":4
-  },
-]
+@login_required(login_url='user:log_in')
+def rate_movie(request, movie_id):
+    movie = get_object_or_404(Movie, movie_id=movie_id)
+    if request.user.is_authenticated:
+        existing_rating = Rating.objects.filter(
+            user=request.user, movie=movie).first()
+        if existing_rating:
+            existing_rating.rating = request.POST.get('rating')
+            existing_rating.timestamp = timezone.now()
+            existing_rating.save()
+        else:
+            rating = Rating(
+                user=request.user,
+                movie=movie,
+                timestamp=timezone.now(),
+                rating=request.POST.get('rating')
+            )
+            rating.save()
+        movie.update_rating()
+        return redirect('movie:movie_detail', movie_id=movie_id)
+    return redirect('user:log_in')
 
 
 def home(request):
+    all_movies = Movie.objects.all()[:20]
+    recent_movies = Movie.objects.all().filter(
+        release_date__lte=datetime.now()).order_by('-release_date')[:20]
+    count_rating_movies = Movie.objects.all().order_by('-count_rating')[:20]
+    avg_rating_movies = Movie.objects.all().order_by('-avg_rating')[:20]
+
+    top_5_genres = Genre.objects.all()[:5]
+
     return render(request, 'home.html', {
-        "movies": all_movies
-    })
+        "movies": all_movies,
+        "recent_movies": recent_movies,
+        "count_rating_movies": count_rating_movies,
+        "avg_rating_movies": avg_rating_movies,
+        "genres": top_5_genres,
+        })
 
 
 def movie_detail(request, movie_id):
-    identified_movie = next(movie for movie in all_movies
-                            if movie['movie_id'] == movie_id)
+    top_5_genres = Genre.objects.all()[:5]
+    movie = get_object_or_404(Movie, movie_id=movie_id)
+    user_rating = None
+    if request.user.is_authenticated:
+        user_rating = Rating.objects.filter(
+            user=request.user, movie=movie).first()
     return render(request, 'movie_detail.html', {
-        "movie": identified_movie
+        'movie': movie,
+        'user_rating': user_rating,
+        "genres": top_5_genres,
     })
 
 

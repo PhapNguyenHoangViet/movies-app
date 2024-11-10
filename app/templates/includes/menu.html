@@ -1,0 +1,39 @@
+<div class="dropdown-menu dropdown-custom bg-light p-3" style="width: 600px;">
+    <div class="row">
+      <!-- Column 1 -->
+      <div class="col-sm-4">
+        <ul class="list-unstyled">
+          <li class="fw-bold"  style="margin-left: 17px;">Quick Links</li>
+          <li><a class="dropdown-item" href="/home">Home</a></li>
+          <li><a class="dropdown-item" href="/explore/top-picks">Top Picks for You</a></li>
+          <li><a class="dropdown-item" href="/explore/rate-more">Rate More</a></li>
+          <li><a class="dropdown-item" href="/explore/recent-releases">Recently Released</a></li>
+          <li><a class="dropdown-item" href="/explore/highest-rated-past-year">Recent Favorites</a></li>
+          <li><a class="dropdown-item" href="/explore/recently-added">New Additions</a></li>
+          <li class="d-block d-sm-none"><a class="dropdown-item" href="/genres">List of Genres</a></li>
+        </ul>
+      </div>
+      <!-- Column 2 -->
+      <div class="col-sm-4">
+        <ul class="list-unstyled">
+          <li class="fw-bold"  style="margin-left: 17px;">Your Activity</li>
+          <li><a class="dropdown-item" href="/explore/your-ratings">Ratings</a></li>
+          <li><a class="dropdown-item" href="/profile/about-your-ratings">About Your Ratings</a></li>
+          <li><a class="dropdown-item" href="/explore/your-wishlist">Wish List</a></li>
+          <li><a class="dropdown-item" href="/lists">Your Lists</a></li>
+          <li><a class="dropdown-item" href="/profile/tags">Tags</a></li>
+          <li><a class="dropdown-item" href="/explore/your-hidden-movies">Hidden Movies</a></li>
+        </ul>
+      </div>
+      <!-- Column 3 -->
+      <div class="col-sm-4">
+        <ul class="list-unstyled">
+          <li class="fw-bold"  style="margin-left: 17px;">Genres</li>
+          {% for genre in genres %}
+            <li><a class="dropdown-item" href="/explore/genres/{{ genre.genre_id }}">{{ genre.genre_name }}</a></li>
+          {% endfor %}
+          <li><a class="dropdown-item" href="/genres">More Genres...</a></li>
+        </ul>
+      </div>
+    </div>
+</div>

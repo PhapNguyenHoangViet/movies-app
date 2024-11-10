@@ -31,85 +31,49 @@
 </head>
 
 <body>
-    <section class="header" style="width: 100%; position: fixed; z-index: 1000; display: flex;">
-        <div class="container-fluid pt-2 bg-white">
-            <div class="row">
-                <div class="col-1 ps-3">
-                    <a class="logo-themovie" href="{% url 'movie:home' %}" style="font-size: 32px; display: flex;">TheMovie</a>
-                </div>
-                <div class="col-1 pt-1">
-                    <div class="dropdown" style="max-width: 80%;">
-                        <button class="btn btn-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false"
-                            style="border: none; background-color: #f3f3f3;">
-                            <i class="fa-solid fa-bars" style="color:#465499;">
-                                <i class="fa-solid fa-caret-down" style="color:#465499;"></i>
-                            </i>
-                        </button>
-                        <ul class="dropdown-menu dropdown-custom bg-light">
-                            <li><a class="dropdown-item bg-light" href="#">Action</a></li>
-                            <li><a class="dropdown-item bg-light" href="#">Another action</a></li>
-                            <li><a class="dropdown-item bg-light" href="#">Something else here</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-1"></div>
-                <div class="col-4 pt-1 ps-4">
-                    <div class="input-group mb-3" style="max-width: 90%;">
-                        <input type="text" class="form-control" placeholder="Search..." aria-label="Search"
-                            aria-describedby="basic-addon2">
-                        <span class="input-group-text" id="basic-addon2"><i
-                                class="fa-solid fa-magnifying-glass"></i></span>
-                    </div>
-                </div>
-                <div class="col-1 pe-5">
-                </div>
-                <div class="col-2 pt-1 g-0">
-                    <button type="button" class="btn" style="display: flex; margin-left: auto;"><i
-                            class="fa-solid fa-star"
-                            style="color: #ffb703; border: none; outline: none; outline-width: 0;"></i></button>
-                </div>
-                <div class="col-1 pt-0 ps-3 pe-0 g-0">
-                    <div class="dropdown" style="max-width: 80%;">
-                        <button class="btn btn-secondary bg-white" type="button" data-bs-toggle="dropdown"
-                            aria-expanded="false" style="border: none; background-color: #f3f3f3;">
-                            <i class="fa-solid fa-user-large" style="color: darkgrey;">
-                                <i class="fa-solid fa-caret-down"></i>
-                            </i>
-                        </button>
-                        <ul class="dropdown-menu dropdown-custom bg-light">
-                            <label class="ps-3" style="color: #465499; font-weight: 700; font-size: 14;">Thuy816</label>
-                            <li><a class="dropdown-item bg-light" href="{% url 'user:profile' %}">Settings</a></li>
-                            <li><a class="dropdown-item bg-light" href="{% url 'movie:welcome' %}">Logout</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    
+    {% include 'includes/header.html' %}
     <div class="row p-5 bg-white"></div>
     <section class="mybody bg-white">
         <div class="container-fluid">
             <div class="row" style="display: flex;">
                 <div class="col-5 ps-5">
                     <div class="poster-movie">
-                        <img src="{{ movie.image }}" alt="{{ movie.movie_title }}">
+                        <img src="{{ MEDIA_URL }}/static/media/{{ movie.image }}" alt="{{ movie.movie_title }}">
                     </div>
                 </div>
                 <div class="col-7">
                     <div class="row">
                         <h3 style="font-family: Raleway; font-size: 32px;">{{ movie.movie_title }}</h3>
                     </div>
-                    <div class="row">
-                        <div class="rate">
-                            <div class="rating">
-                                <input type="radio" name="rating" value="5" id="5"><label for="5">☆</label> <input
-                                    type="radio" name="rating" value="4" id="4"><label for="4">☆</label> <input
-                                    type="radio" name="rating" value="3" id="3"><label for="3">☆</label> <input
-                                    type="radio" name="rating" value="2" id="2"><label for="2">☆</label> <input
-                                    type="radio" name="rating" value="1" id="1"><label for="1">☆</label>
+                    <form method="POST" action="{% url 'movie:rate_movie' movie.movie_id %}" id="rating-form">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="rate">
+                                <div class="rating">
+                                    <input type="radio" name="rating" value="5" id="5" 
+                                           {% if user_rating and user_rating.rating == 5 %}checked{% endif %}>
+                                    <label for="5">☆</label>
+                                    
+                                    <input type="radio" name="rating" value="4" id="4" 
+                                           {% if user_rating and user_rating.rating == 4 %}checked{% endif %}>
+                                    <label for="4">☆</label>
+                                    
+                                    <input type="radio" name="rating" value="3" id="3" 
+                                           {% if user_rating and user_rating.rating == 3 %}checked{% endif %}>
+                                    <label for="3">☆</label>
+                                    
+                                    <input type="radio" name="rating" value="2" id="2" 
+                                           {% if user_rating and user_rating.rating == 2 %}checked{% endif %}>
+                                    <label for="2">☆</label>
+                                    
+                                    <input type="radio" name="rating" value="1" id="1" 
+                                           {% if user_rating and user_rating.rating == 1 %}checked{% endif %}>
+                                    <label for="1">☆</label>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </form>
                     <div class="row">
                         <div class="col-4">
                             <label style="color: #465499; font-size: 14px;">Predicting for you</label>
@@ -123,12 +87,17 @@
                             <label>4.12 stars</label>
                         </div>
                         <div class="col-8">
-                            <label>Action, Animation</label>
+                            <!-- Hiển thị tên các thể loại của movie -->
+                            <label>
+                                {% for genre in genres %}
+                                    {{ genre.genre_name }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </label>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-4">
-                            <label style="color: #465499; font-size: 14px;">Average of 127,194 ratings</label>
+                            <label style="color: #465499; font-size: 14px;">Average of {{ movie.count_rating }} ratings</label>
                         </div>
                         <div class="col-8">
                             <label style="color: #465499; font-size: 14px;">Links</label>
@@ -136,10 +105,11 @@
                     </div>
                     <div class="row">
                         <div class="col-4">
-                            <label>4.12 stars</label>
+                            <label>{{ movie.avg_rating }}</label>
                         </div>
                         <div class="col-8">
-                            <label>imdb</label>
+                            <!-- Thêm liên kết IMDb -->
+                            <label><a href="{{ movie.IMDb_URL }}" target="_blank" style="color: #465499; text-decoration: none;">imdb</a></label>
                         </div>
                     </div>
                 </div>
@@ -150,6 +120,16 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
+
+    <script>
+        const ratingInputs = document.querySelectorAll('input[name="rating"]');
+
+        ratingInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                document.getElementById('rating-form').submit();
+            });
+        });
+    </script>
 </body>
 
 </html>

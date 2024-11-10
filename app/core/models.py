@@ -3,7 +3,6 @@ import os
 
 from django.db import models
 from django.conf import settings
-from django.utils import timezone
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import (
     AbstractBaseUser,
@@ -57,8 +56,21 @@ class Movie(models.Model):
     IMDb_URL = models.URLField(blank=True, null=True)
     tags = models.ManyToManyField('Tag')
     genres = models.ManyToManyField('Genre')
+    link_image = models.CharField(max_length=255, blank=True, null=True)
     image = models.ImageField(null=True, upload_to=movie_image_file_path)
+
+    count_rating = models.PositiveIntegerField(default=0)
+    avg_rating = models.FloatField(default=0.0)
     def __str__(self): return self.movie_title
+
+    def update_rating(self):
+        ratings = Rating.objects.filter(movie=self)
+        total_ratings = ratings.count()
+        if total_ratings > 0:
+            self.avg_rating = sum([
+                rating.rating for rating in ratings]) / total_ratings
+            self.count_rating = total_ratings
+            self.save()
 
 
 class Rating(models.Model):
@@ -75,22 +87,12 @@ class Rating(models.Model):
     class Meta:
         unique_together = ('user', 'movie')
 
-    def save(self, *args, **kwargs):
-        existing_rating = Rating.objects.filter(
-            user=self.user, movie=self.movie).first()
-        if existing_rating:
-            existing_rating.rating = self.rating
-            existing_rating.timestamp = timezone.now()
-            existing_rating.save()
-        else:
-            super().save(*args, **kwargs)
-
     def __str__(self):
         return f"{self.user.user_id} rate {self.movie.movie_id}:{self.rating}"
 
 
 class Genre(models.Model):
-    genre_id = models.AutoField(primary_key=True)
+    genre_id = models.IntegerField(primary_key=True)
     genre_name = models.CharField(max_length=255)
 
     def __str__(self):
