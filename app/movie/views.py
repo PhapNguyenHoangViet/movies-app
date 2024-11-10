@@ -14,13 +14,13 @@ from rest_framework.permissions import IsAuthenticated
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from core.models import Movie
-from core.models import Tag
-from core.models import Rating
-from core.models import Genre
+from django.http import HttpResponseRedirect, HttpResponse
+from django.urls import reverse
+from core.models import Movie, Tag, Rating, Genre, Comment
 from movie import serializers
 from django.utils import timezone
 from datetime import datetime
+from .forms import CommentForm
 
 
 @login_required(login_url='user:log_in')
@@ -68,15 +68,50 @@ def movie_detail(request, movie_id):
     top_5_genres = Genre.objects.all()[:5]
     movie = get_object_or_404(Movie, movie_id=movie_id)
     user_rating = None
+    commentForm = CommentForm()
+    comments = Comment.objects.filter(movie=movie, parent=None).order_by('-date')
     if request.user.is_authenticated:
         user_rating = Rating.objects.filter(
             user=request.user, movie=movie).first()
+        if request.POST:
+            cmtForm = CommentForm(request.POST)
+            if cmtForm.is_valid:
+                parent_obj = None
+                if request.POST.get('parent'):
+                    parent = request.POST.get('parent')
+                    parent_obj = Comment.objects.get(comment_id=parent)
+                    if parent_obj:
+                        comment_reply = cmtForm.save(commit=False)
+                        comment_reply.parent = parent_obj
+                        comment_reply.movie = movie
+                        comment_reply.user=request.user
+                        comment_reply.save()
+                        return HttpResponseRedirect(reverse('movie:movie_detail', kwargs={'movie_id':movie_id}))
+
+                else: 
+                    comment = cmtForm.save(commit=False)
+                    comment.movie = movie
+                    comment.user=request.user
+                    comment.save()
+                    return HttpResponseRedirect(reverse('movie:movie_detail', kwargs={'movie_id':movie_id}))
+
     return render(request, 'movie_detail.html', {
         'movie': movie,
         'user_rating': user_rating,
         "genres": top_5_genres,
+        "commentForm": commentForm,
+        "comments":comments,
     })
 
+
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(Comment, comment_id=comment_id)
+    if request.user == comment.user:
+        comment.delete()
+        return redirect('movie:movie_detail', movie_id=comment.movie.movie_id)  # redirect về trang chi tiết phim
+    else:
+        return HttpResponse("You are not authorized to delete this comment.", status=403)
+    
 
 def welcome(request):
     return render(request, 'welcome.html')

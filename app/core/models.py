@@ -108,3 +108,15 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.tag_name
+    
+
+class Comment(models.Model):
+    comment_id = models.AutoField(primary_key=True)
+    content = models.TextField()
+    date = models.DateTimeField(auto_now=True)
+    
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+    )
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='replies')
