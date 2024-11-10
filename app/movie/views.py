@@ -14,7 +14,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.urls import reverse
 from core.models import Movie, Tag, Rating, Genre, Comment
 from movie import serializers
@@ -104,6 +104,7 @@ def movie_detail(request, movie_id):
     })
 
 
+@login_required(login_url='user:log_in')
 def delete_comment(request, comment_id):
     comment = get_object_or_404(Comment, comment_id=comment_id)
     if request.user == comment.user or request.user == comment.parent.user:
@@ -111,10 +112,36 @@ def delete_comment(request, comment_id):
         return redirect('movie:movie_detail', movie_id=comment.movie.movie_id)  # redirect về trang chi tiết phim
     else:
         return HttpResponse("You are not authorized to delete this comment.", status=403)
-    
+
 
 def welcome(request):
     return render(request, 'welcome.html')
+
+
+def movie_search(request):
+    query = request.GET.get('q', '') 
+    movies = Movie.objects.filter(movie_title__icontains=query)
+
+    return render(request, 'movie_search.html', {
+        'movies': movies,
+        'query': query
+    })
+
+
+def movie_search_suggestions(request):
+    query = request.GET.get('q', '')  # Get the query string from the request
+    
+    if query:
+        # Perform the query to search for movie titles that contain the query
+        suggestions = Movie.objects.filter(movie_title__icontains=query).values('movie_title')[:10]  # Get a max of 10 results
+
+        # Extract movie titles from the query results
+        movie_titles = [suggestion['movie_title'] for suggestion in suggestions]
+
+        return JsonResponse({'suggestions': movie_titles})
+    
+    return JsonResponse({'suggestions': []})
+
 
 
 @extend_schema_view(

@@ -1,6 +1,6 @@
 <section class="header" style="width: 100%; position: fixed; z-index: 1000; display: flex;">
-    <div class="container-fluid pt-2 bg-white">
-      <div class="row">
+    <div class="container-fluid pt-2 bg-white" >
+      <div class="row" style="padding-top: 8px;">
         <div class="col-1 ps-3">
           <a class="logo-themovie" href="{% url 'movie:home' %}" style="font-size: 32px; display: flex;">TheMovie</a>
         </div>
@@ -17,12 +17,18 @@
         </div>
         <div class="col-1"></div>
         <div class="col-4 pt-1 ps-4">
-          <div class="input-group mb-3" style="max-width: 90%;">
-            <input type="text" class="form-control" placeholder="Search..." aria-label="Search"
-              aria-describedby="basic-addon2">
-            <span class="input-group-text" id="basic-addon2"><i class="fa-solid fa-magnifying-glass"></i></span>
-          </div>
+            <div class="input-group mb-3" style="max-width: 100%; margin: 0 auto;">
+                <form method="GET" action="{% url 'movie:movie_search' %}" style="width: 100%; display: flex; align-items: center;">
+                    <input type="text" name="q" class="form-control" placeholder="Search..." value="{{ query }}" aria-label="Search" aria-describedby="search-icon" style="border-radius: 10px;" id="search-input">
+                    <button type="submit" class="input-group-text" id="search-icon" style="border: none; background-color: transparent; padding: 10px;">
+                        <i class="fa-solid fa-magnifying-glass" style="color: #465499;"></i>
+                    </button>
+                </form>
+            </div>
+            <div id="suggestions" class="autocomplete-suggestions"></div>
         </div>
+        
+      
         <div class="col-1 pe-5">
         </div>
         <div class="col-2 pt-1 g-0">
@@ -30,20 +36,62 @@
               style="color: #ffb703; border: none; outline: none; outline-width: 0;"></i></button>
         </div>
         <div class="col-1 pt-0 ps-3 pe-0 g-0">
+          {% if user.is_authenticated %}
           <div class="dropdown" style="max-width: 80%;">
             <button class="btn btn-secondary bg-white" type="button" data-bs-toggle="dropdown" aria-expanded="false"
               style="border: none; background-color: #f3f3f3;">
-              <i class="fa-solid fa-user-large" style="color: darkgrey;">
+              <i class="fa-solid fa-user-large" style="color: darkgrey; padding-top: 5px;">
                 <i class="fa-solid fa-caret-down"></i>
               </i>
             </button>
             <ul class="dropdown-menu dropdown-custom bg-light">
-              <label class="ps-3" style="color: #465499; font-weight: 700; font-size: 14;">Thuy816</label>
+              <label class="ps-3" style="color: #465499; font-weight: 700; font-size: 14;">{{ user.name }}</label>
               <li><a class="dropdown-item bg-light" href="{% url 'user:profile' %}">Settings</a></li>
               <li><a class="dropdown-item bg-light" href="{% url 'user:log_out' %}">Logout</a></li>
             </ul>
           </div>
+          {% else %}
+          <li class="login-signup-container">
+              <a href="{% url 'movie:welcome' %}" class="login-signup-link">Login/Signup</a>
+          </li>
+      {% endif %}
         </div>
       </div>
     </div>
   </section>
+
+
+  <script>
+document.getElementById('search-input').addEventListener('input', function() {
+    const query = this.value;
+    const suggestionsDiv = document.getElementById('suggestions');
+    
+    if (query.length > 0) {
+        // Make AJAX request to get movie suggestions from the backend
+        fetch(`/movie/search-suggestions/?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                const suggestions = data.suggestions;
+                
+                if (suggestions.length > 0) {
+                    suggestionsDiv.innerHTML = suggestions.map(item => `<div class="autocomplete-suggestion">${item}</div>`).join('');
+                    suggestionsDiv.style.display = 'block';
+                } else {
+                    suggestionsDiv.style.display = 'none';
+                }
+
+                // Add click event for selecting a suggestion
+                document.querySelectorAll('.autocomplete-suggestion').forEach(item => {
+                    item.addEventListener('click', function() {
+                        document.getElementById('search-input').value = this.textContent;
+                        suggestionsDiv.style.display = 'none';
+                    });
+                });
+            });
+    } else {
+        suggestionsDiv.style.display = 'none';
+    }
+});
+
+
+  </script>

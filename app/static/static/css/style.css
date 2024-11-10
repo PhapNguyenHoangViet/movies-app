@@ -566,3 +566,76 @@ footer {
     background-color: #f0f0f0;
 }
 
+
+/* Container chứa liên kết để căn giữa */
+.login-signup-container {
+    padding-left: 50px;
+    display: flex;             /* Sử dụng flexbox để căn giữa */
+    justify-content: center;   /* Căn giữa theo chiều ngang */
+    align-items: center;          /* Đảm bảo chiều rộng container đủ lớn */
+}
+
+/* Căn chỉnh và trang trí liên kết Login/Signup */
+.login-signup-link {
+    padding: 10px 20px;        /* Khoảng cách bên trong */
+    font-size: 14px;            /* Kích thước chữ hợp lý */
+    font-weight: bold;          /* Làm đậm chữ */
+    text-transform: uppercase;  /* Viết hoa chữ */
+    color: #333f70;             /* Màu chữ xanh */
+    text-decoration: none;      /* Bỏ gạch chân */
+    border-radius: 4px;         /* Bo tròn góc */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Hiệu ứng chuyển màu */
+}
+
+/* Thêm hiệu ứng hover cho liên kết */
+.login-signup-link:hover {
+    background-color: #f0f0f0;  /* Nền xám sáng khi hover */
+    color: #333f70;             /* Màu chữ đậm hơn */
+    text-decoration: none;      /* Bỏ gạch chân */
+}
+
+/* Thêm hiệu ứng shadow khi di chuột */
+.login-signup-link:focus, .login-signup-link:hover {
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Đổ bóng nhẹ */
+}
+
+
+.no-movies-found {
+    font-size: 18px;
+    font-weight: bold;
+    color: #ff6347; /* Màu chữ cam đỏ (hoặc màu khác bạn muốn) */
+    text-align: center;
+    padding: 20px;
+    background-color: #f8d7da; /* Nền màu đỏ nhạt để thu hút sự chú ý */
+    border: 1px solid #f5c6cb; /* Viền nhẹ màu đỏ nhạt */
+    border-radius: 8px;
+    margin-top: 30px;
+}
+
+
+
+
+.autocomplete-suggestions {
+    position: absolute;
+    background-color: white;
+    width: auto;
+    min-width: 350px;
+    max-width: 600px;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    z-index: 1000;
+    display: none;
+    box-sizing: border-box;
+}
+
+.autocomplete-suggestion {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.autocomplete-suggestion:hover {
+    background-color: #f0f0f0;
+}
+
