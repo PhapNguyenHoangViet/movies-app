@@ -1,15 +1,12 @@
-let header = document.querySelector("header");
-let main = document.querySelector("main");
-main.style.paddingTop = header.offsetHeight + "px";
-let link = document.querySelector(".links");
-
-function menu() {
-    link.classList.toggle("active");
-}
-
 function toggleMenu(menuIcon) {
-    const options = menuIcon.nextElementSibling; // Select the comment-options div
+    const options = menuIcon.nextElementSibling;
     options.style.display = options.style.display === "none" || options.style.display === "" ? "block" : "none";
+    document.addEventListener("click", function handleClickOutside(event) {
+        if (!menuIcon.contains(event.target) && !options.contains(event.target)) {
+            options.style.display = "none";
+            document.removeEventListener("click", handleClickOutside);
+        }
+    });
 }
 
 function toggleDiv(button) {

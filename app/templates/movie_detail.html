@@ -125,38 +125,25 @@
         <div class="container-comments">
             {% if comments %}
                 {% for comment in comments %}
-                    <div class="comment"  data-comment-id="{{ comment.comment_id }}">
+                    <div class="comment" data-comment-id="{{ comment.comment_id }}">
                         <div class="comment-header">
                             <p><strong>{{ comment.user.name }}</strong> - {{ comment.date|date:"d M Y, H:i" }}</p>
-                            <!-- Icon menu for actions -->
                             <div class="menu-icon" onclick="toggleMenu(this)">
                                 ⋮
                             </div>
-                                                                        <!-- Dropdown menu with Reply and Delete options -->
                             <div class="comment-options" style="display: none;">
                                 <button onclick="toggleDiv(this)" class="btn-reply">Reply</button>
                                 {% if comment.user == user %}
-                                    <form action="{% url 'movie:delete_comment' comment.comment_id %}" method="POST">
+                                    <form action="{% url 'movie:delete_comment' comment.comment_id %}" method="POST" style="display: inline;">
                                         {% csrf_token %}
                                         <button type="submit" class="btn-delete">Delete</button>
                                     </form>
                                 {% endif %}
                             </div>
                         </div>
-                        
-
-                        <p>{{ comment.content }}</p>
+                        <p>{{ comment.content|linebreaksbr }}</p>
                     </div>
-                    <div class="reply">
-                        {% if comment.user == user %}
-                            <form action="{% url 'movie:delete_comment' comment.comment_id %}" method="POST">
-                                {% csrf_token %}
-                                <button type="submit" class="btn-delete">Delete</button>
-                            </form>
-                        {% endif %}
-
-                        <button onclick="toggleDiv(this)" class="btn-reply">Reply</button>
-                    </div>
+                
 
                     <div class="container-reply-comment">
                         <div class="comment-box" id="comment-reply-box-{{ comment.comment_id }}" style="display: none;">
@@ -175,9 +162,23 @@
                     </div>
 
                     {% for reply in comment.replies.all|dictsortreversed:"date" %}
-                        <div class="reply-comment">
-                            <p><strong>{{ reply.user.name }}</strong> - {{ reply.date|date:"d M Y, H:i" }}</p>
-                            <p>{{ reply.content }}</p>
+                        <div class="reply-comment" data-comment-id="{{ reply.comment_id }}">
+                            <div class="reply-comment-header">
+                                    <div class="menu-icon" onclick="toggleMenu(this)">
+                                        ⋮
+                                    </div>
+                                    <div class="reply-comment-options" style="display: none;">
+                                        {% if reply.user == user or comment.user == user %}
+                                                    <form action="{% url 'movie:delete_comment' reply.comment_id %}" method="POST" style="display: inline;">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn-delete">Delete</button>
+                                                    </form>
+                                                    
+                                        {% endif %}
+                                    </div>
+                                <p><strong>{{ reply.user.name }}</strong> - {{ reply.date|date:"d M Y, H:i" }}</p>
+                            </div>
+                            <p>{{ reply.content|linebreaksbr }}</p>
                         </div>
                     {% endfor %}
                 {% endfor %}

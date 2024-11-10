@@ -374,6 +374,7 @@ footer {
     padding-right: 80px;
     background-color: #ffffff;
     text-align: left; 
+    overflow-x: hidden;
     overflow-y: auto; 
 }
 .comments-tieude {
@@ -402,7 +403,7 @@ footer {
     margin-bottom: 15px;
     border-radius: 8px;
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
-    text-align: left; 
+    text-align: left;
 }
 
 .comment p {
@@ -411,6 +412,9 @@ footer {
     color: #333;
     margin: 5px 0;
     text-align: left;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
 }
 
 .comment p strong {
@@ -436,6 +440,9 @@ footer {
     color: #333;
     margin: 5px 0;
     text-align: right;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
 }
 
 .reply-comment p strong {
@@ -465,58 +472,35 @@ footer {
     text-align: left;
 }
 
-.reply {
-    text-align: right;
-    padding-bottom: 20px;
+
+.comment-header {
     display: flex;
-    justify-content: flex-end;
-    gap: 10px;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    padding-right: 20px;
 }
-
-.reply button {
-    background-color: #888;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
-    padding: 5px 10px; 
-}
-
-.reply button:hover {
-    background-color: #354a7c;
-}
-
-
-
-
-
-
-
-
-
-
-
 
 .menu-icon {
     cursor: pointer;
     font-size: 20px;
-    display: inline-block;
     margin-left: 10px;
+    position: relative;
 }
 
 .comment-options {
     position: absolute;
+    top: 100%;
+    right: 0;
     background-color: white;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     padding: 5px;
     border-radius: 5px;
-    margin-top: 5px;
     z-index: 1;
+    display: none;
 }
 
-.comment-options button {
+.comment-options button, .comment-options form button {
     background: none;
     border: none;
     color: #333;
@@ -526,25 +510,59 @@ footer {
     text-align: left;
 }
 
-.comment-options button:hover {
+.comment-options button:hover, .comment-options form button:hover {
     background-color: #f0f0f0;
 }
 
-.comment-header {
+.reply-comment-header {
     display: flex;
-    align-items: center; /* Căn giữa các phần tử theo chiều dọc */
-    justify-content: space-between; /* Đặt khoảng cách đều nhau giữa tên/ngày và biểu tượng menu */
+    justify-content: space-between; /* Căn lề tên người dùng và biểu tượng ba chấm */
+    align-items: center;
+    position: relative;
+    padding-left: 10px;
+    width: 100%;
 }
 
-.comment-header p {
-    margin: 0; /* Loại bỏ khoảng cách mặc định của thẻ p */
+.reply-user-info {
+    margin: 0;
+    font-size: 14px;
     font-family: 'Raleway', sans-serif;
     color: #333;
-    font-size: 16px;
+    text-align: right; /* Căn lề phải cho tên người dùng và thời gian */
+    flex-grow: 1; /* Đảm bảo phần tử này lấp đầy không gian còn lại */
 }
 
-.menu-icon {
+.reply-menu-icon {
     cursor: pointer;
     font-size: 20px;
-    margin-left: 10px;
+    margin-right: 10px;
+    position: relative;
+    flex-shrink: 0; /* Đảm bảo biểu tượng không bị thu nhỏ */
 }
+
+.reply-comment-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: white;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 5px;
+    border-radius: 5px;
+    z-index: 1;
+    display: none;
+}
+
+.reply-comment-options button, .reply-comment-options form button {
+    background: none;
+    border: none;
+    color: #333;
+    cursor: pointer;
+    padding: 5px 10px;
+    width: 100%;
+    text-align: left;
+}
+
+.reply-comment-options button:hover, .reply-comment-options form button:hover {
+    background-color: #f0f0f0;
+}
+

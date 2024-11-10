@@ -106,7 +106,7 @@ def movie_detail(request, movie_id):
 
 def delete_comment(request, comment_id):
     comment = get_object_or_404(Comment, comment_id=comment_id)
-    if request.user == comment.user:
+    if request.user == comment.user or request.user == comment.parent.user:
         comment.delete()
         return redirect('movie:movie_detail', movie_id=comment.movie.movie_id)  # redirect về trang chi tiết phim
     else:
