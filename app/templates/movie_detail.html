@@ -40,7 +40,7 @@
             <div class="row" style="display: flex;">
                 <div class="col-5 ps-5" >
                     <div class="poster-movie">
-                        <img src="{{ MEDIA_URL }}/static/media/{{ movie.image }}" alt="{{ movie.movie_title }}">
+                        <img src="{{ movie.link_image }}" alt="{{ movie.movie_title }}">
                     </div>
                 </div>
                 <div class="col-7">
@@ -90,7 +90,7 @@
                         <div class="col-8">
                             <!-- Hiển thị tên các thể loại của movie -->
                             <label>
-                                {% for genre in genres %}
+                                {% for genre in movie_genres %}
                                     {{ genre.genre_name }}{% if not forloop.last %}, {% endif %}
                                 {% endfor %}
                             </label>
@@ -98,7 +98,7 @@
                     </div>
                     <div class="row">
                         <div class="col-4">
-                            <label style="color: #465499; font-size: 14px;">Average of {{ movie.count_rating }} ratings</label>
+                            <label style="color: #465499; font-size: 14px;">Average of {{ movie.count_rating|default:0 }} ratings</label>
                         </div>
                         <div class="col-8">
                             <label style="color: #465499; font-size: 14px;">Links</label>
@@ -106,17 +106,43 @@
                     </div>
                     <div class="row">
                         <div class="col-4">
-                            <label>{{ movie.avg_rating }}</label>
+                            <label>{{ movie.avg_rating|default:0 }}</label>
                         </div>
                         <div class="col-8">
                             <!-- Thêm liên kết IMDb -->
-                            <label><a href="{{ movie.IMDb_URL }}" target="_blank" style="color: #465499; text-decoration: none;">imdb</a></label>
+                            <label><a href="https://www.themoviedb.org/movie/{{ movie.tmdb_id }}" target="_blank" style="color: #465499; text-decoration: none;">tmdb</a></label>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
+    <div class="detail-movie-tieude">
+        <h3>Detail movie</h3>
+        <div class="movie-details">
+            <!-- Column 1: Detailed movie description (7 parts) -->
+            <div class="movie-description">
+                <p>{{ movie.overview }}</p>
+            </div>
+    
+            <!-- Column 2: Movie info (5 parts) -->
+            <div class="movie-info">
+                <p><strong>Release Year:</strong> {{movie.release_date}}</p>
+                <p><strong>Duration:</strong> {{movie.runtime}} minutes</p>
+                <p><strong>Directors:</strong> {{movie.director}}</p>
+                <p><strong>Cast:</strong> 
+                    {% for cast in movie.cast %}
+                        {{ cast }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}</p>
+                <p><strong>Key words:</strong>
+                    {% for keyword in movie.keywords %}
+                    {{ keyword }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}</p>
+            </div>
+        </div>
+    </div>
+    
 
     <div class="comments-tieude">
         <h3>Comments</h3>
@@ -176,7 +202,9 @@
                                                     
                                         {% endif %}
                                     </div>
-                                <p><strong>{{ reply.user.name }}</strong> - {{ reply.date|date:"d M Y, H:i" }}</p>
+                                    <div class="reply-user-info">
+                                        <p><strong>{{ reply.user.name }}</strong> - {{ reply.date|date:"d M Y, H:i" }}</p>
+                                    </div>
                             </div>
                             <p>{{ reply.content|linebreaksbr }}</p>
                         </div>

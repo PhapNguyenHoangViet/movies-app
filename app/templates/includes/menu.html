@@ -28,12 +28,14 @@
       <!-- Column 3 -->
       <div class="col-sm-4">
         <ul class="list-unstyled">
-          <li class="fw-bold"  style="margin-left: 17px;">Genres</li>
-          {% for genre in genres %}
-            <li><a class="dropdown-item" href="/explore/genres/{{ genre.genre_id }}">{{ genre.genre_name }}</a></li>
-          {% endfor %}
-          <li><a class="dropdown-item" href="/genres">More Genres...</a></li>
+            <li class="fw-bold" style="margin-left: 17px;">Genres</li>
+            {% for genre in genres %}
+                <li>
+                    <a class="dropdown-item" href="{% url 'movie:filter_movies' genre.genre_name %}">{{ genre.genre_name }}</a>
+                </li>
+            {% endfor %}
+            <li><a class="dropdown-item" href="{% url 'movie:all_genres' %}">More Genres...</a></li>
         </ul>
-      </div>
+    </div>
     </div>
 </div>

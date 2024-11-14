@@ -18,6 +18,7 @@ from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.urls import reverse
 from core.models import Movie, Tag, Rating, Genre, Comment
 from movie import serializers
+from django.db.models import Count
 from django.utils import timezone
 from datetime import datetime
 from .forms import CommentForm
@@ -67,6 +68,8 @@ def home(request):
 def movie_detail(request, movie_id):
     top_5_genres = Genre.objects.all()[:5]
     movie = get_object_or_404(Movie, movie_id=movie_id)
+    movie_genres = Genre.objects.filter(movie=movie)
+
     user_rating = None
     commentForm = CommentForm()
     comments = Comment.objects.filter(movie=movie, parent=None).order_by('-date')
@@ -97,10 +100,11 @@ def movie_detail(request, movie_id):
 
     return render(request, 'movie_detail.html', {
         'movie': movie,
+        'movie_genres': movie_genres,
         'user_rating': user_rating,
-        "genres": top_5_genres,
-        "commentForm": commentForm,
-        "comments":comments,
+        'genres': top_5_genres,
+        'commentForm': commentForm,
+        'comments':comments,
     })
 
 
@@ -119,29 +123,39 @@ def welcome(request):
 
 
 def movie_search(request):
-    query = request.GET.get('q', '') 
+    top_5_genres = Genre.objects.all()[:5]
+    query = request.GET.get('q', '')
     movies = Movie.objects.filter(movie_title__icontains=query)
 
     return render(request, 'movie_search.html', {
         'movies': movies,
-        'query': query
+        'query': query,
+        'genres': top_5_genres,
     })
 
 
 def movie_search_suggestions(request):
-    query = request.GET.get('q', '')  # Get the query string from the request
-    
+    query = request.GET.get('q', '')
+
     if query:
-        # Perform the query to search for movie titles that contain the query
-        suggestions = Movie.objects.filter(movie_title__icontains=query).values('movie_title')[:10]  # Get a max of 10 results
-
-        # Extract movie titles from the query results
+        suggestions = Movie.objects.filter(movie_title__icontains=query).values('movie_title')[:10]
         movie_titles = [suggestion['movie_title'] for suggestion in suggestions]
-
         return JsonResponse({'suggestions': movie_titles})
-    
     return JsonResponse({'suggestions': []})
 
+
+
+def filter_movies_by_genre(request, genre):
+    movies = Movie.objects.filter(genres__genre_name=genre)
+    top_5_genres = Genre.objects.all()[:5]
+    query = genre
+    return render(request, 'movie_search.html', {'movies': movies, 'genres': top_5_genres, 'query': query})
+
+
+def all_genres(request):
+    top_5_genres = Genre.objects.all()[:5]
+    genres = Genre.objects.annotate(num_movies=Count('movie')).order_by('-num_movies')
+    return render(request, 'all_genres.html', {'all_genres': genres, 'genres': top_5_genres })
 
 
 @extend_schema_view(

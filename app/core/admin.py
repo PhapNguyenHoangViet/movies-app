@@ -6,20 +6,21 @@ from core import models
 class UserAdmin(BaseUserAdmin):
     ordering = ['user_id']
     list_display = [
-        'email', 'name',  'dateOfBirth', 'sex', 'currentCity', 'occupation']
+        'user_id', 'email', 'name', 'dateOfBirth', 'sex', 'age', 'occupation']
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        ('Personal info', {'fields': ('name', 'dateOfBirth',
-                                      'sex', 'currentCity', 'occupation')}),
+        ('Personal Info', {'fields': ('name', 'dateOfBirth', 'age', 'sex', 'currentCity', 'occupation')}),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser')}),
-        ('Important dates', {'fields': ('last_login',)}),
+        ('Important Dates', {'fields': ('last_login',)}),
     )
     readonly_fields = ['last_login']
-    add_fieldsets = ((None, {
+    # Fieldset for adding a new user
+    add_fieldsets = (
+        (None, {
             'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2', 'name',
-                       'dateOfBirth', 'sex', 'currentCity', 'occupation')}))
-
+            'fields': ('email', 'password1', 'password2', 'name', 'dateOfBirth', 'sex', 'age', 'occupation'),
+        }),
+    )
 
 admin.site.register(models.User, UserAdmin)
 admin.site.register(models.Movie)

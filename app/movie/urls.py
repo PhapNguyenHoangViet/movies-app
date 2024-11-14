@@ -23,6 +23,8 @@ urlpatterns = [
          views.movie_detail, name='movie_detail'),
     path('movie/<int:movie_id>/rate/', views.rate_movie, name='rate_movie'),
     path('comment/<int:comment_id>/delete/', views.delete_comment, name='delete_comment'),
+    path('all_genres/', views.all_genres, name='all_genres'),
     path('search/', views.movie_search, name='movie_search'),
     path('search-suggestions/', views.movie_search_suggestions, name='movie_search_suggestions'),
+    path('filter_movies/<str:genre>', views.filter_movies_by_genre, name='filter_movies'),
 ]

@@ -3,7 +3,7 @@
     <div class="movie-card-md1">
       <div class="card">
         <a href="{% url 'movie:movie_detail' movie_id=movie.movie_id %}">
-          <img src="{{ MEDIA_URL }}/static/media/{{ movie.image }}" alt="{{ movie.movie_title }}"">
+          <img src="{{ movie.link_image }}" alt="{{ movie.movie_title }}"">
         </a>
       </div>
       <div class="overlay">
@@ -12,7 +12,7 @@
         </div>
         <div class="row-gap-1">
           <i class="fa-solid fa-star" style="color: #ffb703; border: none; outline: none; outline-width: 0;">
-            <label style="color: gray;">{{ movie.avg_rating }}</label>
+            <label style="color: gray;"> {{ movie.avg_rating|default:0 }}</label>
           </i>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import uuid
 import os
+from datetime import date
 
 from django.db import models
 from django.conf import settings
@@ -39,6 +40,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     dateOfBirth = models.DateField(blank=True, null=True)
+    age = models.IntegerField(blank=True, null=True)
     sex = models.CharField(max_length=10, null=True, blank=True)
     currentCity = models.CharField(max_length=255, null=True, blank=True)
     occupation = models.CharField(max_length=255, null=True, blank=True)
@@ -47,20 +49,40 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
     USERNAME_FIELD = 'email'
 
+    def calculate_age(self):
+        if self.dateOfBirth:
+            today = date.today()
+            age = today.year - self.dateOfBirth.year
+            if today.month < self.dateOfBirth.month or (today.month == self.dateOfBirth.month and today.day < self.dateOfBirth.day):
+                age -= 1
+            return age
+        return None
+
+    def save(self, *args, **kwargs):
+        if self.dateOfBirth:
+            self.age = self.calculate_age()
+        super().save(*args, **kwargs)
 
 class Movie(models.Model):
     movie_id = models.AutoField(primary_key=True)
     movie_title = models.CharField(max_length=1000)
     release_date = models.DateField(blank=True, null=True)
-    video_release_date = models.DateField(blank=True, null=True)
-    IMDb_URL = models.URLField(blank=True, null=True)
     tags = models.ManyToManyField('Tag')
     genres = models.ManyToManyField('Genre')
     link_image = models.CharField(max_length=255, blank=True, null=True)
     image = models.ImageField(null=True, upload_to=movie_image_file_path)
-
-    count_rating = models.PositiveIntegerField(default=0)
-    avg_rating = models.FloatField(default=0.0)
+    
+    tmdb_id = models.PositiveIntegerField(blank=True, null=True)  # TMDb ID
+    overview = models.TextField(blank=True, null=True)  # Overview
+    runtime = models.PositiveIntegerField(blank=True, null=True)  # Runtime in minutes
+    budget = models.BigIntegerField(blank=True, null=True)  # Budget
+    revenue = models.BigIntegerField(blank=True, null=True)  # Revenue
+    keywords = models.JSONField(blank=True, null=True)  # New model for keywords
+    director = models.CharField(max_length=255, blank=True, null=True)  # Director name
+    cast = models.JSONField(blank=True, null=True)  # Cast as text or linked to another model
+    
+    count_rating = models.PositiveIntegerField(default=0, blank=True, null=True)
+    avg_rating = models.FloatField(default=0.0, blank=True, null=True)
     def __str__(self): return self.movie_title
 
     def update_rating(self):

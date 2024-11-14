@@ -36,20 +36,23 @@
   <section class="mybody mt-5 pt-5" >
     <div style="padding-left: 90px;">
     <div class="row ps-3" >
-      <p3 style="font-size: 32px; color: #6c757d;">Search results for "{{ query }}"</p3>
+      <p3 style="font-size: 32px; color: #6c757d;">All genres</p3>
     </div>
-    {% if movies %}
+    {% if all_genres %}
         <div class="row" style="display: flex;">
             <div class="large-12 columns" style="padding: 2%;">
                 <div class="owl-carousel owl-theme">
-                {% for movie in movies %}
-                {% include 'includes/movie.html' %}
-                {% endfor %}          
+                  <ul>
+                    {% for genre in all_genres %}
+                        <li><a href="{% url 'movie:filter_movies' genre.genre_name %}">{{ genre.genre_name }}</a>({{ genre.num_movies }} movies)</li>
+                        
+                    {% endfor %}
+                </ul>   
                 </div>
             </div>
         </div>
     {% else %}
-        <p class="no-movies-found">No movies found for "{{ query }}"</p>
+        <p class="no-movies-found">No genres found.</p>
     {% endif %}
   </div>
   </section>
