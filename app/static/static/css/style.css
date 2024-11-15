@@ -137,7 +137,7 @@ footer {
 }
 
 .form-group select {
-    width: 270px;
+    width: 250px;
     padding: 8px;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -696,4 +696,85 @@ footer {
 .autocomplete-suggestion:hover {
     background-color: #f0f0f0;
 }
+
+.table-active{
+    width: 100%;
+}
+.movie-table-row{
+    width: 100%;
+    vertical-align: middle;
+    border-bottom: 1px solid #ddd;
+}
+.movie-table-row:hover{
+    background-color: white;
+}
+.movie-table-row .movie-table-cell-rating{
+    width: 200px;
+}
+.movie-table-cell-name{
+    width: 500px;
+    max-width: 600px;
+}
+.movie-table-cell-name a{
+    text-decoration: none;
+    color: black;
+}
+.movie-table-cell-name a:hover{
+    color: var(--bluedark);
+}
+
+
+#messages {
+    position: fixed;
+    top: 20px; /* Khoảng cách từ trên cùng */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1050;
+    text-align: center;
+    display: flex;
+    flex-direction: column; /* Hiển thị dọc */
+    gap: 10px; /* Khoảng cách giữa các thông báo */
+}
+
+.toast {
+    display: inline-block;
+    border-radius: 12px; /* Cạnh bo tròn mượt mà hơn */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Bóng mềm hơn */
+    opacity: 0.95; /* Tăng độ trong suốt nhẹ */
+    margin-bottom: 15px; /* Khoảng cách giữa các thông báo */
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.toast:hover {
+    transform: scale(1.03); /* Tăng hiệu ứng khi hover */
+}
+
+.toast-success {
+    background-color: #b4dcbd !important;
+    color: #155724 !important;
+}
+
+.toast-error {
+    background-color: #e8707a !important;
+    color: #ffffff !important;
+}
+
+.toast-warning {
+    background-color: #eed890 !important;
+    color: #856404 !important;
+}
+
+.toast-info {
+    background-color: #91e3f2 !important;
+    color: #0c5460 !important;
+}
+.btn-close {
+    color: #000;
+    opacity: 0.6;
+}
+
+.btn-close:hover {
+    opacity: 1;
+}
+
 

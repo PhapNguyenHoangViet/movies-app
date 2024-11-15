@@ -89,8 +89,8 @@ class Movie(models.Model):
         ratings = Rating.objects.filter(movie=self)
         total_ratings = ratings.count()
         if total_ratings > 0:
-            self.avg_rating = sum([
-                rating.rating for rating in ratings]) / total_ratings
+            self.avg_rating = round(sum(
+                [rating.rating for rating in ratings]) / total_ratings, 1)
             self.count_rating = total_ratings
             self.save()
 

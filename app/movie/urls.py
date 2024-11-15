@@ -27,4 +27,6 @@ urlpatterns = [
     path('search/', views.movie_search, name='movie_search'),
     path('search-suggestions/', views.movie_search_suggestions, name='movie_search_suggestions'),
     path('filter_movies/<str:genre>', views.filter_movies_by_genre, name='filter_movies'),
+    path('your_ratings/', views.your_ratings, name='your_ratings'),
+    
 ]

@@ -121,6 +121,9 @@ def delete_comment(request, comment_id):
 def welcome(request):
     return render(request, 'welcome.html')
 
+def your_ratings(request):
+    return render(request, 'your_ratings.html')
+
 
 def movie_search(request):
     top_5_genres = Genre.objects.all()[:5]

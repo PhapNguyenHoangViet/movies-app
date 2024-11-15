@@ -1,0 +1,23 @@
+<div id="messages">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="toast show align-items-center toast-{{ message.tags }} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ message }}
+                    </div>
+                    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.toast').forEach(toastElement => {
+            const toast = new bootstrap.Toast(toastElement, { delay: 2000 });
+            toast.show();
+        });
+    });
+</script>
