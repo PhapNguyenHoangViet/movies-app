@@ -38,7 +38,7 @@
     
     <section class="mybody bg-white">
         <div class="container-fluid">
-            <div class="row" style="display: flex;">
+            <div class="row" style="display: flex; margin-left: 50px;">
                 <div class="col-5 ps-5" >
                     <div class="poster-movie">
                         <img src="{{ movie.link_image }}" alt="{{ movie.movie_title }}">
@@ -114,35 +114,38 @@
                             <label><a href="https://www.themoviedb.org/movie/{{ movie.tmdb_id }}" target="_blank" style="color: #465499; text-decoration: none;">tmdb</a></label>
                         </div>
                     </div>
+                    <div class="row" style="margin-top: 100px;">
+                        <div class="detail-movie-tieude">
+                            <h3>Detail movie</h3>
+                            <div class="movie-details">
+                                <!-- Column 1: Detailed movie description (7 parts) -->
+                                <div class="movie-description">
+                                    <p>{{ movie.overview }}</p>
+                                </div>
+                        
+                                <!-- Column 2: Movie info (5 parts) -->
+                                <div class="movie-info">
+                                    <p><strong>Release Year:</strong> {{movie.release_date}}</p>
+                                    <p><strong>Duration:</strong> {{movie.runtime}} minutes</p>
+                                    <p><strong>Directors:</strong> {{movie.director}}</p>
+                                    <p><strong>Cast:</strong> 
+                                        {% for cast in movie.cast %}
+                                            {{ cast }}{% if not forloop.last %}, {% endif %}
+                                        {% endfor %}</p>
+                                    <p><strong>Key words:</strong>
+                                        {% for keyword in movie.keywords %}
+                                        {{ keyword }}{% if not forloop.last %}, {% endif %}
+                                    {% endfor %}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <div class="detail-movie-tieude">
-        <h3>Detail movie</h3>
-        <div class="movie-details">
-            <!-- Column 1: Detailed movie description (7 parts) -->
-            <div class="movie-description">
-                <p>{{ movie.overview }}</p>
-            </div>
     
-            <!-- Column 2: Movie info (5 parts) -->
-            <div class="movie-info">
-                <p><strong>Release Year:</strong> {{movie.release_date}}</p>
-                <p><strong>Duration:</strong> {{movie.runtime}} minutes</p>
-                <p><strong>Directors:</strong> {{movie.director}}</p>
-                <p><strong>Cast:</strong> 
-                    {% for cast in movie.cast %}
-                        {{ cast }}{% if not forloop.last %}, {% endif %}
-                    {% endfor %}</p>
-                <p><strong>Key words:</strong>
-                    {% for keyword in movie.keywords %}
-                    {{ keyword }}{% if not forloop.last %}, {% endif %}
-                {% endfor %}</p>
-            </div>
-        </div>
-    </div>
     
 
     <div class="comments-tieude">

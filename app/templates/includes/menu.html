@@ -4,38 +4,35 @@
       <div class="col-sm-4">
         <ul class="list-unstyled">
           <li class="fw-bold"  style="margin-left: 17px;">Quick Links</li>
-          <li><a class="dropdown-item" href="/home">Home</a></li>
-          <li><a class="dropdown-item" href="/explore/top-picks">Top Picks for You</a></li>
-          <li><a class="dropdown-item" href="/explore/rate-more">Rate More</a></li>
-          <li><a class="dropdown-item" href="/explore/recent-releases">Recently Released</a></li>
-          <li><a class="dropdown-item" href="/explore/highest-rated-past-year">Recent Favorites</a></li>
-          <li><a class="dropdown-item" href="/explore/recently-added">New Additions</a></li>
-          <li class="d-block d-sm-none"><a class="dropdown-item" href="/genres">List of Genres</a></li>
+          <li><a class="dropdown-item" href="{% url 'movie:home'%}">Home</a></li>
+          <li><a class="dropdown-item" href="{% url 'movie:explore' 'top_picks'%}">Top Picks for You</a></li>
+          <li><a class="dropdown-item" href="{% url 'movie:explore' 'count_rating_movies'%}">Rate More</a></li>
+          <li><a class="dropdown-item" href="{% url 'movie:explore' 'recent_movies'%}">Recently Released</a></li>
+          <li><a class="dropdown-item" href="{% url 'movie:explore' 'avg_rating_movies'%}">Recent Favorites</a></li>
+          <li><a class="dropdown-item" href="{% url 'movie:all_genres' %}">List of Genres</a></li>
         </ul>
       </div>
-      <!-- Column 2 -->
-      <div class="col-sm-4">
-        <ul class="list-unstyled">
-          <li class="fw-bold"  style="margin-left: 17px;">Your Activity</li>
-          <li><a class="dropdown-item" href="{% url 'movie:your_ratings'%}">Ratings</a></li>
-          <li><a class="dropdown-item" href="/profile/about-your-ratings">About Your Ratings</a></li>
-          <li><a class="dropdown-item" href="/explore/your-wishlist">Wish List</a></li>
-          <li><a class="dropdown-item" href="/lists">Your Lists</a></li>
-          <li><a class="dropdown-item" href="/profile/tags">Tags</a></li>
-          <li><a class="dropdown-item" href="/explore/your-hidden-movies">Hidden Movies</a></li>
-        </ul>
-      </div>
-      <!-- Column 3 -->
       <div class="col-sm-4">
         <ul class="list-unstyled">
             <li class="fw-bold" style="margin-left: 17px;">Genres</li>
             {% for genre in genres %}
                 <li>
-                    <a class="dropdown-item" href="{% url 'movie:filter_movies' genre.genre_name %}">{{ genre.genre_name }}</a>
+                    <a class="dropdown-item" href="{% url 'movie:filter_movies_by_genre' genre.genre_name %}">{{ genre.genre_name }}</a>
                 </li>
             {% endfor %}
             <li><a class="dropdown-item" href="{% url 'movie:all_genres' %}">More Genres...</a></li>
         </ul>
-    </div>
+      </div>
+      <div class="col-sm-4">
+        <ul class="list-unstyled">
+          <li class="fw-bold"  style="margin-left: 14px;">Your Activity</li>
+          <li><a class="dropdown-item" href="{% url 'movie:explore' 'ratings'%}">Ratings</a></li>
+          <li><a class="dropdown-item" href="{% url 'movie:about_your_ratings' %}">About Your Ratings</a></li>
+          <li><a class="dropdown-item" href="#">Wish List</a></li>
+          <li><a class="dropdown-item" href="#">Your Lists</a></li>
+          <li><a class="dropdown-item" href="#">Tags</a></li>
+          <li><a class="dropdown-item" href="#">Hidden Movies</a></li>
+        </ul>
+      </div>
     </div>
 </div>

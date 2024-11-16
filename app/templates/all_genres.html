@@ -34,29 +34,32 @@
 <body>
   {% include 'includes/header.html' %}
   
-  <section class="mybody mt-5 pt-5" >
-    <div style="padding-left: 90px;">
-    <div class="row ps-3" >
-      <p3 style="font-size: 32px; color: #6c757d;">All genres</p3>
-    </div>
-    {% if all_genres %}
-        <div class="row" style="display: flex;">
-            <div class="large-12 columns" style="padding: 2%;">
-                <div class="owl-carousel owl-theme">
-                  <ul>
-                    {% for genre in all_genres %}
-                        <li><a href="{% url 'movie:filter_movies' genre.genre_name %}">{{ genre.genre_name }}</a>({{ genre.num_movies }} movies)</li>
-                        
-                    {% endfor %}
-                </ul>   
-                </div>
-            </div>
+  <section class="mybody mt-5 pt-5">
+    <div style="padding-left: 90px; padding-right: 90px;">
+      <div class="row">
+        <p3 style="font-size: 32px; color: #6c757d;">All genres</p3>
+      </div>
+      {% if all_genres %}
+        <div class="row">
+          <div class="large-12 columns" style="padding-top: 60px;">
+            <ul class="genre-grid">
+              {% for genre in all_genres %}
+                <li onclick=location.href="{% url 'movie:filter_movies_by_genre' genre.genre_name %}">
+                  <a href="{% url 'movie:filter_movies_by_genre' genre.genre_name %}">
+                    {{ genre.genre_name }}
+                  </a>
+                  ({{ genre.num_movies }} movies)
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
         </div>
-    {% else %}
+      {% else %}
         <p class="no-movies-found">No genres found.</p>
-    {% endif %}
-  </div>
+      {% endif %}
+    </div>
   </section>
+  
 
 
     
