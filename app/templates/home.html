@@ -37,12 +37,12 @@
   {% include 'includes/messages.html' %}
   <section class="mybody mt-5 pt-5" style="padding-left: 90px; padding-right: 80px;">
     <div class="row ps-3">
-      <p3 style="font-size: 32px; color: #6c757d;">Top picks</p3>
+      <p3 style="font-size: 32px; color: #6c757d;">Top picks {{ p }}</p3>
     </div>
     <div class="row" style="display: flex;">
       <div class="large-12 columns" style="padding: 1%;">
         <div class="owl-carousel owl-theme">
-        {% for movie in movies %}
+        {% for movie in top_picks %}
           {% include 'includes/movie.html' %}
         {% endfor %}          
         </div>

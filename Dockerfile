@@ -1,4 +1,5 @@
-FROM python:3.9-alpine3.13
+FROM python:3.9-slim
+
 LABEL maintainer="moives.com"
 
 ENV PYTHONUNBUFFERED 1
@@ -12,15 +13,31 @@ EXPOSE 8000
 ARG DEV=false
 RUN python -m venv /py && \
     /py/bin/pip install --upgrade pip && \
-    apk add --update --no-cache postgresql-client jpeg-dev && \
-    apk add --update --no-cache --virtual .tmp-build-deps \
-        build-base postgresql-dev musl-dev zlib zlib-dev && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        postgresql-client \
+        libjpeg-dev \
+        build-essential \
+        libpq-dev \
+        gcc \
+        g++ \
+        git \
+        cmake \
+        && \
+    /py/bin/pip install --no-cache-dir torch==2.0.1 torchvision==0.15.2 --index-url https://download.pytorch.org/whl/cpu && \
+    /py/bin/pip install --no-cache-dir \
+        torch-scatter==2.1.1 \
+        torch-sparse==0.6.17 \
+        torch-cluster==1.6.1 \
+        torch-spline-conv==1.2.2 \
+        torch-geometric==2.3.1 \
+        -f https://data.pyg.org/whl/torch-2.0.1+cpu.html && \
     /py/bin/pip install -r /tmp/requirements.txt && \
     if [ $DEV = "true" ]; \
         then /py/bin/pip install -r /tmp/requirements.dev.txt ; \
     fi && \
     rm -rf /tmp && \
-    apk del .tmp-build-deps &&\
+    rm -rf /var/lib/apt/lists/* && \
     adduser \
         --disabled-password \
         --no-create-home \

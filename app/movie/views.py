@@ -23,6 +23,8 @@ from django.db.models import Count
 from django.utils import timezone
 from datetime import datetime
 from .forms import CommentForm
+from .gcn_model import recommend_movies
+
 
 
 @login_required(login_url='user:log_in')
@@ -49,7 +51,9 @@ def rate_movie(request, movie_id):
 
 
 def home(request):
-    all_movies = Movie.objects.all()[:20]
+    user = request.user
+    movie_ids = recommend_movies(user.user_id, 1682)
+    top_picks = Movie.objects.filter(movie_id__in=movie_ids).order_by('-avg_rating')[:20]
     recent_movies = Movie.objects.all().filter(
         release_date__lte=datetime.now()).order_by('-release_date')[:20]
     count_rating_movies = Movie.objects.all().order_by('-count_rating')[:20]
@@ -58,7 +62,7 @@ def home(request):
     top_5_genres = Genre.objects.all()[:5]
 
     return render(request, 'home.html', {
-        "movies": all_movies,
+        "top_picks": top_picks,
         "recent_movies": recent_movies,
         "count_rating_movies": count_rating_movies,
         "avg_rating_movies": avg_rating_movies,
@@ -129,7 +133,8 @@ def explore(request, explore_name):
     top_5_genres = Genre.objects.all()[:5]
     movies = []
     if (explore_name == 'top_picks'):
-        movies = Movie.objects.all()
+        movie_ids = recommend_movies(user.user_id, 1682)
+        movies = Movie.objects.filter(movie_id__in=movie_ids).order_by('-avg_rating')[:20]
         content = 'Top picks'
     elif (explore_name == 'recent_movies'):
         movies = Movie.objects.all().filter(
@@ -156,22 +161,7 @@ def explore(request, explore_name):
         'content':content,
     })
 
-def home(request):
-    all_movies = Movie.objects.all()[:20]
-    recent_movies = Movie.objects.all().filter(
-        release_date__lte=datetime.now()).order_by('-release_date')[:20]
-    count_rating_movies = Movie.objects.all().order_by('-count_rating')[:20]
-    avg_rating_movies = Movie.objects.all().order_by('-avg_rating')[:20]
 
-    top_5_genres = Genre.objects.all()[:5]
-
-    return render(request, 'home.html', {
-        "movies": all_movies,
-        "recent_movies": recent_movies,
-        "count_rating_movies": count_rating_movies,
-        "avg_rating_movies": avg_rating_movies,
-        "genres": top_5_genres,
-        })
 @login_required(login_url='user:log_in')
 def about_your_ratings(request):
     return render(request, 'about_your_ratings.html', {
