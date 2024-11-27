@@ -81,7 +81,7 @@ class Movie(models.Model):
     runtime = models.PositiveIntegerField(blank=True, null=True)  # Runtime in minutes
     keywords = models.JSONField(blank=True, null=True)  # New model for keywords
     director = models.CharField(max_length=255, blank=True, null=True)  # Director name
-    cast = models.JSONField(blank=True, null=True)  # Cast as text or linked to another model
+    caster = models.JSONField(blank=True, null=True)  # Cast as text or linked to another model
     
     count_rating = models.PositiveIntegerField(default=0, blank=True, null=True)
     avg_rating = models.FloatField(default=0.0, blank=True, null=True)

@@ -42,7 +42,7 @@
                 <p3 style="font-size: 32px; color: #6c757d;">{{ content }}</p3>
             </div>
             {% if page_obj %}
-                <div class="movie-grid" style="padding-left: 10px;padding-top: 20px;">
+                <div class="movie-grid" style="padding-left: 10px; padding-top: 20px;">
                     {% for movie in page_obj %}
                         {% include 'includes/movie.html' %}
                     {% endfor %}

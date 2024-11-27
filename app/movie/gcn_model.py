@@ -10,13 +10,11 @@ MODEL_PATH = os.path.join(BASE_DIR, 'movie', 'gcn_model.pth')
 class GCN(torch.nn.Module):
     def __init__(self, num_features, hidden_channels, num_users, num_items):
         super(GCN, self).__init__()
-        # Thêm nhiều lớp convolution
         self.conv1 = GCNConv(num_features, hidden_channels)
         self.conv2 = GCNConv(hidden_channels, hidden_channels // 2)
         self.conv3 = GCNConv(hidden_channels // 2, num_items)
         self.dropout = torch.nn.Dropout(0.5)
         
-        # Embedding với regularization
         self.user_embeddings = torch.nn.Embedding(num_users, hidden_channels)
         self.item_embeddings = torch.nn.Embedding(num_items, hidden_channels)
         
