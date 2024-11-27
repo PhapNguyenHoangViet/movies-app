@@ -12,7 +12,7 @@
         </div>
         <div class="row-gap-1">
           <i class="fa-solid fa-star" style="color: #ffb703; border: none; outline: none; outline-width: 0;">
-            <label style="color: gray;"> {{ movie.avg_rating|default:0 }}</label>
+            <label style="color: gray;">{{ movie.avg_rating|floatformat:1|default:"0.0" }}</label>
           </i>
         </div>
       </div>

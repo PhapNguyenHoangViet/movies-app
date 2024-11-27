@@ -26,6 +26,28 @@ from .forms import CommentForm
 from .gcn_model import recommend_movies
 from django.db.models import Case, When
 
+from django.db import connection
+import pandas as pd
+
+def fetch_data_as_dataframe(query):
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        columns = [col[0] for col in cursor.description]
+        return pd.DataFrame(cursor.fetchall(), columns=columns)
+
+# Truy vấn SQL
+query_movies = "SELECT movie_id, movie_title, release_date, overview, runtime, keywords, director,caster FROM core_movie"
+query_ratings = "SELECT user_id, movie_id, rating, timestamp FROM core_rating"
+query_users = "SELECT user_id, age, sex, occupation FROM core_user"
+
+df_movies = fetch_data_as_dataframe(query_movies)
+df_ratings = fetch_data_as_dataframe(query_ratings)
+df_users = fetch_data_as_dataframe(query_users)
+
+print(df_movies.head())
+print(df_ratings.head())
+print(df_users.head())
+
 
 @login_required(login_url='user:log_in')
 def rate_movie(request, movie_id):

@@ -107,7 +107,7 @@
                     </div>
                     <div class="row">
                         <div class="col-4">
-                            <label>{{ movie.avg_rating|default:0 }}</label>
+                            <label>{{ movie.avg_rating|floatformat:1|default:"0.0" }}</label>
                         </div>
                         <div class="col-8">
                             <!-- Thêm liên kết IMDb -->

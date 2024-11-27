@@ -206,6 +206,13 @@ footer {
     height: 100%;
     width: 100%;
 }
+
+.movie-card-md1 .card img {
+    width: 100%; /* Đảm bảo hình ảnh chiếm toàn bộ chiều rộng của container */
+    height: auto; /* Giữ tỷ lệ khung hình */
+    object-fit: cover; /* Đảm bảo hình ảnh không bị méo */
+}
+
 .movie-card-md1 img {
     border-radius: 5px;
 }
