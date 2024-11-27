@@ -23,30 +23,12 @@ from django.db.models import Count
 from django.utils import timezone
 from datetime import datetime
 from .forms import CommentForm
-from .gcn_model import recommend_movies
+from .gcn_model import MovieRecommender
 from django.db.models import Case, When
+from django.conf import settings
 
-from django.db import connection
-import pandas as pd
-
-def fetch_data_as_dataframe(query):
-    with connection.cursor() as cursor:
-        cursor.execute(query)
-        columns = [col[0] for col in cursor.description]
-        return pd.DataFrame(cursor.fetchall(), columns=columns)
-
-# Truy vấn SQL
-query_movies = "SELECT movie_id, movie_title, release_date, overview, runtime, keywords, director,caster FROM core_movie"
-query_ratings = "SELECT user_id, movie_id, rating, timestamp FROM core_rating"
-query_users = "SELECT user_id, age, sex, occupation FROM core_user"
-
-df_movies = fetch_data_as_dataframe(query_movies)
-df_ratings = fetch_data_as_dataframe(query_ratings)
-df_users = fetch_data_as_dataframe(query_users)
-
-print(df_movies.head())
-print(df_ratings.head())
-print(df_users.head())
+recommender = MovieRecommender(settings.MODEL_DIR)
+users, items, ratings, feature_matrix = recommender.prepare()
 
 
 @login_required(login_url='user:log_in')
@@ -74,9 +56,9 @@ def rate_movie(request, movie_id):
 
 def home(request):
     user = request.user
-    movie_ids = recommend_movies(1, Movie.objects.count())
+    movie_ids = recommender.recommend_movies(user.user_id-1, 20)
     ordering = Case(*[When(movie_id=movie_id, then=index) for index, movie_id in enumerate(movie_ids)])
-    top_picks = Movie.objects.filter(movie_id__in=movie_ids).order_by(ordering)[:20]
+    top_picks = Movie.objects.filter(movie_id__in=movie_ids).order_by(ordering)
     recent_movies = Movie.objects.all().filter(
         release_date__lte=datetime.now()).order_by('-release_date')[:20]
     count_rating_movies = Movie.objects.all().order_by('-count_rating')[:20]
@@ -96,7 +78,7 @@ def home(request):
 @login_required(login_url='user:log_in')
 def recommendations(request):
     user = request.user
-    movie_ids = recommend_movies(1, Movie.objects.count())
+    movie_ids = recommender.recommend_movies(user.user_id-1, 20)
     ordering = Case(*[When(movie_id=movie_id, then=index) for index, movie_id in enumerate(movie_ids)])
     top_picks = Movie.objects.filter(movie_id__in=movie_ids).order_by(ordering)[:20]
     recommendations_data = [
@@ -171,22 +153,23 @@ def explore(request, explore_name):
     user = request.user
     top_5_genres = Genre.objects.all()[:5]
     movies = []
-    if (explore_name == 'top_picks'):
+    content = ""
+    if explore_name == 'top_picks':
+        recommender.update_model(ratings, feature_matrix, settings.MODEL_DIR)
         content = 'Top picks'
-        movie_ids = recommend_movies(1, Movie.objects.count())
+        movie_ids = recommender.recommend_movies(user.user_id-1, Movie.objects.count())
         ordering = Case(*[When(movie_id=movie_id, then=index) for index, movie_id in enumerate(movie_ids)])
-        movies = Movie.objects.filter(movie_id__in=movie_ids).order_by(ordering)[:20]
-    elif (explore_name == 'recent_movies'):
-        movies = Movie.objects.all().filter(
-        release_date__lte=datetime.now()).order_by('-release_date')
+        movies = Movie.objects.filter(movie_id__in=movie_ids).order_by(ordering)
+    elif explore_name == 'recent_movies':
+        movies = Movie.objects.filter(release_date__lte=datetime.now()).order_by('-release_date')
         content = 'Recent movies'
-    elif (explore_name == 'count_rating_movies'):
+    elif explore_name == 'count_rating_movies':
         movies = Movie.objects.all().order_by('-count_rating')
         content = 'Rating more'
-    elif (explore_name == 'avg_rating_movies'):
+    elif explore_name == 'avg_rating_movies':
         movies = Movie.objects.all().order_by('-avg_rating')
         content = 'Favorite Movies'
-    elif (explore_name == 'ratings'):
+    elif explore_name == 'ratings':
         movies = Movie.objects.filter(rating__user=user).distinct()
         content = "Movies you've rated"
 
@@ -194,11 +177,14 @@ def explore(request, explore_name):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
+    visible_pages = get_visible_page_numbers(page_obj.number, paginator.num_pages)
+
     return render(request, 'explore.html', {
         'page_obj': page_obj, 
         'movies': movies,
         'genres': top_5_genres,
-        'content':content,
+        'content': content,
+        'visible_pages': visible_pages,
     })
 
 
@@ -240,6 +226,16 @@ def all_genres(request):
     top_5_genres = Genre.objects.all()[:5]
     genres = Genre.objects.annotate(num_movies=Count('movie')).order_by('-num_movies')
     return render(request, 'all_genres.html', {'all_genres': genres, 'genres': top_5_genres })
+
+
+def get_visible_page_numbers(current_page, total_pages, delta=2):
+    pages = {1, total_pages}
+
+    # Thêm các trang xung quanh trang hiện tại
+    start = max(current_page - delta, 1)
+    end = min(current_page + delta, total_pages)
+    pages.update(range(start, end + 1))
+    return sorted(pages)
 
 
 @extend_schema_view(

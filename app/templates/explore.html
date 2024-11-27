@@ -25,24 +25,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Actor&family=Jolly+Lodger&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/owlcarousel/assets/owl.carousel.min.css">
     <link rel="stylesheet" href="assets/owlcarousel/assets/owl.theme.default.min.css">
-    <style>
-        .dropdown-custom .dropdown-item:hover {
-            color: #465499;
-        }
-    </style>
 </head>
 
 <body>
 
     {% include 'includes/header.html' %}
     
-    <section class="mybody mt-5 pt-5" >
-        <div class="mybody1" style="padding-left: 90px; padding-right: 100px;">
+    <section class="mybody mt-5 pt-5">
+        <div class="mybody1" style="padding-left: 90px;">
             <div class="row ps-3" >
                 <p3 style="font-size: 32px; color: #6c757d;">{{ content }}</p3>
             </div>
             {% if page_obj %}
-                <div class="movie-grid" style="padding-left: 10px; padding-top: 20px;">
+                <div class="movie-grid" style="padding-left: 10px;">
                     {% for movie in page_obj %}
                         {% include 'includes/movie.html' %}
                     {% endfor %}
@@ -57,15 +52,15 @@
                                 </li>
                             {% else %}
                                 <li class="page-item disabled">
-                                    <a class="page-link" style="color: #6c757d;" href="#">Previous</a>
+                                    <a class="page-link" style="background-color: #6c757d; color: #fff;">Previous</a>
                                 </li>
                             {% endif %}
-                    
+                
                             <!-- Danh sách các số trang -->
-                            {% for page_num in page_obj.paginator.page_range %}
+                            {% for page_num in visible_pages %}
                                 {% if page_num == page_obj.number %}
                                     <li class="page-item active">
-                                        <a class="page-link" href="#" style="background-color: #6c757d; color: #fff;">{{ page_num }}</a>
+                                        <a class="page-link" style="background-color: #6c757d; color: #fff;">{{ page_num }}</a>
                                     </li>
                                 {% else %}
                                     <li class="page-item">
@@ -73,20 +68,21 @@
                                     </li>
                                 {% endif %}
                             {% endfor %}
-                    
+                
                             <!-- Nút Next -->
                             {% if page_obj.has_next %}
                                 <li class="page-item">
-                                    <a class="page-link" style="color: #6c757d;" href="?page={{ page_obj.next_page_number }}">Next</a>
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}" style="color: #6c757d;">Next</a>
                                 </li>
                             {% else %}
                                 <li class="page-item disabled">
-                                    <a class="page-link" style="color: #6c757d;" href="#">Next</a>
+                                    <a class="page-link" style="color: #6c757d;">Next</a>
                                 </li>
                             {% endif %}
                         </ul>
                     </nav>
                 </div>
+                
 
             {% else %}
                 <p class="no-movies-found">No movies found</p>
@@ -98,6 +94,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
+
+    
 </body>
 
 </html>
