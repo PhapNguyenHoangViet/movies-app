@@ -41,7 +41,7 @@
     </div>
     <div class="row" style="display: flex;">
       <div class="large-12 columns" style="padding: 1%;">
-        <div class="owl-carousel owl-theme">
+        <div class="owl-carousel owl-theme" id="movie-carousel">
         {% for movie in top_picks %}
           {% include 'includes/movie.html' %}
         {% endfor %}          
@@ -119,6 +119,35 @@
       })
     })
   </script>
+
+<script>
+  $(document).ready(function () {
+      $.ajax({
+          url: "/movie/recommendations/", // URL đến endpoint
+          method: "GET", // Phương thức HTTP
+          success: function (response) {
+              // Xử lý khi nhận được dữ liệu
+              const recommendations = response.recommendations;
+              const $list = $("#recommendations-list");
+              $list.empty(); // Xóa nội dung cũ (nếu có)
+
+              // Thêm danh sách phim vào HTML
+              recommendations.forEach((movie) => {
+                  const listItem = `
+                      <li>
+                          <strong>${movie.title}</strong> 
+                          (Rating: ${movie.avg_rating.toFixed(1)})
+                      </li>`;
+                  $list.append(listItem);
+              });
+          },
+          error: function (xhr, status, error) {
+              console.error("Error fetching recommendations:", error);
+              alert("Could not load recommendations. Please try again later.");
+          },
+      });
+  });
+</script>
 </body>
 
 </html>

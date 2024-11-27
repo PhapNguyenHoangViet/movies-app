@@ -18,6 +18,8 @@ app_name = 'movie'
 urlpatterns = [
     path('', include(router.urls)),
     path('home/', views.home, name='home'),
+    path('recommendations/', views.recommendations,
+         name='recommendations'),
     path('welcome/', views.welcome, name='welcome'),
     path('movie_detail/<int:movie_id>/',
          views.movie_detail, name='movie_detail'),

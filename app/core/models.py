@@ -36,7 +36,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    user_id = models.AutoField(primary_key=True)
+    user_id = models.IntegerField(primary_key=True)
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     dateOfBirth = models.DateField(blank=True, null=True)
@@ -57,10 +57,14 @@ class User(AbstractBaseUser, PermissionsMixin):
                 age -= 1
             return age
         return None
-
+    
     def save(self, *args, **kwargs):
         if self.dateOfBirth:
             self.age = self.calculate_age()
+        if not self.pk:
+            if not self.user_id:
+                max_id = User.objects.aggregate(models.Max('user_id'))['user_id__max']
+                self.user_id = (max_id or 0) + 1
         super().save(*args, **kwargs)
 
 class Movie(models.Model):
@@ -75,8 +79,6 @@ class Movie(models.Model):
     tmdb_id = models.PositiveIntegerField(blank=True, null=True)  # TMDb ID
     overview = models.TextField(blank=True, null=True)  # Overview
     runtime = models.PositiveIntegerField(blank=True, null=True)  # Runtime in minutes
-    budget = models.BigIntegerField(blank=True, null=True)  # Budget
-    revenue = models.BigIntegerField(blank=True, null=True)  # Revenue
     keywords = models.JSONField(blank=True, null=True)  # New model for keywords
     director = models.CharField(max_length=255, blank=True, null=True)  # Director name
     cast = models.JSONField(blank=True, null=True)  # Cast as text or linked to another model

@@ -24,7 +24,7 @@ from django.utils import timezone
 from datetime import datetime
 from .forms import CommentForm
 from .gcn_model import recommend_movies
-
+from django.db.models import Case, When
 
 
 @login_required(login_url='user:log_in')
@@ -52,8 +52,9 @@ def rate_movie(request, movie_id):
 
 def home(request):
     user = request.user
-    movie_ids = recommend_movies(user.user_id, 1682)
-    top_picks = Movie.objects.filter(movie_id__in=movie_ids).order_by('-avg_rating')[:20]
+    movie_ids = recommend_movies(1, Movie.objects.count())
+    ordering = Case(*[When(movie_id=movie_id, then=index) for index, movie_id in enumerate(movie_ids)])
+    top_picks = Movie.objects.filter(movie_id__in=movie_ids).order_by(ordering)[:20]
     recent_movies = Movie.objects.all().filter(
         release_date__lte=datetime.now()).order_by('-release_date')[:20]
     count_rating_movies = Movie.objects.all().order_by('-count_rating')[:20]
@@ -68,6 +69,22 @@ def home(request):
         "avg_rating_movies": avg_rating_movies,
         "genres": top_5_genres,
         })
+
+
+@login_required(login_url='user:log_in')
+def recommendations(request):
+    user = request.user
+    movie_ids = recommend_movies(1, Movie.objects.count())
+    ordering = Case(*[When(movie_id=movie_id, then=index) for index, movie_id in enumerate(movie_ids)])
+    top_picks = Movie.objects.filter(movie_id__in=movie_ids).order_by(ordering)[:20]
+    recommendations_data = [
+        {
+            'movie_id': movie.movie_id,
+            'movie_title': movie.movie_title,
+            'avg_rating': movie.avg_rating,
+        } for movie in top_picks
+    ]
+    return JsonResponse({'recommendations': recommendations_data}, safe=False, status=200)
 
 
 def movie_detail(request, movie_id):
@@ -133,9 +150,10 @@ def explore(request, explore_name):
     top_5_genres = Genre.objects.all()[:5]
     movies = []
     if (explore_name == 'top_picks'):
-        movie_ids = recommend_movies(user.user_id, 1682)
-        movies = Movie.objects.filter(movie_id__in=movie_ids).order_by('-avg_rating')[:20]
         content = 'Top picks'
+        movie_ids = recommend_movies(1, Movie.objects.count())
+        ordering = Case(*[When(movie_id=movie_id, then=index) for index, movie_id in enumerate(movie_ids)])
+        movies = Movie.objects.filter(movie_id__in=movie_ids).order_by(ordering)[:20]
     elif (explore_name == 'recent_movies'):
         movies = Movie.objects.all().filter(
         release_date__lte=datetime.now()).order_by('-release_date')
