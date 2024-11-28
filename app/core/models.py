@@ -47,15 +47,16 @@ class User(AbstractBaseUser, PermissionsMixin):
     # Email verification fields
     is_email_verified = models.BooleanField(default=False)
     email_verification_token = models.CharField(
-        max_length=255, 
-        null=True, 
-        blank=True
-    )
+        max_length=255, null=True, blank=True)
     email_verification_token_created_at = models.DateTimeField(
-        null=True, 
-        blank=True
-    )
-    
+        null=True, blank=True)
+    # Password reset fields
+    password_reset_token = models.CharField(
+        max_length=255, null=True, blank=True)
+    password_reset_token_created_at = models.DateTimeField(
+        null=True, blank=True)
+
+
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     objects = UserManager()

@@ -9,6 +9,13 @@ from .forms import CustomUserCreationForm, ProfileForm
 from .forms import ChangePasswordForm, DeleteUserForm
 from core.models import Genre
 
+from django.core.mail import send_mail
+from django.urls import reverse
+from django.contrib import messages
+from django.conf import settings
+import secrets
+from django.utils import timezone
+from datetime import timedelta
 from user.serializers import (
     UserSerializer,
     AuthTokenSerializer,
@@ -55,7 +62,6 @@ def log_out(request):
     messages.info(request, 'User was logged out!')
     return redirect('movie:welcome')
 
-
 def sign_up(request):
     form = CustomUserCreationForm
 
@@ -72,7 +78,6 @@ def sign_up(request):
                 messages.success(request, 'Registration successful. Please check your email to verify your account.')
                 return redirect('user:log_in')
             except Exception as e:
-                # If email sending fails, delete the user and show error
                 user.delete()
                 messages.error(request, f'Error sending verification email: {str(e)}')
         else:
@@ -85,11 +90,90 @@ def verify_email(request, token):
     is_valid, user = EmailVerification.verify_email_token(token)
     
     if is_valid:
-        messages.success(request, 'Email verified successfully. You can now log in.')
+        messages.success(
+            request, 
+            'Email verified successfully. You can now log in to your account.'
+        )
     else:
-        messages.error(request, 'Invalid or expired verification link.')
+        messages.error(
+            request, 
+            'The verification link is invalid or has expired. '
+            'Please request a new verification email.'
+        )
     
     return redirect('user:log_in')
+
+
+def password_reset_request(request):
+    if request.method == 'POST':
+        email = request.POST.get('email').lower()
+        try:
+            user = User.objects.get(email=email)
+            
+            # Generate a secure reset token
+            reset_token = secrets.token_urlsafe(32)
+            
+            # Store the token and its expiration time
+            user.password_reset_token = reset_token
+            user.password_reset_token_created_at = timezone.now()
+            user.save()
+            
+            # Construct reset link
+            reset_link = request.build_absolute_uri(
+                reverse('user:password_reset_confirm', args=[reset_token])
+            )
+            
+            # Send email
+            send_mail(
+                'Password Reset Request',
+                f'Click the following link to reset your password: {reset_link}\n'
+                'This link will expire in 1 hour.',
+                settings.DEFAULT_FROM_EMAIL,
+                [user.email],
+                fail_silently=False,
+            )
+            
+            messages.success(request, 'Password reset link sent to your email.')
+            return redirect('user:log_in')
+        
+        except User.DoesNotExist:
+            messages.error(request, 'No account found with this email.')
+    
+    return render(request, 'password_reset.html')
+
+def password_reset_confirm(request, token):
+    try:
+        user = User.objects.get(
+            password_reset_token=token,
+            password_reset_token_created_at__gte=timezone.now() - timedelta(hours=1)
+        )
+    except User.DoesNotExist:
+        messages.error(request, 'Invalid or expired reset link.')
+        return redirect('user:log_in')
+    
+    if request.method == 'POST':
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
+        
+        if password1 != password2:
+            messages.error(request, 'Passwords do not match.')
+            return render(request, 'password_reset_confirm.html', {'token': token})
+        
+        # Validate password strength (you can add more robust validation)
+        if len(password1) < 8:
+            messages.error(request, 'Password must be at least 8 characters long.')
+            return render(request, 'password_reset_confirm.html', {'token': token})
+        
+        # Set new password
+        user.set_password(password1)
+        user.password_reset_token = None
+        user.password_reset_token_created_at = None
+        user.save()
+        
+        messages.success(request, 'Password reset successful. You can now log in.')
+        return redirect('user:log_in')
+    
+    return render(request, 'password_reset_confirm.html', {'token': token})
 
 
 @login_required(login_url='user:log_in')

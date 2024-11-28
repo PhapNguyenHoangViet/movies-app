@@ -4,56 +4,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify Your Email - {{ site_name }}</title>
+    <title>Verify Your Email Address</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
-            color: #333;
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
+            color: #333;
+        }
+        .container {
             background-color: #f4f4f4;
+            padding: 20px;
+            border-radius: 5px;
         }
-        .email-container {
-            background-color: white;
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .verification-button {
+        .btn {
             display: inline-block;
-            background-color: #007bff;
-            color: white !important;
-            padding: 12px 24px;
+            background-color: #71a8e3;
+            color: white;
+            padding: 10px 20px;
             text-decoration: none;
             border-radius: 5px;
             margin: 20px 0;
         }
         .footer {
             margin-top: 20px;
-            font-size: 12px;
-            color: #777;
+            font-size: 0.8em;
+            color: #666;
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <div class="email-container">
-        <h2>Verify Your Email Address</h2>
+    <div class="container">
+        <h1>Verify Your Email Address</h1>
         
         <p>Hello {{ user.name }},</p>
         
         <p>Thank you for registering on {{ site_name }}. To complete your registration and activate your account, please click the verification button below:</p>
         
-        <a href="{{ verification_link }}" class="verification-button">Verify Email Address</a>
+        <a href="{{ verification_link }}" class="btn">Verify Email Address</a>
         
         <p>If you did not create an account, please ignore this email or contact our support team.</p>
         
-        <p>This link will expire in 24 hours.</p>
-        
-        <div class="footer">
-            <p>© {% now "Y" %} {{ site_name }}. All rights reserved.</p>
-        </div>
+        <p>This link will expire in {{ expiration_hours }} hours.</p>
+    </div>
+    
+    <div class="footer">
+        <p>© {% now "Y" %} {{ site_name }}. All rights reserved.</p>
     </div>
 </body>
 </html>
