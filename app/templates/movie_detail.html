@@ -129,7 +129,7 @@
                                     <p><strong>Duration:</strong> {{movie.runtime}} minutes</p>
                                     <p><strong>Directors:</strong> {{movie.director}}</p>
                                     <p><strong>Cast:</strong> 
-                                        {% for cast in movie.cast %}
+                                        {% for cast in movie.caster %}
                                             {{ cast }}{% if not forloop.last %}, {% endif %}
                                         {% endfor %}</p>
                                     <p><strong>Key words:</strong>

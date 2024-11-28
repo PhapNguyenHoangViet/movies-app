@@ -14,6 +14,12 @@ from user.serializers import (
     AuthTokenSerializer,
 )
 from core.models import User
+from .email_verification import EmailVerification
+# from movie.gcn_model import MovieRecommender
+# from django.conf import settings
+
+# recommender = MovieRecommender(settings.MODEL_DIR)
+# users, items, ratings, feature_matrix = recommender.prepare()
 
 
 def log_in(request):
@@ -25,16 +31,22 @@ def log_in(request):
         password = request.POST['password']
         try:
             user = User.objects.get(email=email)
+            
+            # Check email verification
+            if not user.is_email_verified:
+                messages.warning(request, 'Please verify your email before logging in.')
+                return redirect('user:log_in')
+            
+            user = authenticate(request, email=email, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect(request.GET['next']
+                                if 'next' in request.GET else 'movie:home')
+            else:
+                messages.error(request, 'Email or password is incorrect')
         except User.DoesNotExist:
             messages.error(request, 'Email does not exist')
-            return redirect('user:log_in')
-        user = authenticate(request, email=email, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect(request.GET['next']
-                            if 'next' in request.GET else 'movie:home')
-        else:
-            messages.error(request, 'Email or password is incorrect')
+    
     return render(request, 'log_in.html')
 
 
@@ -53,14 +65,31 @@ def sign_up(request):
             user = form.save(commit=False)
             user.email = user.email.lower()
             user.save()
-            messages.success(request, 'User account was created!')
-            login(request, user)
-            return redirect('user:log_in')
+            
+            # Send verification email
+            try:
+                EmailVerification.send_verification_email(user, request)
+                messages.success(request, 'Registration successful. Please check your email to verify your account.')
+                return redirect('user:log_in')
+            except Exception as e:
+                # If email sending fails, delete the user and show error
+                user.delete()
+                messages.error(request, f'Error sending verification email: {str(e)}')
         else:
-            messages.success(
-                request, 'An error has occurred during registration')
+            messages.error(request, 'An error has occurred during registration')
 
     return render(request, 'sign_up.html', {"form": form})
+
+
+def verify_email(request, token):
+    is_valid, user = EmailVerification.verify_email_token(token)
+    
+    if is_valid:
+        messages.success(request, 'Email verified successfully. You can now log in.')
+    else:
+        messages.error(request, 'Invalid or expired verification link.')
+    
+    return redirect('user:log_in')
 
 
 @login_required(login_url='user:log_in')

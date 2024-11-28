@@ -829,8 +829,9 @@ footer {
 .movie-grid {
     display: grid;
     grid-template-columns: repeat(8, 1fr); /* 8 cột */
-    grid-gap: 20px; /* Khoảng cách giữa các mục */
+    grid-gap: 10px; /* Khoảng cách giữa các mục */
     margin-top: 20px;
+    padding-right: 100px;
 }
 
 
@@ -839,6 +840,7 @@ footer {
     justify-content: left;
     margin-left: 10px;
     margin-top: 30px;
+    flex-wrap: wrap;
 }
 
 .page-item.active .page-link {
