@@ -44,6 +44,18 @@ class User(AbstractBaseUser, PermissionsMixin):
     sex = models.CharField(max_length=10, null=True, blank=True)
     currentCity = models.CharField(max_length=255, null=True, blank=True)
     occupation = models.CharField(max_length=255, null=True, blank=True)
+    # Email verification fields
+    is_email_verified = models.BooleanField(default=False)
+    email_verification_token = models.CharField(
+        max_length=255, 
+        null=True, 
+        blank=True
+    )
+    email_verification_token_created_at = models.DateTimeField(
+        null=True, 
+        blank=True
+    )
+    
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     objects = UserManager()

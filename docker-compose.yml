@@ -19,6 +19,8 @@ services:
       - DB_NAME=themoviedb
       - DB_USER=vietphap
       - DB_PASS=vietphapA963
+      - EMAIL_USER=vietphap090603@gmail.com
+      - EMAIL_PASSWORD=ljhggfrxbgcpqwlk
     depends_on:
       - db
 
