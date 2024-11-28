@@ -45,7 +45,7 @@
             <ul class="genre-grid">
               {% for genre in all_genres %}
                 <li onclick=location.href="{% url 'movie:filter_movies_by_genre' genre.genre_name %}">
-                  <a href="{% url 'movie:filter_movies_by_genre' genre.genre_name %}">
+                  <a href="{% url 'movie:filter_movies_by_genre' genre.genre_name %}" style="color: #465499; text-decoration: none;">
                     {{ genre.genre_name }}
                   </a>
                   ({{ genre.num_movies }} movies)
