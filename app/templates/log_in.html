@@ -48,7 +48,9 @@
             <div class="login-link">
                 Create an account? <a href="{% url 'user:sign_up' %}">Sign up here</a>
             </div>
-            <a href="{% url 'user:password_reset' %}">Forgot Password?</a>
+            <div class="login-link">
+                Forgot your password? <a href="{% url 'user:password_reset_request' %}">Reset it here</a>
+            </div>
         </form>
     </div>
     {% include 'includes/footer.html' %}
