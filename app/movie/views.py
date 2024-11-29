@@ -56,9 +56,13 @@ def rate_movie(request, movie_id):
 
 def home(request):
     user = request.user
-    movie_ids = recommender.recommend_movies(user.user_id-1, 20)
-    ordering = Case(*[When(movie_id=movie_id, then=index) for index, movie_id in enumerate(movie_ids)])
-    top_picks = Movie.objects.filter(movie_id__in=movie_ids).order_by(ordering)
+    if user.is_authenticated:
+        movie_ids = recommender.recommend_movies(user.user_id - 1, 20)
+        ordering = Case(*[When(movie_id=movie_id, then=index) for index, movie_id in enumerate(movie_ids)])
+        top_picks = Movie.objects.filter(movie_id__in=movie_ids).order_by(ordering)
+    else:
+        top_picks = Movie.objects.all().filter(release_date__lte=datetime.now()).order_by('-avg_rating', '-release_date')[:20]
+
     recent_movies = Movie.objects.all().filter(
         release_date__lte=datetime.now()).order_by('-release_date')[:20]
     count_rating_movies = Movie.objects.all().order_by('-count_rating')[:20]
@@ -198,7 +202,15 @@ def movie_search(request):
     query = request.GET.get('q', '')
     movies = Movie.objects.filter(movie_title__icontains=query)
 
+    paginator = Paginator(movies, 24)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    visible_pages = get_visible_page_numbers(page_obj.number, paginator.num_pages)
+
     return render(request, 'movie_search.html', {
+        'page_obj': page_obj, 
+        'visible_pages': visible_pages,
         'movies': movies,
         'query': query,
         'genres': top_5_genres,
@@ -214,12 +226,24 @@ def movie_search_suggestions(request):
     return JsonResponse({'suggestions': []})
 
 
-
 def filter_movies_by_genre(request, genre):
     movies = Movie.objects.filter(genres__genre_name=genre)
     top_5_genres = Genre.objects.all()[:5]
     query = genre
-    return render(request, 'movie_search.html', {'movies': movies, 'genres': top_5_genres, 'query': query})
+    
+    paginator = Paginator(movies, 24)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    visible_pages = get_visible_page_numbers(page_obj.number, paginator.num_pages)
+
+    return render(request, 'movie_search.html', {
+        'page_obj': page_obj, 
+        'visible_pages': visible_pages,
+        'movies': movies,
+        'query': query,
+        'genres': top_5_genres,
+    })
 
 
 def all_genres(request):

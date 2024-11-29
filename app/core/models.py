@@ -98,6 +98,7 @@ class Movie(models.Model):
     
     count_rating = models.PositiveIntegerField(default=0, blank=True, null=True)
     avg_rating = models.FloatField(default=0.0, blank=True, null=True)
+    
     def __str__(self): return self.movie_title
 
     def update_rating(self):
@@ -112,7 +113,6 @@ class Movie(models.Model):
 
 class Rating(models.Model):
     rating_id = models.AutoField(primary_key=True)
-    rating = models.FloatField()
     rating = models.PositiveIntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(5)])
     timestamp = models.DateTimeField(blank=True, null=True)

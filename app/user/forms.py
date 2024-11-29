@@ -15,12 +15,41 @@ class CustomUserCreationForm(forms.ModelForm):
     SEX_CHOICES = [
         ('M', 'Male'),
         ('F', 'Female'),
-        ('O', 'Other'),
     ]
     sex = forms.ChoiceField(
         choices=SEX_CHOICES,
         widget=forms.Select(attrs={'class': 'input'}),
         label='Sex',
+        required=False
+    )
+
+    OCCUPATION_CHOICES = [
+        ('student', 'Student'),
+        ('technician', 'Technician'),
+        ('administrator', 'Administrator'),
+        ('writer', 'Writer'),
+        ('executive', 'Executive'),
+        ('lawyer', 'Lawyer'),
+        ('educator', 'Educator'),
+        ('scientist', 'Scientist'),
+        ('entertainment', 'Entertainment'),
+        ('programmer', 'Programmer'),
+        ('librarian', 'Librarian'),
+        ('homemaker', 'Homemaker'),
+        ('artist', 'Artist'),
+        ('engineer', 'Engineer'),
+        ('marketing', 'Marketing'),
+        ('healthcare', 'Healthcare'),
+        ('retired', 'Retired'),
+        ('salesman', 'Salesman'),
+        ('doctor', 'Doctor'),
+        ('other', 'Other'),
+        ('none', 'None'),
+    ]
+    occupation = forms.ChoiceField(
+        choices=OCCUPATION_CHOICES,
+        widget=forms.Select(attrs={'class': 'input'}),
+        label='Occupation',
         required=False
     )
 
@@ -63,12 +92,41 @@ class ProfileForm(forms.ModelForm):
     SEX_CHOICES = [
         ('M', 'Male'),
         ('F', 'Female'),
-        ('O', 'Other'),
     ]
     sex = forms.ChoiceField(
         choices=SEX_CHOICES,
         widget=forms.Select(attrs={'class': 'input'}),
         label='Sex',
+        required=False
+    )
+
+    OCCUPATION_CHOICES = [
+        ('student', 'Student'),
+        ('technician', 'Technician'),
+        ('administrator', 'Administrator'),
+        ('writer', 'Writer'),
+        ('executive', 'Executive'),
+        ('lawyer', 'Lawyer'),
+        ('educator', 'Educator'),
+        ('scientist', 'Scientist'),
+        ('entertainment', 'Entertainment'),
+        ('programmer', 'Programmer'),
+        ('librarian', 'Librarian'),
+        ('homemaker', 'Homemaker'),
+        ('artist', 'Artist'),
+        ('engineer', 'Engineer'),
+        ('marketing', 'Marketing'),
+        ('healthcare', 'Healthcare'),
+        ('retired', 'Retired'),
+        ('salesman', 'Salesman'),
+        ('doctor', 'Doctor'),
+        ('other', 'Other'),
+        ('none', 'None'),
+    ]
+    occupation = forms.ChoiceField(
+        choices=OCCUPATION_CHOICES,
+        widget=forms.Select(attrs={'class': 'input'}),
+        label='Occupation',
         required=False
     )
 
