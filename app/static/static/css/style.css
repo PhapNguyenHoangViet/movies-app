@@ -774,27 +774,27 @@ footer {
 
 #messages {
     position: fixed;
-    top: 20px; /* Khoảng cách từ trên cùng */
+    top: 20px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 1050;
     text-align: center;
     display: flex;
-    flex-direction: column; /* Hiển thị dọc */
-    gap: 10px; /* Khoảng cách giữa các thông báo */
+    flex-direction: column;
+    gap: 10px; 
 }
 
 .toast {
     display: inline-block;
-    border-radius: 12px; /* Cạnh bo tròn mượt mà hơn */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Bóng mềm hơn */
-    opacity: 0.95; /* Tăng độ trong suốt nhẹ */
-    margin-bottom: 15px; /* Khoảng cách giữa các thông báo */
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    opacity: 0.95; 
+    margin-bottom: 15px;
     transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
 .toast:hover {
-    transform: scale(1.03); /* Tăng hiệu ứng khi hover */
+    transform: scale(1.03);
 }
 
 .toast-success {
@@ -828,8 +828,8 @@ footer {
 
 .movie-grid {
     display: grid;
-    grid-template-columns: repeat(8, 1fr); /* 8 cột */
-    grid-gap: 10px; /* Khoảng cách giữa các mục */
+    grid-template-columns: repeat(8, 1fr);
+    grid-gap: 10px;
     margin-top: 20px;
     padding-right: 100px;
 }
@@ -844,8 +844,8 @@ footer {
 }
 
 .page-item.active .page-link {
-    background-color: #6c757d; /* Màu xám cho trang hiện tại */
-    color: #fff; /* Chữ trắng */
+    background-color: #6c757d;
+    color: #fff;
     border-color: #6c757d;
 }
 
@@ -863,7 +863,13 @@ footer {
 }
 
 .page-item.disabled .page-link {
-    color: #d6d8db; /* Màu xám nhạt */
+    color: #d6d8db;
     pointer-events: none;
     background-color: transparent;
+}
+
+.sort-select {
+    width: auto;
+    min-width: 150px;
+    display: inline-block;
 }

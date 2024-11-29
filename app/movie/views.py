@@ -20,6 +20,7 @@ from django.urls import reverse
 from core.models import Movie, Tag, Rating, Genre, Comment
 from movie import serializers
 from django.db.models import Count
+from django.db.models import F
 from django.utils import timezone
 from datetime import datetime
 from .forms import CommentForm
@@ -160,6 +161,9 @@ def explore(request, explore_name):
     top_5_genres = Genre.objects.all()[:5]
     movies = []
     content = ""
+    sort = request.GET.get('sort', 'default')
+    order = request.GET.get('order', 'desc')
+
     if explore_name == 'top_picks':
         recommender.update_model(ratings, feature_matrix, settings.MODEL_DIR)
         content = 'Top picks'
@@ -179,6 +183,13 @@ def explore(request, explore_name):
         movies = Movie.objects.filter(rating__user=user).distinct()
         content = "Movies you've rated"
 
+    if sort == 'release_date':
+        movies = movies.order_by(F('release_date').desc() if order == 'desc' else F('release_date').asc())
+    elif sort == 'count_rating':
+        movies = movies.order_by(F('count_rating').desc() if order == 'desc' else F('count_rating').asc())
+    elif sort == 'avg_rating':
+        movies = movies.order_by(F('avg_rating').desc() if order == 'desc' else F('avg_rating').asc())
+
     paginator = Paginator(movies, 24)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -191,11 +202,10 @@ def explore(request, explore_name):
         'genres': top_5_genres,
         'content': content,
         'visible_pages': visible_pages,
+        'current_sort': sort,
+        'current_order': order,
     })
 
-
-import json
-from django.db.models import Count, Avg
 
 @login_required(login_url='user:log_in')
 def about_your_ratings(request):
