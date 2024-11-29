@@ -23,8 +23,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Actor&family=Jolly+Lodger&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/owlcarousel/assets/owl.carousel.min.css">
-    <link rel="stylesheet" href="assets/owlcarousel/assets/owl.theme.default.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
     <style>
         .dropdown-custom .dropdown-item:hover {
             color: #465499;
@@ -35,8 +36,184 @@
 <body>
 
     {% include 'includes/header.html' %}
-    
+    {% include 'includes/messages.html' %}
+    <div class="row p-5 bg-white"></div>
+    <section class="mybody bg-white" style="padding: 30px;">
+        <div class="container-fluid">
+            <div class="row text-center mb-4">
+                <h2 style="font-size: 32px; color: #6c757d;">Your Ratings Overview</h2>
+                <p style="font-size: 18px; color: #6c757d;">You have rated <strong>{{ total_rated_movies }}</strong> movies</p>
+            </div>
+
+            <div class="row p-4 bg-white"></div>
+
+            <div class="row mb-4">
+                <div class="col-md-6 d-flex flex-column align-items-center">
+                    <h4 class="mb-3" style="font-size: 20px; color: #6c757d;">Distribution of Your Ratings</h4>
+                    <div class="chart-container" style="width: 90%; height: 400px;">
+                        <canvas id="ratingDistribution"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-6 d-flex flex-column align-items-center">
+                    <h4 class="mb-3" style="font-size: 20px; color: #6c757d;">Your Ratings Over Time</h4>
+                    <div class="chart-container" style="width: 90%; height: 400px;">
+                        <canvas id="ratingsOverTime"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row p-4 bg-white"></div>
+            <!-- Row 2: Genre Ratings -->
+            <div class="row mb-4">
+                <div class="col-md-6 d-flex flex-column align-items-center">
+                    <h4 class="mb-3" style="font-size: 20px; color: #6c757d;">Number of Movies Rated Per Genre</h4>
+                    <div class="chart-container" style="width: 90%; height: 400px;">
+                        <canvas id="genreRatings"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-6 d-flex flex-column align-items-center">
+                    <h4 class="mb-3" style="font-size: 20px; color: #6c757d;">Average Rating Per Genre</h4>
+                    <div class="chart-container" style="width: 90%; height: 400px;">
+                        <canvas id="avgRatingsByGenre"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
     {% include 'includes/footer.html' %}
+    <script>
+        const ratingDistributionData = JSON.parse('{{ rating_distribution|default:"[]"|safe }}');
+        const ratingsOverTimeData = JSON.parse('{{ ratings_over_time|default:"[]"|safe }}');
+        const genreRatingsData = JSON.parse('{{ genre_ratings|default:"[]"|safe }}');
+        const avgRatingsByGenreData = JSON.parse('{{ avg_ratings_by_genre|default:"[]"|safe }}');
+
+        const ratingDistributionChartData = {
+            labels: ratingDistributionData.map(item => item['rating']),
+            datasets: [{
+                label: 'Frequency',
+                data: ratingDistributionData.map(item => item.frequency),
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        const ratingDistributionOptions = {
+            responsive: true,
+            scales: {
+                x: {
+                    title: { display: true, text: 'Rating' }
+                },
+                y: {
+                    title: { display: true, text: 'Frequency' },
+                    beginAtZero: true
+                }
+            }
+        };
+
+        new Chart(document.getElementById('ratingDistribution'), {
+            type: 'bar',
+            data: ratingDistributionChartData,
+            options: ratingDistributionOptions
+        });
+
+        // Ratings Over Time Chart
+        const ratingsOverTimeChartData = {
+            labels: ratingsOverTimeData.map(item => {
+                const date = new Date(item.timestamp__year, item.timestamp__month - 1);  // Tháng trong JS bắt đầu từ 0
+                return date.toLocaleDateString('default', { month: 'short', year: 'numeric' });  // Định dạng: Jan 2024
+            }),
+            datasets: [{
+                label: 'Number of Ratings',
+                data: ratingsOverTimeData.map(item => item.num_ratings),
+                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                fill: true,
+                tension: 0.3
+            }]
+        };
+
+        const ratingsOverTimeOptions = {
+            responsive: true,
+            scales: {
+                x: {
+                    title: { display: true, text: 'Month' }
+                },
+                y: {
+                    title: { display: true, text: 'Number of Ratings' },
+                    beginAtZero: true
+                }
+            }
+        };
+
+        new Chart(document.getElementById('ratingsOverTime'), {
+            type: 'line',
+            data: ratingsOverTimeChartData,
+            options: ratingsOverTimeOptions
+        });
+
+        // Genre Ratings Chart
+        const genreRatingsChartData = {
+            labels: genreRatingsData.map(item => item['movie__genres__genre_name']),
+            datasets: [{
+                label: 'Number of Movies Rated',
+                data: genreRatingsData.map(item => item.num_movies),
+                backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        const genreRatingsOptions = {
+            responsive: true,
+            scales: {
+                x: {
+                    title: { display: true, text: 'Genre' }
+                },
+                y: {
+                    title: { display: true, text: 'Number of Movies' },
+                    beginAtZero: true
+                }
+            }
+        };
+
+        new Chart(document.getElementById('genreRatings'), {
+            type: 'bar',
+            data: genreRatingsChartData,
+            options: genreRatingsOptions
+        });
+
+        // Average Ratings By Genre Chart
+        const avgRatingsByGenreChartData = {
+            labels: avgRatingsByGenreData.map(item => item['movie__genres__genre_name']),
+            datasets: [{
+                label: 'Average Rating',
+                data: avgRatingsByGenreData.map(item => parseFloat(item.avg_rating).toFixed(1)),
+                backgroundColor: 'rgba(153, 102, 255, 0.5)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        const avgRatingsByGenreOptions = {
+            responsive: true,
+            scales: {
+                x: {
+                    title: { display: true, text: 'Genre' }
+                },
+                y: {
+                    title: { display: true, text: 'Average Rating' },
+                    beginAtZero: true
+                }
+            }
+        };
+
+        new Chart(document.getElementById('avgRatingsByGenre'), {
+            type: 'bar',
+            data: avgRatingsByGenreChartData,
+            options: avgRatingsByGenreOptions
+        });
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>

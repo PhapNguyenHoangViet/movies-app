@@ -26,6 +26,8 @@ from .forms import CommentForm
 from .gcn_model import MovieRecommender
 from django.db.models import Case, When
 from django.conf import settings
+from django.db.models import Count, Avg
+import json
 
 recommender = MovieRecommender(settings.MODEL_DIR)
 users, items, ratings, feature_matrix = recommender.prepare()
@@ -192,10 +194,56 @@ def explore(request, explore_name):
     })
 
 
+import json
+from django.db.models import Count, Avg
+
 @login_required(login_url='user:log_in')
 def about_your_ratings(request):
-    return render(request, 'about_your_ratings.html', {
-    })
+    user = request.user
+    user_ratings = Rating.objects.filter(user=request.user)
+    rated_movies = user.rating_set.all()  # Giả sử bạn có quan hệ "rating_set" cho User
+    total_rated_movies = rated_movies.count()
+
+    top_5_genres = Genre.objects.all()[:5]
+    # Prepare data for charts
+    rating_distribution = list(
+        user_ratings.values('rating').annotate(frequency=Count('rating')).order_by('rating')
+    )
+    ratings_over_time = list(
+        user_ratings
+        .order_by('timestamp')
+        .values('timestamp__month', 'timestamp__year')
+        .annotate(num_ratings=Count('rating'))
+        .order_by('timestamp__year', 'timestamp__month')
+    )
+    release_years = list(
+        user_ratings.values('movie__release_date__year')
+        .annotate(num_movies=Count('movie__release_date__year'))
+        .order_by('movie__release_date__year')
+    )
+    genre_ratings = list(
+        user_ratings.values('movie__genres__genre_name')
+        .annotate(num_movies=Count('movie__genres__genre_name'))
+        .order_by('-num_movies')
+    )
+    avg_ratings_by_genre = list(
+        user_ratings.values('movie__genres__genre_name')
+        .annotate(avg_rating=Avg('rating'))
+        .order_by('movie__genres__genre_name')
+    )
+    context = {
+        'genres': top_5_genres,
+        'total_rated_movies': total_rated_movies,
+        'rating_distribution': json.dumps(rating_distribution),
+        'ratings_over_time': json.dumps(ratings_over_time),
+        'release_years': json.dumps(release_years),
+        'genre_ratings': json.dumps(genre_ratings),
+        'avg_ratings_by_genre': json.dumps(avg_ratings_by_genre),
+    }
+
+    return render(request, 'about_your_ratings.html', context)
+
+
 
 def movie_search(request):
     top_5_genres = Genre.objects.all()[:5]
