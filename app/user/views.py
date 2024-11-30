@@ -23,7 +23,6 @@ from user.serializers import (
 from core.models import User
 from .email_verification import EmailVerification
 # from movie.gcn_model import MovieRecommender
-# from django.conf import settings
 
 # recommender = MovieRecommender(settings.MODEL_DIR)
 # users, items, ratings, feature_matrix = recommender.prepare()

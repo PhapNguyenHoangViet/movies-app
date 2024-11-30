@@ -33,7 +33,6 @@ import json
 recommender = MovieRecommender(settings.MODEL_DIR)
 users, items, ratings, feature_matrix = recommender.prepare()
 
-
 @login_required(login_url='user:log_in')
 def rate_movie(request, movie_id):
     movie = get_object_or_404(Movie, movie_id=movie_id)

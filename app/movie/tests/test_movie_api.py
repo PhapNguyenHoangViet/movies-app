@@ -34,9 +34,7 @@ def create_user(email='user@gmail.com', password='123456'):
 def create_movie(**params):
     defaults = {
         'movie_title': 'Sample movie title',
-        'release_date': '2024-05-05',
-        'video_release_date': '2024-05-05',
-        'IMDb_URL': 'http://example.com/movie.pdf',
+        'release_date': '2024-05-05'
     }
     defaults.update(params)
 
@@ -77,23 +75,20 @@ class MovieAPITests(TestCase):
     def test_create_movie(self):
         payload = {
             'movie_title': 'Sample movie title',
-            'release_date': '2024-05-05',
-            'video_release_date': '2024-05-05',
-            'IMDb_URL': 'http://example.com/movie.pdf',
+            'release_date': '2024-05-05'
         }
         res = self.client.post(MOVIES_URL, payload, format='json')
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         movie = Movie.objects.get(movie_id=res.data['movie_id'])
         for k, v in payload.items():
-            if k in ['release_date', 'video_release_date']:
+            if k in ['release_date']:
                 v = datetime.strptime(v, '%Y-%m-%d').date()
             self.assertEqual(getattr(movie, k), v)
 
     def test_partial_update(self):
         original_link = 'https://example.com/movie.pdf'
         movie = create_movie(
-            movie_title='Sample movie title',
-            IMDb_URL=original_link,
+            movie_title='Sample movie title'
         )
 
         payload = {'movie_title': 'New movie title'}
@@ -103,7 +98,6 @@ class MovieAPITests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         movie.refresh_from_db()
         self.assertEqual(movie.movie_title, payload['movie_title'])
-        self.assertEqual(movie.IMDb_URL, original_link)
 
     def test_full_update(self):
         movie = create_movie()
@@ -111,8 +105,6 @@ class MovieAPITests(TestCase):
         payload = {
             'movie_title': 'New movie title',
             'release_date': '2024-05-05',
-            'video_release_date': '2024-05-05',
-            'IMDb_URL': 'http://example.com/Newmovie.pdf',
         }
 
         url = detail_url(movie.movie_id)
@@ -121,7 +113,7 @@ class MovieAPITests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         movie.refresh_from_db()
         for k, v in payload.items():
-            if k in ['release_date', 'video_release_date']:
+            if k in ['release_date']:
                 v = datetime.strptime(v, '%Y-%m-%d').date()
             self.assertEqual(getattr(movie, k), v)
 
@@ -139,8 +131,6 @@ class MovieAPITests(TestCase):
         payload = {
             'movie_title': 'New movie title',
             'release_date': '2024-05-05',
-            'video_release_date': '2024-05-05',
-            'IMDb_URL': 'http://example.com/Newmovie.pdf',
             'tags': [{'tag_name': 'hay'}, {'tag_name': 'chua hay'}],
         }
         res = self.client.post(MOVIES_URL, payload, format='json')
@@ -162,8 +152,6 @@ class MovieAPITests(TestCase):
         payload = {
             'movie_title': 'New movie title',
             'release_date': '2024-05-05',
-            'video_release_date': '2024-05-05',
-            'IMDb_URL': 'http://example.com/Newmovie.pdf',
             'tags': [{'tag_name': 'hay'}, {'tag_name': 'chua hay'}],
         }
         res = self.client.post(MOVIES_URL, payload, format='json')

@@ -47,9 +47,7 @@ class ModelTests(TestCase):
     def test_create_movie(self):
         movie = models.Movie.objects.create(
             movie_title='Sample Movie Title',
-            video_release_date=None,
             release_date=None,
-            IMDb_URL='https://sample-movie.com',
         )
         self.assertEqual(str(movie), movie.movie_title)
 
@@ -66,9 +64,8 @@ class ModelTests(TestCase):
         )
         movie = models.Movie.objects.create(
             movie_title='Sample Movie Title',
-            video_release_date=None,
+             
             release_date=None,
-            IMDb_URL='https://sample-movie.com',
         )
         rating = models.Rating.objects.create(
             user=user,
