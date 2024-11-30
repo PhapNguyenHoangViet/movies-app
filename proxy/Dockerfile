@@ -1,4 +1,4 @@
-FROM nginxinc/nginx-unprivileged:latest
+FROM nginxinc/nginx-unprivileged:alpine3.20-perl
 
 LABEL maintainer="moives.com"
 

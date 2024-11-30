@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   app:
     build:
@@ -29,5 +31,4 @@ services:
       - static-data:/vol/static
 
 volumes:
-  postgres-data:
   static-data:
