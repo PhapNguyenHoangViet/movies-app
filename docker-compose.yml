@@ -6,7 +6,7 @@ services:
       args:
         - DEV=true      
     ports:
-      - "80:8000"
+      - "8000:8000"
     volumes:
       - ./app:/app
       - dev-static-data:/vol/web
@@ -15,14 +15,39 @@ services:
              python manage.py migrate &&
              python manage.py runserver 0.0.0.0:8000"
     environment:
-      - DB_HOST=themoviedb.cpyo2w4s8544.ap-southeast-1.rds.amazonaws.com
+      - DB_HOST=test-app.cjey8eegkzya.ap-southeast-1.rds.amazonaws.com
       - DB_NAME=themoviedb
       - DB_USER=vietphap
       - DB_PASS=vietphapA963
       - EMAIL_USER=vietphap090603@gmail.com
       - EMAIL_PASSWORD=ljhggfrxbgcpqwlk
       - DEBUG=1
+    depends_on:
+      - db
+
+
+  db:
+    image: postgres:13-alpine
+    ports:
+      - "5432:5432"
+    volumes:
+      - dev-db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=moviedb
+      - POSTGRES_USER=devuser
+      - POSTGRES_PASSWORD=123456
   
+  pgadmin:
+    image: dpage/pgadmin4
+    depends_on:
+      - db
+    ports:
+      - "85:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=123456
+    restart: unless-stopped
 
 volumes:
   dev-db-data:
+  dev-static-data:
