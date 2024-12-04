@@ -23,7 +23,6 @@ from user.serializers import (
 from core.models import User
 from .email_verification import EmailVerification
 # from movie.gcn_model import MovieRecommender
-# from django.conf import settings
 
 # recommender = MovieRecommender(settings.MODEL_DIR)
 # users, items, ratings, feature_matrix = recommender.prepare()
@@ -72,7 +71,6 @@ def sign_up(request):
             user.email = user.email.lower()
             user.save()
             
-            # Send verification email
             try:
                 EmailVerification.send_verification_email(user, request)
                 messages.success(request, 'Registration successful. Please check your email to verify your account.')
@@ -110,20 +108,16 @@ def password_reset_request(request):
         try:
             user = User.objects.get(email=email)
             
-            # Generate a secure reset token
             reset_token = secrets.token_urlsafe(32)
             
-            # Store the token and its expiration time
             user.password_reset_token = reset_token
             user.password_reset_token_created_at = timezone.now()
             user.save()
             
-            # Construct reset link
             reset_link = request.build_absolute_uri(
                 reverse('user:password_reset_confirm', args=[reset_token])
             )
             
-            # Send email
             send_mail(
                 'Password Reset Request',
                 f'Click the following link to reset your password: {reset_link}\n'

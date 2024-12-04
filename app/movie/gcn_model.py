@@ -9,8 +9,11 @@ from django.db import connection
 import pandas as pd
 import numpy as np
 import os
+from core.models import User
+from django.db.models import Max
+from core.models import User
 
-NUM_USER = 943
+num_user_id = User.objects.aggregate(Max('user_id'))['user_id__max']
 
 class GCN(torch.nn.Module):
     def __init__(self, num_features, hidden_channels, num_users, num_items):
@@ -22,7 +25,6 @@ class GCN(torch.nn.Module):
         
         self.user_embeddings = torch.nn.Embedding(num_users, hidden_channels)
         self.item_embeddings = torch.nn.Embedding(num_items, hidden_channels)
-        
     
     def forward(self, x, edge_index):
         x = F.relu((self.conv1(x, edge_index)))
@@ -130,7 +132,7 @@ class MovieRecommender:
     
     def _create_interaction_graph(self, ratings, features):
         user_ids = ratings['user_id'].values
-        item_ids = ratings['movie_id'].values + NUM_USER
+        item_ids = ratings['movie_id'].values + num_user_id
         ratings_values = ratings['rating'].values
                 
         edge_index = torch.tensor([

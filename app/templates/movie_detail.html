@@ -86,7 +86,7 @@
                     </div>
                     <div class="row pb-4">
                         <div class="col-4">
-                            <label>4.12 stars</label>
+                            <label>{{ movie.avg_rating|floatformat:1|default:"0.0" }} stars</label>
                         </div>
                         <div class="col-8">
                             <!-- Hiển thị tên các thể loại của movie -->

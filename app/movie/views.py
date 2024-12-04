@@ -20,16 +20,18 @@ from django.urls import reverse
 from core.models import Movie, Tag, Rating, Genre, Comment
 from movie import serializers
 from django.db.models import Count
+from django.db.models import F
 from django.utils import timezone
 from datetime import datetime
 from .forms import CommentForm
 from .gcn_model import MovieRecommender
 from django.db.models import Case, When
 from django.conf import settings
+from django.db.models import Count, Avg
+import json
 
 recommender = MovieRecommender(settings.MODEL_DIR)
 users, items, ratings, feature_matrix = recommender.prepare()
-
 
 @login_required(login_url='user:log_in')
 def rate_movie(request, movie_id):
@@ -56,9 +58,13 @@ def rate_movie(request, movie_id):
 
 def home(request):
     user = request.user
-    movie_ids = recommender.recommend_movies(user.user_id-1, 20)
-    ordering = Case(*[When(movie_id=movie_id, then=index) for index, movie_id in enumerate(movie_ids)])
-    top_picks = Movie.objects.filter(movie_id__in=movie_ids).order_by(ordering)
+    if user.is_authenticated:
+        movie_ids = recommender.recommend_movies(user.user_id - 1, 20)
+        ordering = Case(*[When(movie_id=movie_id, then=index) for index, movie_id in enumerate(movie_ids)])
+        top_picks = Movie.objects.filter(movie_id__in=movie_ids).order_by(ordering)
+    else:
+        top_picks = Movie.objects.all().filter(release_date__lte=datetime.now()).order_by('-avg_rating', '-release_date')[:20]
+
     recent_movies = Movie.objects.all().filter(
         release_date__lte=datetime.now()).order_by('-release_date')[:20]
     count_rating_movies = Movie.objects.all().order_by('-count_rating')[:20]
@@ -154,6 +160,9 @@ def explore(request, explore_name):
     top_5_genres = Genre.objects.all()[:5]
     movies = []
     content = ""
+    sort = request.GET.get('sort', 'default')
+    order = request.GET.get('order', 'desc')
+
     if explore_name == 'top_picks':
         recommender.update_model(ratings, feature_matrix, settings.MODEL_DIR)
         content = 'Top picks'
@@ -173,6 +182,13 @@ def explore(request, explore_name):
         movies = Movie.objects.filter(rating__user=user).distinct()
         content = "Movies you've rated"
 
+    if sort == 'release_date':
+        movies = movies.order_by(F('release_date').desc() if order == 'desc' else F('release_date').asc())
+    elif sort == 'count_rating':
+        movies = movies.order_by(F('count_rating').desc() if order == 'desc' else F('count_rating').asc())
+    elif sort == 'avg_rating':
+        movies = movies.order_by(F('avg_rating').desc() if order == 'desc' else F('avg_rating').asc())
+
     paginator = Paginator(movies, 24)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -185,20 +201,73 @@ def explore(request, explore_name):
         'genres': top_5_genres,
         'content': content,
         'visible_pages': visible_pages,
+        'current_sort': sort,
+        'current_order': order,
     })
 
 
 @login_required(login_url='user:log_in')
 def about_your_ratings(request):
-    return render(request, 'about_your_ratings.html', {
-    })
+    user = request.user
+    user_ratings = Rating.objects.filter(user=request.user)
+    rated_movies = user.rating_set.all()  # Giả sử bạn có quan hệ "rating_set" cho User
+    total_rated_movies = rated_movies.count()
+
+    top_5_genres = Genre.objects.all()[:5]
+    # Prepare data for charts
+    rating_distribution = list(
+        user_ratings.values('rating').annotate(frequency=Count('rating')).order_by('rating')
+    )
+    ratings_over_time = list(
+        user_ratings
+        .order_by('timestamp')
+        .values('timestamp__month', 'timestamp__year')
+        .annotate(num_ratings=Count('rating'))
+        .order_by('timestamp__year', 'timestamp__month')
+    )
+    release_years = list(
+        user_ratings.values('movie__release_date__year')
+        .annotate(num_movies=Count('movie__release_date__year'))
+        .order_by('movie__release_date__year')
+    )
+    genre_ratings = list(
+        user_ratings.values('movie__genres__genre_name')
+        .annotate(num_movies=Count('movie__genres__genre_name'))
+        .order_by('-num_movies')
+    )
+    avg_ratings_by_genre = list(
+        user_ratings.values('movie__genres__genre_name')
+        .annotate(avg_rating=Avg('rating'))
+        .order_by('movie__genres__genre_name')
+    )
+    context = {
+        'genres': top_5_genres,
+        'total_rated_movies': total_rated_movies,
+        'rating_distribution': json.dumps(rating_distribution),
+        'ratings_over_time': json.dumps(ratings_over_time),
+        'release_years': json.dumps(release_years),
+        'genre_ratings': json.dumps(genre_ratings),
+        'avg_ratings_by_genre': json.dumps(avg_ratings_by_genre),
+    }
+
+    return render(request, 'about_your_ratings.html', context)
+
+
 
 def movie_search(request):
     top_5_genres = Genre.objects.all()[:5]
     query = request.GET.get('q', '')
     movies = Movie.objects.filter(movie_title__icontains=query)
 
+    paginator = Paginator(movies, 24)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    visible_pages = get_visible_page_numbers(page_obj.number, paginator.num_pages)
+
     return render(request, 'movie_search.html', {
+        'page_obj': page_obj, 
+        'visible_pages': visible_pages,
         'movies': movies,
         'query': query,
         'genres': top_5_genres,
@@ -214,12 +283,24 @@ def movie_search_suggestions(request):
     return JsonResponse({'suggestions': []})
 
 
-
 def filter_movies_by_genre(request, genre):
     movies = Movie.objects.filter(genres__genre_name=genre)
     top_5_genres = Genre.objects.all()[:5]
     query = genre
-    return render(request, 'movie_search.html', {'movies': movies, 'genres': top_5_genres, 'query': query})
+    
+    paginator = Paginator(movies, 24)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    visible_pages = get_visible_page_numbers(page_obj.number, paginator.num_pages)
+
+    return render(request, 'movie_search.html', {
+        'page_obj': page_obj, 
+        'visible_pages': visible_pages,
+        'movies': movies,
+        'query': query,
+        'genres': top_5_genres,
+    })
 
 
 def all_genres(request):

@@ -20,12 +20,18 @@ STATIC_DIR = os.path.join(BASE_DIR, 'static')
 MODEL_DIR = os.path.join(BASE_DIR, 'movie', 'gcn_model.pth')
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-uyeg9hks#-%)$a=b1@gcw_l37g$y$8$1e*!@qy0iv^(0cl+emh'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'changeme')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(int(os.environ.get('DEBUG', 0)))
 
 ALLOWED_HOSTS = []
+ALLOWED_HOSTS.extend(
+    filter(
+        None,
+        os.environ.get('ALLOWED_HOSTS', '').split(','),
+    )
+)
 
 INSTALLED_APPS = [
     'django.contrib.admin',

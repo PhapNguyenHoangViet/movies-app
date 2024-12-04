@@ -36,9 +36,7 @@ class PrivateratingsApiTests(TestCase):
         self.user = create_user()
         self.movie = Movie.objects.create(
             movie_title='Sample Movie Title',
-            video_release_date=None,
             release_date=None,
-            IMDb_URL='https://sample-movie.com',
         )
         self.client = APIClient()
         self.client.force_authenticate(self.user)
