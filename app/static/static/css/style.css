@@ -871,8 +871,6 @@ footer {
     pointer-events: none;
     background-color: transparent;
 }
-
-<<<<<<< HEAD
 .container-forgetpassword {
     width: 100%;
     max-width: 400px;
@@ -1018,10 +1016,8 @@ footer {
 .chat-btn img:hover{
     transform: rotate(30deg);
 }
-=======
 .sort-select {
     width: auto;
     min-width: 150px;
     display: inline-block;
 }
->>>>>>> origin/main
