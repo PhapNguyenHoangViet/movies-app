@@ -190,13 +190,14 @@ footer {
     margin: 0 4px 0 0;
     display: inline-block;
     vertical-align: baseline;
+    display: flex;
 }
 .movie-card-md1 {
     float: left;
     margin: 0 0 3px;
     position: relative;
-    width: 154px;
-    height: 280px;
+    width: 100%;
+    height: 100%;
     overflow-x: visible;
     font-size: 14px;
     border-radius: 5px;
@@ -691,6 +692,7 @@ footer {
 
 
 .genre-grid li {
+    display: flex;
     background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -698,6 +700,8 @@ footer {
     padding: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s, background-color 0.3s;
+    align-items: center;
+    justify-content: center;
 }
 
 
@@ -867,7 +871,151 @@ footer {
     pointer-events: none;
     background-color: transparent;
 }
+.container-forgetpassword {
+    width: 100%;
+    max-width: 400px;
+    margin: 40px auto;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: white;
+}
+.container-chatbox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.chat-box {
+    display: none;
+    width: 400px;
+    height: 80%;
+    background-color:#fff;
+    overflow: hidden;
+    border-radius: 10px;
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    z-index: 1099;
+}
+.recommender {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    height: 10%;
+    background-color:#465499;
+}
+.recommender-info {
+    color: #fff;
+    padding: 10%;
+    margin-top: 8px;
+}
+.recommender-info h2 {
+    color: white;
+    font-weight: bold;
+    font-size: 0.8em;
+    font-family: Jolly Lodger;
+    font-size: 30px;
+}
+.chats {
+    width: 100%;
+    height: 75%;
+    padding: 0 15px;
+    color: #fff;
+    position: relative;
+    font-size: 0.9em;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    overflow-y: auto;
+}    
 
+.recommender-chat{
+    width: auto;
+    max-width: 80%;
+    word-wrap: break-word;
+    background-color: #4f5d73c7;
+    padding: 7px 10px;
+    border-radius: 10px 10px 10px 0;
+    margin: 5px 0;
+    display: inline-block;
+    align-items: flex-start; 
+}
+.my-chat {
+    width: auto;
+    max-width: 80%;
+    word-wrap: break-word;
+    background-color: #465499;
+    padding: 7px 10px;
+    border-radius: 10px 10px 0 10px;
+    margin: 5px 5px 5px auto;
+    display: inline-block;
+}    
+.chat-input {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 14%;
+    background-color:#fff;
+    padding: 15px;
+    overflow: hidden;
+    position: absolute;
+    bottom: 0;
+}
+.chat-input input {
+    width: calc(100% - 60px);
+    height: 100%;
+    background-color: #4f5d7321;
+    border-radius: 20px;
+    color: #000;
+    font-size: 1.2em;
+    padding: 0 15px;
+    border: 0;
+}    
+.send-btn {
+    width: 40px;
+    height: 30px;
+    background-color: transparent;
+    overflow: hidden;
+    position: relative;
+    margin-left: 5px;
+    cursor: pointer;
+    transition: 0.4s ease-in-out;
+    border: 0;
+}
+.send-btn:active {
+    transform: scale(0.85);
+}
+.send-btn img {
+    width: 100%;
+    height: 100%;
+}    
+.chat-btn {
+    width: 70px;
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background-color:#fff;
+    cursor: pointer;
+    overflow: hidden;
+    position: fixed;
+    z-index: 1100;
+    bottom: 20px;
+    right: 20px;
+}
+
+.chat-btn img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    position: absolute;
+    padding: 5px;
+    transition: 0.4s ease-in-out;
+}
+.chat-btn img:hover{
+    transform: rotate(30deg);
+}
 .sort-select {
     width: auto;
     min-width: 150px;

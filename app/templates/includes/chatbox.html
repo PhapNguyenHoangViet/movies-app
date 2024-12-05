@@ -1,0 +1,39 @@
+{% load static %}
+<div class="container-chatbox">
+  <div class="chat-box">
+    <div class="recommender">
+      <div class="recommender-info">
+        <h2>TheMovie</h2>
+      </div>
+    </div>
+    <div class="chats">
+      <div class="recommender-chat">Hi!</div>
+      <div class="my-chat">Hi! My name is Thuy</div>
+      <div class="recommender-chat">
+        aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+      </div>
+      <div class="my-chat">Hi! My name is Thuy</div>
+      <div class="recommender-chat">Hi! My name is Thuy</div>
+      <div class="my-chat">Hi! My name is Thuy</div>
+      <div class="recommender-chat">
+        Responsive Chat built with Bootstrap 5. Many variants of chatbox UI, mobile app, messages box, chat window, chatbot UI, group chat, chat widget, web chat & more
+      </div>
+      <div class="my-chat">Hi! My name is Thuy. How are you?</div>
+    </div>
+    <div class="chat-input">
+      <input type="text" placeholder="Enter message"></input>
+      <button class="send-btn"><img src="{% static '/media/images/send_message.png' %}" alt=""></button>
+    </div>
+  </div>
+  <div class="chat-btn">
+    <img src="{% static '/media/images/chat_btn.png' %}" alt="">
+  </div>
+</div>
+<script src="{% static '/static/assets/vendors/jquery.min.js' %}"></script>
+<script>
+  $(document).ready(() => {
+    $(".chat-btn").click(() => {
+      $(".chat-box").slideToggle("")
+    })
+  })
+</script>
