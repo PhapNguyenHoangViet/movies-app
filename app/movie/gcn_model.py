@@ -80,14 +80,6 @@ class MovieRecommender:
         except Exception as e:
             print(f"Error saving model: {e}")
     
-    def recommend_movies(self, user_id, k=5):
-        try:
-            recommended_item_ids = self.model.recommend(user_id, k)
-            return recommended_item_ids
-        except Exception as e:
-            print(f"Recommendation error: {e}")
-            return []
-    
     def update_model(self, 
                      ratings_data, 
                      feature_matrix, 
@@ -129,7 +121,97 @@ class MovieRecommender:
         except Exception as e:
             print(f"Model update error: {e}")
             return None
+        
+    def update_with_new_ratings(self, new_ratings, feature_matrix, model_path, epochs=5):
+        if new_ratings.empty:
+            print("No new ratings to update.")
+            return
+
+        train_data = self._create_interaction_graph(new_ratings, feature_matrix)
+        train_loader = DataLoader([train_data], batch_size=1)
+        optimizer = optim.AdamW(self.model.parameters(), lr=0.0005, weight_decay=1e-5)
+        criterion = torch.nn.MSELoss()
+
+        self.model.train()
+        for epoch in range(epochs):
+            total_loss = 0
+            for data in train_loader:
+                optimizer.zero_grad()
+                out = self.model(data.x, data.edge_index)
+                edge_scores = (out[data.edge_index[0]] * out[data.edge_index[1]]).sum(dim=1)
+                loss = torch.sqrt(criterion(edge_scores, data.edge_attr.to(torch.float)))
+                loss.backward()
+                optimizer.step()
+                total_loss += loss.item()
+
+            train_loss = total_loss / len(train_loader)
+            print(f"Epoch {epoch + 1}, Train Loss: {train_loss:.4f}")
+
+        self.model.eval()
+        self.save_model(model_path)
+
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                UPDATE core_rating 
+                SET processed = TRUE
+                WHERE rating_id IN (%s)
+            """ % ', '.join(map(str, new_ratings['rating_id'].tolist())))
+        print("Updated ratings processed status.")
     
+    def auto_update_model(self, model_path):
+        try:
+            new_ratings = self.get_new_ratings(batch_size=5)
+            
+            if len(new_ratings) >= 5:
+                print(f"Found {len(new_ratings)} new ratings. Updating model...")
+                _, _, _, feature_matrix = self.prepare()
+
+                self.update_with_new_ratings(
+                    new_ratings=new_ratings,
+                    feature_matrix=feature_matrix,
+                    model_path=model_path,
+                    epochs=50
+                )
+                
+                print("Model updated successfully!")
+                return True
+            else:
+                print(f"Only {len(new_ratings)} new ratings found. Waiting for more ratings...")
+                return False
+                
+        except Exception as e:
+            print(f"Error in auto update: {e}")
+            return False
+        
+    def get_recommendations(self, user_id, top_k=10):
+        try:
+            users, items, ratings, feature_matrix = self.prepare()
+            train_data = self._create_interaction_graph(ratings, feature_matrix)
+            self.model.eval()
+            
+            with torch.no_grad():
+                rated_movies = set(ratings[ratings['user_id'] == user_id]['movie_id'].values)
+                out = self.model(train_data.x, train_data.edge_index)
+                user_embedding = out[user_id]
+                num_users = len(users)
+                num_items = len(items)
+                item_embeddings = out[num_users:num_users + num_items]
+                
+                scores = torch.matmul(user_embedding.unsqueeze(0), item_embeddings.t()).squeeze()
+                scores = scores.cpu().numpy()
+                
+                movie_scores = [(i + 1, float(score)) for i, score in enumerate(scores)]  # Cộng 1 vào movie_id
+                unrated_movies = [(i, score) for i, score in movie_scores if (i-1) not in rated_movies]
+                
+                recommendations = sorted(unrated_movies, key=lambda x: x[1], reverse=True)[:top_k]
+                
+                return recommendations
+                
+        except Exception as e:
+            print(f"Error getting recommendations: {e}")
+            return []
+
+
     def _create_interaction_graph(self, ratings, features):
         user_ids = ratings['user_id'].values
         item_ids = ratings['movie_id'].values + num_user_id
@@ -158,6 +240,16 @@ class MovieRecommender:
             cursor.execute(query)
             columns = [col[0] for col in cursor.description]
             return pd.DataFrame(cursor.fetchall(), columns=columns)
+        
+    def get_new_ratings(self, batch_size=5):
+        query = f"""
+            SELECT * 
+            FROM core_rating 
+            WHERE processed = FALSE
+            ORDER BY timestamp ASC
+            LIMIT {batch_size}
+        """
+        return self.fetch_data_as_dataframe(query)
 
     def prepare(self):
         query_movies = "SELECT movie_id, movie_title, release_date, overview, runtime, keywords, director,caster FROM core_movie ORDER BY movie_id ASC"

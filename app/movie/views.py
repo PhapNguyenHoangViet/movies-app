@@ -29,9 +29,9 @@ from django.db.models import Case, When
 from django.conf import settings
 from django.db.models import Count, Avg
 import json
+from django.contrib import messages
 
 recommender = MovieRecommender(settings.MODEL_DIR)
-users, items, ratings, feature_matrix = recommender.prepare()
 
 @login_required(login_url='user:log_in')
 def rate_movie(request, movie_id):
@@ -52,6 +52,10 @@ def rate_movie(request, movie_id):
             )
             rating.save()
         movie.update_rating()
+        if recommender.auto_update_model(model_path=settings.MODEL_DIR):
+            messages.success(request, 'Model updated successfully!')
+        else:
+            messages.error(request, 'Waiting for more ratings...')
         return redirect('movie:movie_detail', movie_id=movie_id)
     return redirect('user:log_in')
 
@@ -59,7 +63,9 @@ def rate_movie(request, movie_id):
 def home(request):
     user = request.user
     if user.is_authenticated:
-        movie_ids = recommender.recommend_movies(user.user_id - 1, 20)
+        recommendations = recommender.get_recommendations(user.user_id - 1, 20)
+        movie_ids = [movie_id for movie_id, _ in recommendations]
+        
         ordering = Case(*[When(movie_id=movie_id, then=index) for index, movie_id in enumerate(movie_ids)])
         top_picks = Movie.objects.filter(movie_id__in=movie_ids).order_by(ordering)
     else:
@@ -84,7 +90,9 @@ def home(request):
 @login_required(login_url='user:log_in')
 def recommendations(request):
     user = request.user
-    movie_ids = recommender.recommend_movies(user.user_id-1, 20)
+    recommendations = recommender.get_recommendations(user.user_id - 1, 20)
+    movie_ids = [movie_id for movie_id, _ in recommendations]
+        
     ordering = Case(*[When(movie_id=movie_id, then=index) for index, movie_id in enumerate(movie_ids)])
     top_picks = Movie.objects.filter(movie_id__in=movie_ids).order_by(ordering)[:20]
     recommendations_data = [
@@ -110,7 +118,7 @@ def movie_detail(request, movie_id):
             user=request.user, movie=movie).first()
         if request.POST:
             cmtForm = CommentForm(request.POST)
-            if cmtForm.is_valid:
+            if cmtForm.is_valid():
                 parent_obj = None
                 if request.POST.get('parent'):
                     parent = request.POST.get('parent')
@@ -164,9 +172,10 @@ def explore(request, explore_name):
     order = request.GET.get('order', 'desc')
 
     if explore_name == 'top_picks':
-        recommender.update_model(ratings, feature_matrix, settings.MODEL_DIR)
         content = 'Top picks'
-        movie_ids = recommender.recommend_movies(user.user_id-1, Movie.objects.count())
+        recommendations = recommender.get_recommendations(user.user_id - 1, Movie.objects.count())
+        movie_ids = [movie_id for movie_id, _ in recommendations]
+        
         ordering = Case(*[When(movie_id=movie_id, then=index) for index, movie_id in enumerate(movie_ids)])
         movies = Movie.objects.filter(movie_id__in=movie_ids).order_by(ordering)
     elif explore_name == 'recent_movies':

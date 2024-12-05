@@ -24,7 +24,7 @@ class TagSerializer(serializers.ModelSerializer):
 class RatingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rating
-        fields = ['rating_id', 'rating', 'timestamp']
+        fields = ['rating_id', 'rating', 'timestamp', 'processed']
         read_only_fields = ['rating_id']
 
 
