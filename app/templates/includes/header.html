@@ -31,16 +31,17 @@
       
         <div class="col-1 pe-5">
         </div>
-        <div class="col-2 pt-1 g-0">
-          <button type="button" class="btn" style="display: flex; margin-left: auto;"><i class="fa-solid fa-star"
-              style="color: #ffb703; border: none; outline: none; outline-width: 0;"></i></button>
+        <div class="col-2 pt-1 g-0 d-flex justify-content-end">
+          <a href="{% url 'movie:about_your_ratings' %}" role="button" class="btn" style="margin-bottom: 20px;">
+            <i class="fa-solid fa-star" style="color: #ffb703; border: none; outline: none; outline-width: 0;"></i>
+          </a>
         </div>
         <div class="col-1 pt-0 ps-3 pe-0 g-0">
           {% if user.is_authenticated %}
           <div class="dropdown" style="max-width: 80%;">
             <button class="btn btn-secondary bg-white" type="button" data-bs-toggle="dropdown" aria-expanded="false"
               style="border: none; background-color: #f3f3f3;">
-              <i class="fa-solid fa-user-large" style="color: darkgrey; padding-top: 5px;">
+              <i class="fa-solid fa-user-large" style="color: darkgrey; padding-top: 7px;">
                 <i class="fa-solid fa-caret-down"></i>
               </i>
             </button>

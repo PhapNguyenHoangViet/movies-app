@@ -116,6 +116,7 @@ class Rating(models.Model):
     rating = models.PositiveIntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(5)])
     timestamp = models.DateTimeField(blank=True, null=True)
+    processed = models.BooleanField(default=False)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
     )
