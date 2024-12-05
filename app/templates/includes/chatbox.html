@@ -6,20 +6,9 @@
         <h2>TheMovie</h2>
       </div>
     </div>
-    <div class="chats">
-      <div class="recommender-chat">Hi!</div>
-      <div class="my-chat">Hi! My name is Thuy</div>
-      <div class="recommender-chat">
-        aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-      </div>
-      <div class="my-chat">Hi! My name is Thuy</div>
-      <div class="recommender-chat">Hi! My name is Thuy</div>
-      <div class="my-chat">Hi! My name is Thuy</div>
-      <div class="recommender-chat">
-        Responsive Chat built with Bootstrap 5. Many variants of chatbox UI, mobile app, messages box, chat window, chatbot UI, group chat, chat widget, web chat & more
-      </div>
-      <div class="my-chat">Hi! My name is Thuy. How are you?</div>
-    </div>
+
+    <div class="chats"></div>
+    
     <div class="chat-input">
       <input type="text" placeholder="Enter message"></input>
       <button class="send-btn"><img src="{% static '/media/images/send_message.png' %}" alt=""></button>
@@ -31,9 +20,58 @@
 </div>
 <script src="{% static '/static/assets/vendors/jquery.min.js' %}"></script>
 <script>
-  $(document).ready(() => {
-    $(".chat-btn").click(() => {
-      $(".chat-box").slideToggle("")
-    })
-  })
+$(document).ready(() => {
+  $(".chat-btn").click(() => {
+        $(".chat-box").slideToggle();
+
+        if ($(".chat-box").is(":visible")) {
+            $.ajax({
+                url: "{% url 'movie:chat_history' %}",
+                method: "GET",
+                success: function (response) {
+                    const chats = response.history;
+
+                    // Xóa tin nhắn cũ trong chatbox
+                    $(".chats").empty();
+
+                    // Hiển thị lịch sử chat
+                    chats.reverse().forEach(chat => {
+                        if (chat.question) {
+                            $(".chats").append(`<div class="my-chat">${chat.question}</div>`);
+                        }
+                        if (chat.answer) {
+                            $(".chats").append(`<div class="recommender-chat">${chat.answer}</div>`);
+                        }
+                    });
+                },
+                error: function () {
+                    alert("Error loading chat history!");
+                }
+            });
+        }
+    });
+
+    $(".send-btn").click(() => {
+      const inputField = $(".chat-input input");
+      const question = inputField.val().trim();
+
+      if (!question) return;
+
+      $(".chats").append(`<div class="my-chat">${question}</div>`);
+      inputField.val(""); // Clear input field
+
+      $.ajax({
+        url: "{% url 'movie:chatbot' %}",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ question }),
+        success: function (response) {
+          $(".chats").append(`<div class="recommender-chat">${response.answer}</div>`);
+        },
+        error: function () {
+          alert("Error connecting to the chatbot!");
+        }
+      });
+    });
+  });
 </script>

@@ -31,4 +31,6 @@ urlpatterns = [
     path('filter_movies_by_genre/<str:genre>', views.filter_movies_by_genre, name='filter_movies_by_genre'),
     path('explore/<str:explore_name>', views.explore, name='explore'),
     path('about_your_ratings/', views.about_your_ratings, name='about_your_ratings'),
+    path('chatbot/history/', views.get_chat_history, name='chat_history'),
+    path('chatbot/', views.chatbot, name='chatbot'),
 ]

@@ -158,3 +158,12 @@ class Comment(models.Model):
     )
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='replies')
+
+class Chat(models.Model):
+    chat_id = models.AutoField(primary_key=True)
+    question = models.TextField(blank=True, null=True)
+    answer = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+    )

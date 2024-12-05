@@ -12,11 +12,12 @@ from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.urls import reverse
-from core.models import Movie, Tag, Rating, Genre, Comment
+from core.models import Movie, Tag, Rating, Genre, Comment, Chat
 from movie import serializers
 from django.db.models import Count
 from django.db.models import F
@@ -29,8 +30,10 @@ from django.conf import settings
 from django.db.models import Count, Avg
 import json
 from django.contrib import messages
+import requests
 
 recommender = MovieRecommender(settings.MODEL_DIR)
+API_GATEWAY_URL = "https://i0gs6aijae.execute-api.us-west-2.amazonaws.com/dev/"
 
 @login_required(login_url='user:log_in')
 def rate_movie(request, movie_id):
@@ -57,6 +60,49 @@ def rate_movie(request, movie_id):
             messages.info(request, 'Waiting for more ratings...')
         return redirect('movie:movie_detail', movie_id=movie_id)
     return redirect('user:log_in')
+
+
+@csrf_exempt
+def chatbot(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        question = data.get('question', '')
+        if not question:
+            return JsonResponse({'error': 'No question provided'}, status=400)
+
+        # chats = Chat.objects.filter(user=request.user).order_by('-created_at')[:5]
+        # chat_history = [{"question": chat.question, "answer": chat.answer} for chat in chats]
+        # context = ""
+        # for chat in chat_history:
+        #     context += f"Q: {chat['question']}\nA: {chat['answer']}\n"
+        # context += f"Q: {question}\n"
+        # print(context)
+        response = requests.get(API_GATEWAY_URL, params={'prompt': question})
+        if response.status_code != 200:
+            return JsonResponse({'error': 'Failed to fetch answer from chatbot'}, status=response.status_code)
+
+        body = json.loads(response.json()['body'])
+        answer = body.get('answer', 'Sorry, no answer available.')
+        
+        user = request.user if request.user.is_authenticated else None
+        chat = Chat.objects.create(
+            question=question,
+            answer=answer,
+            user=user,
+            created_at=timezone.now()
+        )
+        return JsonResponse({'answer': answer, 'chat_id': chat.chat_id})
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+@login_required
+def get_chat_history(request):
+    chats = Chat.objects.filter(user=request.user).order_by('-created_at')[:5]
+    chat_data = [
+        {"question": chat.question, "answer": chat.answer}
+        for chat in chats
+    ]
+    return JsonResponse({"history": chat_data})
 
 
 def home(request):

@@ -4,6 +4,7 @@ from core.models import (
     Tag,
     Rating,
     Genre,
+    Chat,
 )
 
 
@@ -26,6 +27,13 @@ class RatingSerializer(serializers.ModelSerializer):
         model = Rating
         fields = ['rating_id', 'rating', 'timestamp', 'processed']
         read_only_fields = ['rating_id']
+
+
+class RatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Chat
+        fields = ['chat_id', 'question', 'answer', 'created']
+        read_only_fields = ['chat_id']
 
 
 class MovieSerializer(serializers.ModelSerializer):
