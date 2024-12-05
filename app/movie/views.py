@@ -11,7 +11,6 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
@@ -55,7 +54,7 @@ def rate_movie(request, movie_id):
         if recommender.auto_update_model(model_path=settings.MODEL_DIR):
             messages.success(request, 'Model updated successfully!')
         else:
-            messages.error(request, 'Waiting for more ratings...')
+            messages.info(request, 'Waiting for more ratings...')
         return redirect('movie:movie_detail', movie_id=movie_id)
     return redirect('user:log_in')
 
@@ -158,10 +157,6 @@ def delete_comment(request, comment_id):
         return HttpResponse("You are not authorized to delete this comment.", status=403)
 
 
-def welcome(request):
-    return render(request, 'welcome.html')
-
-
 @login_required(login_url='user:log_in')
 def explore(request, explore_name):
     user = request.user
@@ -175,7 +170,6 @@ def explore(request, explore_name):
         content = 'Top picks'
         recommendations = recommender.get_recommendations(user.user_id - 1, Movie.objects.count())
         movie_ids = [movie_id for movie_id, _ in recommendations]
-        
         ordering = Case(*[When(movie_id=movie_id, then=index) for index, movie_id in enumerate(movie_ids)])
         movies = Movie.objects.filter(movie_id__in=movie_ids).order_by(ordering)
     elif explore_name == 'recent_movies':
@@ -321,11 +315,14 @@ def all_genres(request):
 def get_visible_page_numbers(current_page, total_pages, delta=2):
     pages = {1, total_pages}
 
-    # Thêm các trang xung quanh trang hiện tại
     start = max(current_page - delta, 1)
     end = min(current_page + delta, total_pages)
     pages.update(range(start, end + 1))
     return sorted(pages)
+
+
+def welcome(request):
+    return render(request, 'welcome.html')
 
 
 @extend_schema_view(
