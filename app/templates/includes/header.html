@@ -93,6 +93,14 @@ document.getElementById('search-input').addEventListener('input', function() {
         suggestionsDiv.style.display = 'none';
     }
 });
+document.addEventListener('click', function(event) {
+  const suggestionsDiv = document.getElementById('suggestions');
+  const searchInput = document.getElementById('search-input');
+
+  if (!searchInput.contains(event.target) && !suggestionsDiv.contains(event.target)) {
+      suggestionsDiv.style.display = 'none';
+  }
+});
 
 
   </script>
