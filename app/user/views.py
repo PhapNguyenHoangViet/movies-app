@@ -11,7 +11,6 @@ from core.models import Genre
 
 from django.core.mail import send_mail
 from django.urls import reverse
-from django.contrib import messages
 from django.conf import settings
 import secrets
 from django.utils import timezone

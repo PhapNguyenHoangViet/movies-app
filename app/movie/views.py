@@ -11,13 +11,13 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-
 from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.urls import reverse
-from core.models import Movie, Tag, Rating, Genre, Comment
+from core.models import Movie, Tag, Rating, Genre, Comment, Chat
 from movie import serializers
 from django.db.models import Count
 from django.db.models import F
@@ -30,8 +30,10 @@ from django.conf import settings
 from django.db.models import Count, Avg
 import json
 from django.contrib import messages
+import requests
 
 recommender = MovieRecommender(settings.MODEL_DIR)
+API_GATEWAY_URL = "https://i0gs6aijae.execute-api.us-west-2.amazonaws.com/dev/"
 
 @login_required(login_url='user:log_in')
 def rate_movie(request, movie_id):
@@ -55,9 +57,52 @@ def rate_movie(request, movie_id):
         if recommender.auto_update_model(model_path=settings.MODEL_DIR):
             messages.success(request, 'Model updated successfully!')
         else:
-            messages.error(request, 'Waiting for more ratings...')
+            messages.info(request, 'Waiting for more ratings...')
         return redirect('movie:movie_detail', movie_id=movie_id)
     return redirect('user:log_in')
+
+
+@csrf_exempt
+def chatbot(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        question = data.get('question', '')
+        if not question:
+            return JsonResponse({'error': 'No question provided'}, status=400)
+
+        # chats = Chat.objects.filter(user=request.user).order_by('-created_at')[:5]
+        # chat_history = [{"question": chat.question, "answer": chat.answer} for chat in chats]
+        # context = ""
+        # for chat in chat_history:
+        #     context += f"Q: {chat['question']}\nA: {chat['answer']}\n"
+        # context += f"Q: {question}\n"
+        # print(context)
+        response = requests.get(API_GATEWAY_URL, params={'prompt': question})
+        if response.status_code != 200:
+            return JsonResponse({'error': 'Failed to fetch answer from chatbot'}, status=response.status_code)
+
+        body = json.loads(response.json()['body'])
+        answer = body.get('answer', 'Sorry, no answer available.')
+        
+        user = request.user if request.user.is_authenticated else None
+        chat = Chat.objects.create(
+            question=question,
+            answer=answer,
+            user=user,
+            created_at=timezone.now()
+        )
+        return JsonResponse({'answer': answer, 'chat_id': chat.chat_id})
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+@login_required
+def get_chat_history(request):
+    chats = Chat.objects.filter(user=request.user).order_by('-created_at')[:5]
+    chat_data = [
+        {"question": chat.question, "answer": chat.answer}
+        for chat in chats
+    ]
+    return JsonResponse({"history": chat_data})
 
 
 def home(request):
@@ -158,10 +203,6 @@ def delete_comment(request, comment_id):
         return HttpResponse("You are not authorized to delete this comment.", status=403)
 
 
-def welcome(request):
-    return render(request, 'welcome.html')
-
-
 @login_required(login_url='user:log_in')
 def explore(request, explore_name):
     user = request.user
@@ -175,7 +216,6 @@ def explore(request, explore_name):
         content = 'Top picks'
         recommendations = recommender.get_recommendations(user.user_id - 1, Movie.objects.count())
         movie_ids = [movie_id for movie_id, _ in recommendations]
-        
         ordering = Case(*[When(movie_id=movie_id, then=index) for index, movie_id in enumerate(movie_ids)])
         movies = Movie.objects.filter(movie_id__in=movie_ids).order_by(ordering)
     elif explore_name == 'recent_movies':
@@ -321,11 +361,14 @@ def all_genres(request):
 def get_visible_page_numbers(current_page, total_pages, delta=2):
     pages = {1, total_pages}
 
-    # Thêm các trang xung quanh trang hiện tại
     start = max(current_page - delta, 1)
     end = min(current_page + delta, total_pages)
     pages.update(range(start, end + 1))
     return sorted(pages)
+
+
+def welcome(request):
+    return render(request, 'welcome.html')
 
 
 @extend_schema_view(
