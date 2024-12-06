@@ -19,7 +19,7 @@
         <div class="col-4 pt-1 ps-4">
             <div class="input-group mb-3" style="max-width: 100%; margin: 0 auto;">
                 <form method="GET" action="{% url 'movie:movie_search' %}" style="width: 100%; display: flex; align-items: center;">
-                    <input type="text" name="q" class="form-control" placeholder="Search..." value="{{ query }}" aria-label="Search" aria-describedby="search-icon" style="border-radius: 10px;" id="search-input">
+                    <input type="text" name="q" class="form-control" placeholder="Search..." value="{{ query }}" aria-label="Search" aria-describedby="search-icon" style="border-radius: 10px;" id="search-input" autocomplete="off">
                     <button type="submit" class="input-group-text" id="search-icon" style="border: none; background-color: transparent; padding: 10px;">
                         <i class="fa-solid fa-magnifying-glass" style="color: #465499;"></i>
                     </button>

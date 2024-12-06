@@ -962,16 +962,22 @@ footer {
     position: absolute;
     bottom: 0;
 }
-.chat-input input {
+.chat-input .message-input {
     width: calc(100% - 60px);
     height: 100%;
     background-color: #4f5d7321;
     border-radius: 20px;
     color: #000;
-    font-size: 1.2em;
+    font-size: 15px;
+    font-weight: 100;
     padding: 0 15px;
     border: 0;
-}    
+}   
+.chat-input .message-input:focus {
+    outline: 0;
+    border: 0;
+    box-shadow: none;
+  } 
 .send-btn {
     width: 40px;
     height: 30px;
