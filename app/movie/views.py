@@ -33,7 +33,7 @@ from django.contrib import messages
 import requests
 
 recommender = MovieRecommender(settings.MODEL_DIR)
-API_GATEWAY_URL = "https://i0gs6aijae.execute-api.us-west-2.amazonaws.com/dev/"
+API_GATEWAY_URL = "https://z3tfu25otb.execute-api.us-west-2.amazonaws.com/dev/"
 
 @login_required(login_url='user:log_in')
 def rate_movie(request, movie_id):
@@ -70,14 +70,13 @@ def chatbot(request):
         if not question:
             return JsonResponse({'error': 'No question provided'}, status=400)
 
-        # chats = Chat.objects.filter(user=request.user).order_by('-created_at')[:5]
-        # chat_history = [{"question": chat.question, "answer": chat.answer} for chat in chats]
-        # context = ""
-        # for chat in chat_history:
-        #     context += f"Q: {chat['question']}\nA: {chat['answer']}\n"
-        # context += f"Q: {question}\n"
-        # print(context)
-        response = requests.get(API_GATEWAY_URL, params={'prompt': question})
+        chats = Chat.objects.filter(user=request.user).order_by('-created_at')[:5]
+        chat_history = [{"question": chat.question, "answer": chat.answer} for chat in chats]
+        context = ""
+        for chat in chat_history:
+            context += f"Q: {chat['question']}\nA: {chat['answer']}\n"
+        context += f"Q: {question}\n"
+        response = requests.post(API_GATEWAY_URL, params={'prompt': question})
         if response.status_code != 200:
             return JsonResponse({'error': 'Failed to fetch answer from chatbot'}, status=response.status_code)
 
