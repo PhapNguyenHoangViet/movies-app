@@ -10,7 +10,7 @@
     <div class="chats"></div>
     
     <div class="chat-input">
-      <input type="text" placeholder="Enter message"></input>
+      <input type="text" class="message-input" placeholder="Enter message"></input>
       <button class="send-btn"><img src="{% static '/media/images/send_message.png' %}" alt=""></button>
     </div>
   </div>
@@ -43,6 +43,7 @@ $(document).ready(() => {
                             $(".chats").append(`<div class="recommender-chat">${chat.answer}</div>`);
                         }
                     });
+                    $('.chats').scrollTop($('.chats')[0].scrollHeight);
                 },
                 error: function () {
                     alert("Error loading chat history!");
@@ -72,6 +73,11 @@ $(document).ready(() => {
           alert("Error connecting to the chatbot!");
         }
       });
+    });
+    $(".message-input").keydown((event) => {
+      if (event.key === "Enter") {
+        $(".send-btn").click();
+      }
     });
   });
 </script>
