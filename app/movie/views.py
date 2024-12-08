@@ -61,7 +61,6 @@ def rate_movie(request, movie_id):
         return redirect('movie:movie_detail', movie_id=movie_id)
     return redirect('user:log_in')
 
-
 @csrf_exempt
 def chatbot(request):
     if request.method == 'POST':
@@ -120,7 +119,6 @@ def chatbot(request):
             )
             
     return JsonResponse({'error': 'Invalid request method'}, status=400)
-
 
 @login_required
 def get_chat_history(request):
