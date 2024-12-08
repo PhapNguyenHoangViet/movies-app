@@ -76,21 +76,49 @@ def chatbot(request):
         for chat in chat_history:
             context += f"Q: {chat['question']}\nA: {chat['answer']}\n"
         context += f"Q: {question}\n"
-        response = requests.post(API_GATEWAY_URL, params={'prompt': question})
-        if response.status_code != 200:
-            return JsonResponse({'error': 'Failed to fetch answer from chatbot'}, status=response.status_code)
 
-        body = json.loads(response.json()['body'])
-        answer = body.get('answer', 'Sorry, no answer available.')
+        headers = {
+            'Content-Type': 'application/json'
+        }
+        payload = {
+            "prompt": context
+        }
         
-        user = request.user if request.user.is_authenticated else None
-        chat = Chat.objects.create(
-            question=question,
-            answer=answer,
-            user=user,
-            created_at=timezone.now()
-        )
-        return JsonResponse({'answer': answer, 'chat_id': chat.chat_id})
+        try:
+            response = requests.post(
+                API_GATEWAY_URL,
+                headers=headers,
+                json=payload
+            )
+            
+            if response.status_code != 200:
+                return JsonResponse(
+                    {'error': 'Failed to fetch answer from chatbot'}, 
+                    status=response.status_code
+                )
+
+            response_data = response.json()
+            answer = response_data.get('answer', 'Sorry, no answer available.')
+            
+            user = request.user if request.user.is_authenticated else None
+            chat = Chat.objects.create(
+                question=question,
+                answer=answer, 
+                user=user,
+                created_at=timezone.now()
+            )
+
+            return JsonResponse({
+                'answer': answer,
+                'chat_id': chat.chat_id
+            })
+
+        except Exception as e:
+            return JsonResponse(
+                {'error': f'API request failed: {str(e)}'}, 
+                status=500
+            )
+            
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
 

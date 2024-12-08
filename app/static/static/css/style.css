@@ -196,8 +196,8 @@ footer {
     float: left;
     margin: 0 0 3px;
     position: relative;
-    width: 100%;
-    height: 100%;
+    width: 175px;
+    height: 275px;
     overflow-x: visible;
     font-size: 14px;
     border-radius: 5px;
@@ -209,9 +209,9 @@ footer {
 }
 
 .movie-card-md1 .card img {
-    width: 100%; /* Đảm bảo hình ảnh chiếm toàn bộ chiều rộng của container */
-    height: auto; /* Giữ tỷ lệ khung hình */
-    object-fit: cover; /* Đảm bảo hình ảnh không bị méo */
+    width: 100%;
+    height: auto;
+    object-fit: cover;
 }
 
 .movie-card-md1 img {
@@ -349,13 +349,13 @@ footer {
 }
 
 .comment {
-    background-color: #ffffff; /* Nền trắng cho mỗi bình luận */
+    background-color: #ffffff;
     padding: 15px;
     padding-left: 30px;
-    margin-bottom: 15px; /* Khoảng cách giữa các bình luận */
+    margin-bottom: 15px;
     border-radius: 8px;
-    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1); /* Bóng đổ nhẹ cho mỗi bình luận */
-    text-align: left; /* Căn lề trái cho mỗi bình luận */
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1); 
+    text-align: left;
 }
 
 .comment-box button[type="submit"] {
@@ -424,7 +424,7 @@ footer {
 }
 
 .movie-info {
-    flex: 5; /* 5 parts */
+    flex: 5;
     font-size: 14px;
 }
 
@@ -582,7 +582,7 @@ footer {
     padding-left: 10px;
     padding-right: 10px;
     width: 100%;
-    justify-content: space-between; /* Space between items: icon on the left, user info on the right */
+    justify-content: space-between;
 }
 
 .reply-menu-icon {
@@ -591,11 +591,11 @@ footer {
     margin-right: 10px;
     position: relative;
     flex-shrink: 0;
-    display: block; /* Ensure the icon is visible */
+    display: block;
 }
 
 .reply-menu-icon.hidden {
-    display: none; /* Hide the icon when the class 'hidden' is added */
+    display: none;
 }
 
 .reply-user-info {
@@ -604,7 +604,7 @@ footer {
     font-family: 'Raleway', sans-serif;
     color: #333;
     text-align: right;
-    flex-basis: 0; /* Ensure it doesn't take extra space when the menu is hidden */
+    flex-basis: 0;
     flex-grow: 1;
 }
 
@@ -697,7 +697,7 @@ footer {
     border: 1px solid #ddd;
     border-radius: 8px;
     text-align: center;
-    padding: 10px;
+    padding: 6px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s, background-color 0.3s;
     align-items: center;
@@ -714,7 +714,7 @@ footer {
 
 .genre-grid li a {
     text-decoration: none;
-    font-size: 16px;
+    font-size: 12px;
     font-weight: bold;
     color: #007bff;
 }
