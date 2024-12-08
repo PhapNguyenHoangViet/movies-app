@@ -33,6 +33,45 @@ Giao diện trang quản lý thông tin cá nhân
 -	Hệ thống tự động cập nhật mô hình sau một lượng rating mới nhất định
 7. Chatbot hỗ trợ người dùng
 -	Hệ thống hỗ trợ tính năng chatbot để người dùng dễ dàng tìm hiểu thêm thông tin liên quan đến phim
-![image](https://github.com/user-attachments/assets/2b1f3f23-3f83-4da3-b2af-05d50cf55371)
+image
 
 Giao diện chatbot
+
+
+# Hướng dẫn cài đặt và chạy ứng dụng
+
+## Yêu cầu hệ thống
+- Python 3.8 trở lên
+- Docker và Docker Compose
+- Git
+
+## Các bước cài đặt
+
+1. Clone repository
+```bash
+git clone https://github.com/PhapNguyenHoangViet/movies-app.git
+cd movies-app
+
+2. Cấu hình môi trường
+Copy file .env.sample thành file .env
+Cập nhật các biến môi trường trong file .env theo cấu hình của bạn
+
+3. Chạy ứng dụng với Docker
+# Build và chạy các container
+docker-compose -f docker-compose-deploy.yml up
+
+# Chạy ở chế độ detached
+docker-compose -f docker-compose-deploy.yml up -d
+
+Truy cập ứng dụng
+Website chính: http://127.0.0.1/movie/welcome/
+
+Liên hệ hỗ trợ
+Nếu gặp vấn đề, vui lòng tạo issue trên GitHub hoặc liên hệ qua email: [vietphap090603@gmail.com]
+
+Những thông tin này sẽ giúp người dùng:
+1. Biết được yêu cầu hệ thống cần thiết
+2. Các bước cài đặt chi tiết
+3. Cách chạy ứng dụng với Docker
+4. Liên hệ hỗ trợ
+
