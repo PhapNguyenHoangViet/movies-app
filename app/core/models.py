@@ -68,6 +68,7 @@ class User(AbstractBaseUser, PermissionsMixin):
             age = today.year - self.dateOfBirth.year
             if today.month < self.dateOfBirth.month or (today.month == self.dateOfBirth.month and today.day < self.dateOfBirth.day):
                 age -= 1
+            if age < 0: age = 0
             return age
         return None
     

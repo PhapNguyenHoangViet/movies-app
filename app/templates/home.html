@@ -85,7 +85,9 @@
         </div>
       </div>
     </div>
-    {% include 'includes/chatbox.html' %}
+    {% if user.is_authenticated %}
+      {% include 'includes/chatbox.html' %}
+    {% endif %}
   </section>
 
   {% include 'includes/footer.html' %}

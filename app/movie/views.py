@@ -70,7 +70,7 @@ def chatbot(request):
         if not question:
             return JsonResponse({'error': 'No question provided'}, status=400)
 
-        chats = Chat.objects.filter(user=request.user).order_by('-created_at')[:5]
+        chats = Chat.objects.filter(user=request.user).order_by('-created_at')[:1]
         chat_history = [{"question": chat.question, "answer": chat.answer} for chat in chats]
         context = ""
         for chat in chat_history:
