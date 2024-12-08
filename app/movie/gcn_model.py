@@ -16,32 +16,21 @@ from core.models import User
 num_user_id = User.objects.aggregate(Max('user_id'))['user_id__max']
 
 class GCN(torch.nn.Module):
-    def __init__(self, num_features, hidden_channels, num_users, num_items):
+    def __init__(self, num_features, hidden_channels):
         super(GCN, self).__init__()
+        # Thêm nhiều lớp convolution
         self.conv1 = GCNConv(num_features, hidden_channels)
         self.conv2 = GCNConv(hidden_channels, hidden_channels // 2)
-        self.conv3 = GCNConv(hidden_channels // 2, num_items)
+        self.conv3 = GCNConv(hidden_channels // 2, hidden_channels)
         self.dropout = torch.nn.Dropout(0.5)
-        
-        self.user_embeddings = torch.nn.Embedding(num_users, hidden_channels)
-        self.item_embeddings = torch.nn.Embedding(num_items, hidden_channels)
     
-    def forward(self, x, edge_index):
-        x = F.relu((self.conv1(x, edge_index)))
+    def forward(self, x, edge_index, edge_attr):
+        x = F.relu((self.conv1(x, edge_index, edge_weight=edge_attr)))
         x = self.dropout(x)
-        x = F.relu((self.conv2(x, edge_index)))
+        x = F.relu((self.conv2(x, edge_index, edge_weight=edge_attr)))
         x = self.dropout(x)
-        x = self.conv3(x, edge_index)
+        x = self.conv3(x, edge_index, edge_weight=edge_attr)
         return x
-    
-    def recommend(self, user_id, k=5):
-        self.eval()
-        with torch.no_grad():
-            user_embedding = self.user_embeddings(torch.tensor([user_id], dtype=torch.long))
-            item_embeddings = self.item_embeddings.weight
-            item_scores = torch.matmul(user_embedding, item_embeddings.t())
-            _, sorted_indices = torch.topk(item_scores, k)
-            return sorted_indices.squeeze().tolist()
 
 
 class MovieRecommender:
@@ -49,8 +38,6 @@ class MovieRecommender:
         checkpoint = torch.load(model_path)
         self.num_features = checkpoint['conv1.lin.weight'].shape[1]
         self.hidden_channels = checkpoint['conv1.lin.weight'].shape[0]
-        self.num_users = checkpoint['user_embeddings.weight'].shape[0]
-        self.num_items = checkpoint['item_embeddings.weight'].shape[0]
         
         self.model = self._create_gcn_model()
         
@@ -60,9 +47,7 @@ class MovieRecommender:
     def _create_gcn_model(self):
         return GCN(
             num_features=self.num_features, 
-            hidden_channels=self.hidden_channels, 
-            num_users=self.num_users, 
-            num_items=self.num_items
+            hidden_channels=self.hidden_channels
         )
     
     def load_model(self, model_path):
@@ -103,7 +88,7 @@ class MovieRecommender:
                 total_loss = 0
                 for data in train_loader:
                     optimizer.zero_grad()
-                    out = self.model(data.x, data.edge_index)
+                    out = self.model(data.x, data.edge_index, data.edge_attr)
                     edge_scores = (out[data.edge_index[0]] * out[data.edge_index[1]]).sum(dim=1)
                     loss = torch.sqrt(criterion(edge_scores, data.edge_attr.to(torch.float)))
                     loss.backward()
@@ -137,7 +122,7 @@ class MovieRecommender:
             total_loss = 0
             for data in train_loader:
                 optimizer.zero_grad()
-                out = self.model(data.x, data.edge_index)
+                out = self.model(data.x, data.edge_index, data.edge_attr)
                 edge_scores = (out[data.edge_index[0]] * out[data.edge_index[1]]).sum(dim=1)
                 loss = torch.sqrt(criterion(edge_scores, data.edge_attr.to(torch.float)))
                 loss.backward()
@@ -191,7 +176,7 @@ class MovieRecommender:
             
             with torch.no_grad():
                 rated_movies = set(ratings[ratings['user_id'] == user_id]['movie_id'].values)
-                out = self.model(train_data.x, train_data.edge_index)
+                out = self.model(train_data.x, train_data.edge_index, train_data.edge_attr)
                 user_embedding = out[user_id]
                 num_users = len(users)
                 num_items = len(items)
@@ -298,8 +283,8 @@ class MovieRecommender:
         
         users['sex'] = LabelEncoder().fit_transform(users['sex'])
         users['occupation'] = LabelEncoder().fit_transform(users['occupation'])
-        bins = [0, 13, 18, 25, 35, 45, 55, 65, 100]
-        labels = [0, 1, 2, 3, 4, 5, 6, 7]
+        bins = [0, 18, 30, 45, 60, 100]
+        labels = list(range(len(bins)-1))
         users['age'] = pd.cut(users['age'], bins=bins, labels=labels, right=False)
         user_features = pd.get_dummies(users, columns=['age', 'sex', 'occupation'])
         user_features = user_features.drop(['user_id'], axis=1).astype(float)

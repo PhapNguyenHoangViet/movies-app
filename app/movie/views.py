@@ -107,13 +107,29 @@ def get_chat_history(request):
 def home(request):
     user = request.user
     if user.is_authenticated:
-        recommendations = recommender.get_recommendations(user.user_id - 1, 20)
-        movie_ids = [movie_id for movie_id, _ in recommendations]
-        
-        ordering = Case(*[When(movie_id=movie_id, then=index) for index, movie_id in enumerate(movie_ids)])
-        top_picks = Movie.objects.filter(movie_id__in=movie_ids).order_by(ordering)
+        user_ratings_count = Rating.objects.filter(user=user).count()    
+        if user_ratings_count >= 5:
+            recommendations = recommender.get_recommendations(user.user_id - 1, 20)
+            movie_ids = [movie_id for movie_id, _ in recommendations]
+            ordering = Case(*[When(movie_id=movie_id, then=index) for index, movie_id in enumerate(movie_ids)])
+            top_picks = Movie.objects.filter(movie_id__in=movie_ids).order_by(ordering)
+        else:
+            top_picks = Movie.objects.filter(
+                release_date__lte=datetime.now(),
+                avg_rating__gte=4.0
+            ).order_by(
+                '-release_date',
+                '-avg_rating'
+            )[:20]
+
     else:
-        top_picks = Movie.objects.all().filter(release_date__lte=datetime.now()).order_by('-avg_rating', '-release_date')[:20]
+        top_picks = Movie.objects.filter(
+                release_date__lte=datetime.now(),
+                avg_rating__gte=4.0
+            ).order_by(
+                '-release_date',
+                '-avg_rating'
+            )[:20]
 
     recent_movies = Movie.objects.all().filter(
         release_date__lte=datetime.now()).order_by('-release_date')[:20]
