@@ -51,17 +51,22 @@ Giao diện chatbot
 ```bash
 git clone https://github.com/PhapNguyenHoangViet/movies-app.git
 cd movies-app
-
+```
 2. Cấu hình môi trường
 Copy file .env.sample thành file .env
 Cập nhật các biến môi trường trong file .env theo cấu hình của bạn
 
 3. Chạy ứng dụng với Docker
+```bash
 # Build và chạy các container
 docker-compose -f docker-compose-deploy.yml up
 
 # Chạy ở chế độ detached
 docker-compose -f docker-compose-deploy.yml up -d
+
+# Kiểm tra logs nếu có lỗi
+docker-compose -f docker-compose-deploy.yml logs
+```
 
 Truy cập ứng dụng
 Website chính: http://127.0.0.1/movie/welcome/
