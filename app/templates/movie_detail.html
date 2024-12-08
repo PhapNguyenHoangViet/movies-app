@@ -34,7 +34,7 @@
     
     {% include 'includes/header.html' %}
 
-    {% include 'includes/messages.html' %}
+    <!--{% include 'includes/messages.html' %}-->
 
     <div class="row p-5 bg-white"></div>
     
@@ -80,17 +80,11 @@
                     </form>
                     <div class="row">
                         <div class="col-4">
-                            <label style="color: #465499; font-size: 14px;">Predicting for you</label>
-                        </div>
-                        <div class="col-8">
                             <label style="color: #465499; font-size: 14px;">Genres</label>
                         </div>
                     </div>
                     <div class="row pb-4">
                         <div class="col-4">
-                            <label>{{ movie.avg_rating|floatformat:1|default:"0.0" }} stars</label>
-                        </div>
-                        <div class="col-8">
                             <!-- Hiển thị tên các thể loại của movie -->
                             <label>
                                 {% for genre in movie_genres %}
@@ -238,7 +232,9 @@
             </div>
         </div>
     </section>
-    {% include 'includes/chatbox.html' %}
+    {% if user.is_authenticated %}
+      {% include 'includes/chatbox.html' %}
+    {% endif %}
     {% include 'includes/footer.html' %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
