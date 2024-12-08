@@ -34,4 +34,5 @@ Giao diện trang quản lý thông tin cá nhân
 7. Chatbot hỗ trợ người dùng
 -	Hệ thống hỗ trợ tính năng chatbot để người dùng dễ dàng tìm hiểu thêm thông tin liên quan đến phim
 ![image](https://github.com/user-attachments/assets/2b1f3f23-3f83-4da3-b2af-05d50cf55371)
+
 Giao diện chatbot
