@@ -33,7 +33,8 @@ Giao diện trang quản lý thông tin cá nhân
 -	Hệ thống tự động cập nhật mô hình sau một lượng rating mới nhất định
 7. Chatbot hỗ trợ người dùng
 -	Hệ thống hỗ trợ tính năng chatbot để người dùng dễ dàng tìm hiểu thêm thông tin liên quan đến phim
-image
+![image](https://github.com/user-attachments/assets/fac68621-22f1-49c2-91e2-e3b9a21cfeb6)
+
 
 Giao diện chatbot
 
@@ -53,8 +54,9 @@ git clone https://github.com/PhapNguyenHoangViet/movies-app.git
 cd movies-app
 ```
 2. Cấu hình môi trường
-Copy file .env.sample thành file .env
-Cập nhật các biến môi trường trong file .env theo cấu hình của bạn
+
+- Copy file .env.sample thành file .env
+- Cập nhật các biến môi trường trong file .env theo cấu hình của bạn
 
 3. Chạy ứng dụng với Docker
 ```bash
