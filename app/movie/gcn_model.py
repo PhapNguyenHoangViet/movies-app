@@ -11,25 +11,40 @@ import numpy as np
 import os
 from core.models import User
 from django.db.models import Max
-from core.models import User
+from core.models import Movie
 
-num_user_id = User.objects.aggregate(Max('user_id'))['user_id__max']
+MAX_USER = User.objects.aggregate(Max('user_id'))['user_id__max']
+MAX_ITEM = Movie.objects.aggregate(Max('movie_id'))['movie_id__max']
+device = torch.device('cpu')
 
 class GCN(torch.nn.Module):
     def __init__(self, num_features, hidden_channels):
         super(GCN, self).__init__()
-        # Thêm nhiều lớp convolution
-        self.conv1 = GCNConv(num_features, hidden_channels)
+        # Main path
+        self.conv1 = GCNConv(num_features, hidden_channels)        
         self.conv2 = GCNConv(hidden_channels, hidden_channels // 2)
-        self.conv3 = GCNConv(hidden_channels // 2, hidden_channels)
-        self.dropout = torch.nn.Dropout(0.5)
-    
+        self.conv3 = GCNConv(hidden_channels // 2, hidden_channels // 4)
+        self.dropout = torch.nn.Dropout(0.2)
+        # Thêm nhiều attention heads
+        self.attention = torch.nn.MultiheadAttention(
+            hidden_channels // 4, 
+            num_heads=8,  # Tăng số lượng heads
+            dropout=0.2   # Thêm dropout
+        )
+        self.to(device)
+        
+
     def forward(self, x, edge_index, edge_attr):
+        # Main path
         x = F.relu((self.conv1(x, edge_index, edge_weight=edge_attr)))
         x = self.dropout(x)
         x = F.relu((self.conv2(x, edge_index, edge_weight=edge_attr)))
         x = self.dropout(x)
         x = self.conv3(x, edge_index, edge_weight=edge_attr)
+        # Apply attention
+        x = x.unsqueeze(0)
+        x, _ = self.attention(x, x, x)
+        x = x.squeeze(0)
         return x
 
 
@@ -198,19 +213,22 @@ class MovieRecommender:
 
 
     def _create_interaction_graph(self, ratings, features):
+        features = features.to(device)
         user_ids = ratings['user_id'].values
-        item_ids = ratings['movie_id'].values + num_user_id
+        item_ids = ratings['movie_id'].values + MAX_USER
         ratings_values = ratings['rating'].values
                 
-        edge_index = torch.tensor([
+        edges = np.stack([
             np.concatenate([user_ids, item_ids]),
             np.concatenate([item_ids, user_ids])
-        ], dtype=torch.long)
+        ])
+        edge_index = torch.tensor(edges, dtype=torch.long).to(device)
+
         
         edge_attr = torch.tensor(
             np.concatenate([ratings_values, ratings_values]), 
             dtype=torch.float
-        )
+        ).to(device)
         
         graph_data = Data(
             x=features, 
@@ -235,6 +253,43 @@ class MovieRecommender:
             LIMIT {batch_size}
         """
         return self.fetch_data_as_dataframe(query)
+    
+    def remap_and_save(self, users, items, ratings):
+        # Reassign user_id, movie_id begin from 0
+        users['STT'] = range(0, len(users))
+        items['STT'] = range(0, len(items))
+
+        # Create a mapping from user_id to STT
+        user_map = dict(zip(users['user_id'], users['STT']))
+        movie_map = dict(zip(items['movie_id'], items['STT']))
+
+        # Update ratings with new STT
+        ratings['user_STT'] = ratings['user_id'].map(user_map)
+        ratings['movie_STT'] = ratings['movie_id'].map(movie_map)
+        ratings = ratings.drop(columns=['user_id', 'movie_id'])
+        ratings = ratings.rename(columns={'user_STT': 'user_id', 'movie_STT': 'movie_id'})
+
+        # Remove the old id column from users and movies DataFrame
+        users = users.drop(columns=['user_id'])
+        items = items.drop(columns=['movie_id'])
+        users = users.rename(columns={'STT': 'user_id'})
+        items = items.rename(columns={'STT': 'movie_id'})
+        return users, items, ratings
+
+    def add_temporal_features(self, ratings):
+        ratings['timestamp'] = pd.to_datetime(ratings['timestamp'], unit='s')
+        ratings['day_of_week'] = ratings['timestamp'].dt.dayofweek
+        ratings['hour'] = ratings['timestamp'].dt.hour
+        ratings['time_of_day'] = pd.cut(ratings['hour'],
+                                        bins=[0, 6, 12, 18, 24],
+                                        labels=[0, 1, 2, 3],
+                                        include_lowest=True)
+        ratings['month'] = ratings['timestamp'].dt.month
+        ratings['is_weekend'] = ratings['day_of_week'].isin([5, 6]).astype(int)
+        ratings['season'] = pd.cut(ratings['month'],
+                                        bins=[0, 3, 6, 9, 12],
+                                        labels=[0,1,2,3])
+        return ratings
 
     def prepare(self):
         query_movies = "SELECT movie_id, movie_title, release_date, overview, runtime, keywords, director,caster FROM core_movie ORDER BY movie_id ASC"
@@ -253,10 +308,9 @@ class MovieRecommender:
         movie_genres = self.fetch_data_as_dataframe(query_movie_genres)
         items = items.merge(movie_genres, on="movie_id", how="left")
         
-        users['user_id']=users['user_id']-1
-        items['movie_id']=items['movie_id']-1
-        ratings['user_id']=ratings['user_id']-1
-        ratings['movie_id']=ratings['movie_id']-1
+        users, items, ratings = self.remap_and_save(users, items, ratings)
+        ratings = self.add_temporal_features(ratings)
+
         genre_list = [
             'unknown', 'Action', 'Adventure', 'Animation', "Children's", 'Comedy', 'Crime', 'Documentary', 
             'Drama', 'Fantasy', 'Film-Noir', 'Horror', 'Musical', 'Mystery', 'Romance', 'Sci-Fi', 
@@ -272,33 +326,29 @@ class MovieRecommender:
         genre_one_hot = items['genres'].apply(lambda x: pd.Series(genres_to_one_hot(x, genre_list)))
         items = pd.concat([items.drop(columns=['genres']), genre_one_hot], axis=1)
         
-        ratings['timestamp'] = pd.to_datetime(ratings['timestamp'], unit='s')
-        ratings['day_of_week'] = ratings['timestamp'].dt.dayofweek
-        ratings['hour'] = ratings['timestamp'].dt.hour
-        ratings['time_of_day'] = pd.cut(ratings['hour'],
-                                        bins=[0, 6, 12, 18, 24],
-                                        labels=[0, 1, 2, 3],
-                                        include_lowest=True)
-
-        
-        users['sex'] = LabelEncoder().fit_transform(users['sex'])
-        users['occupation'] = LabelEncoder().fit_transform(users['occupation'])
-        bins = [0, 18, 30, 45, 60, 100]
+        label_encoder = LabelEncoder()
+        users['sex'] = label_encoder.fit_transform(users['sex'])
+        users['occupation'] = label_encoder.fit_transform(users['occupation'])
+        bins = [0, 18, 30, 45, 60, 200]
         labels = list(range(len(bins)-1))
         users['age'] = pd.cut(users['age'], bins=bins, labels=labels, right=False)
-        user_features = pd.get_dummies(users, columns=['age', 'sex', 'occupation'])
-        user_features = user_features.drop(['user_id'], axis=1).astype(float)
-        user_features = torch.tensor(user_features.values, dtype=torch.float)
 
-        item_features = items.to_numpy()
-        item_features = item_features[:, -19:]
-        item_features = item_features.astype(float)
-        item_features = torch.tensor(item_features, dtype=torch.float)
+        users['age'] = users['age'].astype(int)
+        users['occupation'] = users['occupation'].astype(int)
+        users['sex'] = users['sex'].astype(int)
+        users_processed = pd.get_dummies(users[['sex', 'age', 'occupation']])
+        user_features = torch.FloatTensor(users_processed.values).to(device)
 
-
-        feature_matrix = torch.cat([
-            torch.cat([user_features, torch.zeros(len(user_features), item_features.shape[1])], dim=1),
-            torch.cat([torch.zeros(len(item_features), user_features.shape[1]), item_features], dim=1)
-        ])
+        movie_features = items.to_numpy()
+        movie_features = movie_features[:, -19:-1]
+        movie_features = movie_features.astype(int)
+        movie_features = torch.FloatTensor(movie_features).to(device)
+    
+        num_users = user_features.shape[0]
+        num_items = movie_features.shape[0]
+        num_contexts = ratings["time_of_day"].nunique()
+        feature_matrix = torch.zeros((num_users + num_items + num_contexts, user_features.shape[1] + movie_features.shape[1]))
+        feature_matrix[:num_users, :user_features.shape[1]] = user_features
+        feature_matrix[num_users : num_users + num_items, user_features.shape[1]:] = movie_features
 
         return users, items, ratings, feature_matrix

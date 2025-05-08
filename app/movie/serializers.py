@@ -29,11 +29,11 @@ class RatingSerializer(serializers.ModelSerializer):
         read_only_fields = ['rating_id']
 
 
-class RatingSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Chat
-        fields = ['chat_id', 'question', 'answer', 'created']
-        read_only_fields = ['chat_id']
+class ChatSerializer(serializers.ModelSerializer): 
+    class Meta: 
+        model = Chat 
+        fields = ['chat_id', 'question', 'answer', 'created'] 
+        read_only_fields = ['chat_id', 'created_at'] 
 
 
 class MovieSerializer(serializers.ModelSerializer):

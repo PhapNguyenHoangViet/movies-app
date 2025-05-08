@@ -61,6 +61,10 @@ cd movies-app
 3. Chạy ứng dụng với Docker
 ```bash
 # Build và chạy các container
+
+docker-compose -f docker-compose.yml up
+
+
 docker-compose -f docker-compose-deploy.yml up
 
 # Chạy ở chế độ detached

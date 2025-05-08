@@ -135,7 +135,7 @@ def home(request):
     if user.is_authenticated:
         user_ratings_count = Rating.objects.filter(user=user).count()    
         if user_ratings_count >= 5:
-            recommendations = recommender.get_recommendations(user.user_id - 1, 20)
+            recommendations = recommender.get_recommendations(user.user_id, 20)
             movie_ids = [movie_id for movie_id, _ in recommendations]
             ordering = Case(*[When(movie_id=movie_id, then=index) for index, movie_id in enumerate(movie_ids)])
             top_picks = Movie.objects.filter(movie_id__in=movie_ids).order_by(ordering)
@@ -176,7 +176,7 @@ def home(request):
 @login_required(login_url='user:log_in')
 def recommendations(request):
     user = request.user
-    recommendations = recommender.get_recommendations(user.user_id - 1, 20)
+    recommendations = recommender.get_recommendations(user.user_id, 20)
     movie_ids = [movie_id for movie_id, _ in recommendations]
         
     ordering = Case(*[When(movie_id=movie_id, then=index) for index, movie_id in enumerate(movie_ids)])
@@ -255,7 +255,7 @@ def explore(request, explore_name):
 
     if explore_name == 'top_picks':
         content = 'Top picks'
-        recommendations = recommender.get_recommendations(user.user_id - 1, Movie.objects.count())
+        recommendations = recommender.get_recommendations(user.user_id, Movie.objects.count())
         movie_ids = [movie_id for movie_id, _ in recommendations]
         ordering = Case(*[When(movie_id=movie_id, then=index) for index, movie_id in enumerate(movie_ids)])
         movies = Movie.objects.filter(movie_id__in=movie_ids).order_by(ordering)

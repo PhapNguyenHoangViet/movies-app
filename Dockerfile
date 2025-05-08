@@ -25,14 +25,9 @@ RUN python -m venv /py && \
         git \
         cmake \
         && \
-    /py/bin/pip install --no-cache-dir torch==2.0.1 torchvision==0.15.2 --index-url https://download.pytorch.org/whl/cpu && \
-    /py/bin/pip install --no-cache-dir \
-        torch-scatter==2.1.1 \
-        torch-sparse==0.6.17 \
-        torch-cluster==1.6.1 \
-        torch-spline-conv==1.2.2 \
-        torch-geometric==2.3.1 \
-        -f https://data.pyg.org/whl/torch-2.0.1+cpu.html && \
+    /py/bin/pip install torch==2.0.1 torchvision==0.15.2 --index-url https://download.pytorch.org/whl/cpu && \
+    /py/bin/pip install torch-scatter==2.1.1 torch-sparse==0.6.17 torch-cluster==1.6.1 torch-spline-conv==1.2.2 -f https://data.pyg.org/whl/torch-2.0.1+cpu.html && \
+    /py/bin/pip install torch-geometric==2.3.1 && \
     /py/bin/pip install -r /tmp/requirements.txt && \
     if [ $DEV = "true" ]; \
         then /py/bin/pip install -r /tmp/requirements.dev.txt ; \
