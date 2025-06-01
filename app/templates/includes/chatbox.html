@@ -22,62 +22,99 @@
 <script>
 $(document).ready(() => {
   $(".chat-btn").click(() => {
-        $(".chat-box").slideToggle();
+    $(".chat-box").slideToggle();
 
-        if ($(".chat-box").is(":visible")) {
-            $.ajax({
-                url: "{% url 'movie:chat_history' %}",
-                method: "GET",
-                success: function (response) {
-                    const chats = response.history;
-
-                    // Xóa tin nhắn cũ trong chatbox
-                    $(".chats").empty();
-
-                    // Hiển thị lịch sử chat
-                    chats.reverse().forEach(chat => {
-                        if (chat.question) {
-                            $(".chats").append(`<div class="my-chat">${chat.question}</div>`);
-                        }
-                        if (chat.answer) {
-                            $(".chats").append(`<div class="recommender-chat">${chat.answer}</div>`);
-                        }
-                    });
-                    $('.chats').scrollTop($('.chats')[0].scrollHeight);
-                },
-                error: function () {
-                    alert("Error loading chat history!");
-                }
-            });
-        }
-    });
-
-    $(".send-btn").click(() => {
-      const inputField = $(".chat-input input");
-      const question = inputField.val().trim();
-
-      if (!question) return;
-
-      $(".chats").append(`<div class="my-chat">${question}</div>`);
-      inputField.val(""); // Clear input field
-
+    if ($(".chat-box").is(":visible")) {
       $.ajax({
-        url: "{% url 'movie:chatbot' %}",
-        method: "POST",
-        contentType: "application/json",
-        data: JSON.stringify({ question }),
+        url: "{% url 'movie:chat_history' %}",
+        method: "GET",
         success: function (response) {
-          $(".chats").append(`<div class="recommender-chat">${response.answer}</div>`);
+          const chats = response.history;
+          $(".chats").empty();
+
+          chats.reverse().forEach(chat => {
+            if (chat.question) {
+              $(".chats").append(`<div class="my-chat">${chat.question}</div>`);
+            }
+            if (chat.answer) {
+              $(".chats").append(`<div class="recommender-chat">${chat.answer}</div>`);
+            }
+          });
+
+          $('.chats').scrollTop($('.chats')[0].scrollHeight);
         },
         error: function () {
-          alert("Error connecting to the chatbot!");
+          alert("Error loading chat history!");
         }
       });
-    });
-    $(".message-input").keydown((event) => {
-      if (event.key === "Enter") {
-        $(".send-btn").click();
-      }
-    });
+    }
   });
+
+$(".send-btn").click(() => {
+  const inputField = $(".chat-input input");
+  const question = inputField.val().trim();
+
+  if (!question) return;
+
+  $(".chats").append(`<div class="my-chat">${question}</div>`);
+  inputField.val(""); // Clear input
+
+  fetch("{% url 'movie:chatbot' %}", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ question })
+  })
+  .then(response => {
+    if (!response.ok) throw new Error("Network error");
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder("utf-8");
+    const answerElement = $(`<div class="recommender-chat"></div>`);
+    $(".chats").append(answerElement);
+
+    function read() {
+      reader.read().then(({ done, value }) => {
+        if (done) return;
+
+        const text = decoder.decode(value, { stream: true });
+
+        // Chia dữ liệu theo từng phần `data:`
+        text.split("data:").forEach(part => {
+          const line = part.trim();
+          if (!line) return;
+
+          try {
+            const parsed = JSON.parse(line);
+            const message = parsed.data?.message;
+            const type = parsed.data?.type;
+
+            if (message === "[END]" || type === "hidden") return;
+
+            if (type === "ai" && message) {
+              answerElement.append(document.createTextNode(message));
+              $(".chats").scrollTop($(".chats")[0].scrollHeight);
+            }
+          } catch (err) {
+            console.warn("Lỗi JSON:", line);
+          }
+        });
+
+        read(); // Tiếp tục đọc
+      });
+    }
+
+    read();
+  })
+  .catch(error => {
+    console.error("Lỗi stream", error);
+    alert("Lỗi kết nối chatbot!");
+  });
+});
+
+$(".message-input").keydown((event) => {
+  if (event.key === "Enter") {
+    $(".send-btn").click();
+  }
+});
+});
 </script>
