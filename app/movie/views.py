@@ -93,12 +93,32 @@ def chatbot(request):
     if not question:
         return JsonResponse({"error": "No question provided"}, status=400)
 
-    chats = Chat.objects.filter(user=request.user).order_by("-created_at")[:2]
+    chats = Chat.objects.filter(user=request.user).order_by("-created_at")[:20]
     chat_history = [
         {"question": chat.question, "answer": chat.answer} for chat in chats
     ]
-    context = "".join(f"Q: {c['question']}\nA: {c['answer']}\n" for c in chat_history)
-    context += f"Trả lời câu hỏi của User bằng ngữ cảnh trên, nếu không liên quan thì không cần quan tâm nội dung bên trên, hãy trả lời câu hỏi User bên dưới bằng ngôn ngữ người dùng đưa vào (mặc định là tiếng Việt). User:  {question}\n"
+    context = ""
+    if chat_history:
+        context = "=== LỊCH SỬ HỘI THOẠI GẦN ĐÂY ===\n"
+        for i, chat in enumerate(chat_history, 1):
+            context += f"Hội thoại {i}:\n"
+            context += f"Câu hỏi: {chat['question']}\n"
+            context += f"Trả lời: {chat['answer']}\n\n"
+        context += "=== KẾT THÚC LỊCH SỬ ===\n\n"
+
+    # Tạo prompt chính
+    prompt = f"""{context}Bạn là một trợ lý AI thông minh và hữu ích. 
+
+    HƯỚNG DẪN:
+    1. Đọc kỹ lịch sử hội thoại bên trên để hiểu ngữ cảnh
+    2. Sử dụng thông tin từ lịch sử nếu có liên quan đến câu hỏi hiện tại
+    3. Nếu lịch sử không liên quan, hãy bỏ qua và trả lời trực tiếp câu hỏi
+    4. Trả lời bằng ngôn ngữ mà người dùng sử dụng trong câu hỏi
+    5. Cung cấp câu trả lời chi tiết, chính xác và hữu ích
+
+    CÂUHỎI CỦA NGƯỜI DÙNG: {question}
+
+    Hãy trả lời câu hỏi trên một cách tự nhiên và hữu ích."""
     # Biến để lưu trữ toàn bộ câu trả lời
     complete_answer = ""
     save_attempted = False
@@ -107,7 +127,6 @@ def chatbot(request):
         nonlocal complete_answer, save_attempted
         try:
             chat_url = f"{AI_MOVIE_API_URL}/conversation/chat"
-            print(f"[DEBUG] Starting stream for question: {question}")
 
             with requests.post(
                 chat_url,
@@ -115,41 +134,32 @@ def chatbot(request):
                 json={
                     "conversation_id": "857e0395-eb1e-4001-ac4d-f4fffbddb3c4",
                     "user_id": str(request.user.user_id),
-                    "message": context,
+                    "message": prompt,
                 },
                 stream=True,
                 timeout=(30, 300),  # 30s connection, 300s read timeout
             ) as r:
                 if r.status_code != 200:
-                    print(f"[DEBUG] API error: {r.status_code}")
                     yield 'data: {"error": "failed to stream from AI API"}\n\n'
                     return
 
                 try:
                     for chunk in r.iter_lines(decode_unicode=True):
                         if chunk:
-                            print(f"[DEBUG] Raw chunk: {chunk}")
 
                             # Kiểm tra xem chunk có bắt đầu bằng "data: " không
                             if chunk.startswith("data: "):
                                 json_part = chunk[6:]  # Bỏ "data: " ở đầu
-                                print(f"[DEBUG] JSON part: {json_part}")
 
                                 try:
                                     # Parse JSON từ phần sau "data: "
                                     chunk_data = json.loads(json_part)
-                                    print(f"[DEBUG] Parsed chunk: {chunk_data}")
 
                                     if chunk_data.get(
                                         "status"
                                     ) == "success" and chunk_data.get("data"):
                                         message = chunk_data["data"].get("message", "")
                                         msg_type = chunk_data["data"].get("type", "")
-
-                                        print(
-                                            f"[DEBUG] Message: '{message}', Type: '{msg_type}'"
-                                        )
-
                                         # Chỉ lưu message từ AI và không phải là [END]
                                         if (
                                             msg_type == "ai"
@@ -157,17 +167,10 @@ def chatbot(request):
                                             and message != "[END]"
                                         ):
                                             complete_answer += message
-                                            print(
-                                                f"[DEBUG] Current answer length: {len(complete_answer)}"
-                                            )
 
                                         # Nếu gặp [END] thì lưu vào database
                                         elif message == "[END]" and not save_attempted:
                                             save_attempted = True
-                                            print(
-                                                f"[DEBUG] END detected. Saving answer: '{complete_answer[:100]}...'"
-                                            )
-
                                             try:
                                                 user = (
                                                     request.user
@@ -273,7 +276,7 @@ def home(request):
                 if response.status_code == 200:
                     resp_json = response.json()
                     if resp_json.get("status") == "success":
-                        messages.info(request, "Gợi ý phù hợp.")
+                        # messages.info(request, "Gợi ý phù hợp.")
                         recommendations = resp_json["data"]["recommendations"]
 
                         movie_ids = [movie_id for movie_id, _ in recommendations]
@@ -296,7 +299,7 @@ def home(request):
                             movie_id__in=movie_ids
                         ).order_by(ordering)
                     else:
-                        messages.info(request, "Không có gợi ý phù hợp.")
+                        # messages.info(request, "Không có gợi ý phù hợp.")
                         top_picks = Movie.objects.filter(
                             release_date__lte=datetime.now(), avg_rating__gte=4.0
                         ).order_by("-release_date", "-avg_rating")[:20]

@@ -1,6 +1,6 @@
 FROM nginxinc/nginx-unprivileged:alpine3.20-perl
 
-LABEL maintainer="moives.com"
+LABEL maintainer="movies.com"
 
 COPY ./default.conf.tpl /etc/nginx/default.conf.tpl
 COPY ./uwsgi_params /etc/nginx/uwsgi_params
