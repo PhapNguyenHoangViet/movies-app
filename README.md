@@ -68,10 +68,10 @@ docker-compose -f docker-compose.yml up
 docker-compose -f docker-compose-deploy.yml up
 
 # Chạy ở chế độ detached
-docker-compose -f docker-compose-deploy.yml up -d
+docker compose -f docker-compose-deploy.yml up -d
 
 # Kiểm tra logs nếu có lỗi
-docker-compose -f docker-compose-deploy.yml logs
+docker compose -f docker-compose-deploy.yml logs
 ```
 
 Truy cập ứng dụng

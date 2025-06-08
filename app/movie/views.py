@@ -37,12 +37,7 @@ from django.contrib import messages
 import requests
 import os
 
-API_GATEWAY_URL = os.environ.get(
-    "API_GATEWAY_URL", "https://z3tfu25otb.execute-api.us-west-2.amazonaws.com/dev/"
-)
-# AI_MOVIE_API_URL = os.environ.get("AI_MOVIE_API_URL", "http://127.0.0.1:8001/themovie/api/v1")
-AI_MOVIE_API_URL = "http://themovie:8001/themovie/api/v1"
-
+AI_MOVIE_API_URL = "https://39be-116-111-7-185.ngrok-free.app/themovie/api/v1"
 
 @login_required(login_url="user:log_in")
 def rate_movie(request, movie_id):
@@ -276,7 +271,6 @@ def home(request):
                 if response.status_code == 200:
                     resp_json = response.json()
                     if resp_json.get("status") == "success":
-                        # messages.info(request, "Gợi ý phù hợp.")
                         recommendations = resp_json["data"]["recommendations"]
 
                         movie_ids = [movie_id for movie_id, _ in recommendations]
@@ -356,7 +350,6 @@ def recommendations(request):
     if response.status_code == 200:
         resp_json = response.json()
         if resp_json.get("status") == "success":
-            messages.info(request, "Gợi ý phù hợp.")
             recommendations = resp_json["data"]["recommendations"]
     rated_movie_ids = Rating.objects.filter(user=user).values_list(
         "movie__movie_id", flat=True
@@ -466,7 +459,6 @@ def explore(request, explore_name):
         if response.status_code == 200:
             resp_json = response.json()
             if resp_json.get("status") == "success":
-                messages.info(request, "Gợi ý phù hợp.")
                 recommendations = resp_json["data"]["recommendations"]
         movie_ids = [movie_id for movie_id, _ in recommendations]
         ordering = Case(
